@@ -285,14 +285,22 @@ class ChartCreator:
         """Get transit chart data as JSON"""
         try:
             def get_planet_details(planet_obj):
+                # Get planet name and position
+                planet_name = planet_obj.name.lower()
+                abs_pos = planet_obj.abs_pos
+                
+                # Calculate declination
+                declination = self.get_declination(planet_name, abs_pos)
+                logger.info(f"Got declination for {planet_name}: {declination}")
+
                 return {
                     "name": planet_obj.name,
                     "sign": planet_obj.sign,
                     "position": round(planet_obj.position, 4),
-                    "abs_pos": round(planet_obj.abs_pos, 4),
+                    "abs_pos": round(abs_pos, 4),
                     "house": planet_obj.house,
                     "retrograde": planet_obj.retrograde,
-                    "declination": round(planet_obj.declination, 4) if hasattr(planet_obj, 'declination') else None
+                    "declination": round(declination, 4) if declination is not None else None
                 }
 
             # Create data structures for both natal and transit
