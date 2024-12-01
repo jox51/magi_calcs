@@ -1,0 +1,291 @@
+{
+  "person1": {
+    "subject": {
+      "name": "Woody Allen",
+      "birth_data": {
+        "date": "1935-12-1",
+        "time": "22:55",
+        "location": "Brooklyn, NY, USA",
+        "longitude": -73.9496,
+        "latitude": 40.6501
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Sag",
+          "position": 9.0449,
+          "abs_pos": 249.0449,
+          "house": "Fourth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Aqu",
+          "position": 24.0972,
+          "abs_pos": 324.0972,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Sag",
+          "position": 4.5159,
+          "abs_pos": 244.5159,
+          "house": "Fourth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Lib",
+          "position": 22.8996,
+          "abs_pos": 202.8996,
+          "house": "Second_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Cap",
+          "position": 26.1071,
+          "abs_pos": 296.1071,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Sag",
+          "position": 5.122,
+          "abs_pos": 245.122,
+          "house": "Fourth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 4.0181,
+          "abs_pos": 334.0181,
+          "house": "Seventh_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Tau",
+          "position": 2.1857,
+          "abs_pos": 32.1857,
+          "house": "Ninth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Vir",
+          "position": 16.6875,
+          "abs_pos": 166.6875,
+          "house": "First_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Can",
+          "position": 27.1802,
+          "abs_pos": 117.1802,
+          "house": "Eleventh_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Gem",
+          "position": 13.8533,
+          "abs_pos": 73.8533,
+          "house": "Tenth_House",
+          "retrograde": true,
+          "declination": null
+        }
+      }
+    }
+  },
+  "person2": {
+    "subject": {
+      "name": "Mia Farrow",
+      "birth_data": {
+        "date": "1945-2-9",
+        "time": "21:00",
+        "location": "Los Angeles, CA, USA",
+        "longitude": -73.9496,
+        "latitude": 40.6501
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 21.0643,
+          "abs_pos": 321.0643,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Cap",
+          "position": 17.106,
+          "abs_pos": 287.106,
+          "house": "Fourth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Aqu",
+          "position": 7.4749,
+          "abs_pos": 307.4749,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Ari",
+          "position": 7.7331,
+          "abs_pos": 7.7331,
+          "house": "Seventh_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Cap",
+          "position": 26.7392,
+          "abs_pos": 296.7392,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Vir",
+          "position": 26.1879,
+          "abs_pos": 176.1879,
+          "house": "First_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Can",
+          "position": 4.3512,
+          "abs_pos": 94.3512,
+          "house": "Tenth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Gem",
+          "position": 9.118,
+          "abs_pos": 69.118,
+          "house": "Ninth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Lib",
+          "position": 6.1283,
+          "abs_pos": 186.1283,
+          "house": "First_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Leo",
+          "position": 8.832,
+          "abs_pos": 128.832,
+          "house": "Eleventh_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Lib",
+          "position": 2.8567,
+          "abs_pos": 182.8567,
+          "house": "First_House",
+          "retrograde": true,
+          "declination": null
+        }
+      }
+    }
+  },
+  "saturn_clashes": [
+    {
+      "person1_name": "Woody Allen",
+      "person2_name": "Mia Farrow",
+      "saturn_person": "Woody Allen",
+      "planet_person": "Mia Farrow",
+      "planet1_name": "saturn",
+      "planet2_name": "neptune",
+      "aspect_name": "quincunx",
+      "aspect_degrees": 150,
+      "orbit": 2.110199999999992,
+      "actual_degrees": 147.8898
+    },
+    {
+      "person1_name": "Woody Allen",
+      "person2_name": "Mia Farrow",
+      "saturn_person": "Woody Allen",
+      "planet_person": "Mia Farrow",
+      "planet1_name": "saturn",
+      "planet2_name": "chiron",
+      "aspect_name": "quincunx",
+      "aspect_degrees": 150,
+      "orbit": 1.1614000000000146,
+      "actual_degrees": 151.16140000000001
+    },
+    {
+      "person1_name": "Woody Allen",
+      "person2_name": "Mia Farrow",
+      "saturn_person": "Mia Farrow",
+      "planet_person": "Woody Allen",
+      "planet1_name": "saturn",
+      "planet2_name": "mercury",
+      "aspect_name": "quincunx",
+      "aspect_degrees": 150,
+      "orbit": 0.16469999999998208,
+      "actual_degrees": 150.16469999999998
+    },
+    {
+      "person1_name": "Woody Allen",
+      "person2_name": "Mia Farrow",
+      "saturn_person": "Mia Farrow",
+      "planet_person": "Woody Allen",
+      "planet1_name": "saturn",
+      "planet2_name": "jupiter",
+      "aspect_name": "quincunx",
+      "aspect_degrees": 150,
+      "orbit": 0.7708000000000084,
+      "actual_degrees": 150.7708
+    }
+  ],
+  "cinderella_linkages": [
+    {
+      "person1_name": "Woody Allen",
+      "person2_name": "Mia Farrow",
+      "planet1_name": "jupiter",
+      "planet2_name": "chiron",
+      "aspect_name": "sextile",
+      "aspect_degrees": 60,
+      "orbit": 2.2653,
+      "actual_degrees": 62.2653
+    }
+  ],
+  "chart_path": "charts/synastry_chart.svg"
+}

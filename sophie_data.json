@@ -1,0 +1,113 @@
+{
+  "natal": {
+    "name": "Sophie",
+    "birth_data": {
+      "date": "1965-1-20",
+      "time": "12:0",
+      "location": "Oxford, UK",
+      "longitude": -1.256,
+      "latitude": 51.7522
+    },
+    "planets": {
+      "sun": {
+        "name": "Sun",
+        "sign": "Aqu",
+        "position": 0.23352619395927832,
+        "abs_pos": 300.2335261939593,
+        "house": "Tenth_House",
+        "retrograde": false,
+        "declination": -20.1046
+      },
+      "moon": {
+        "name": "Moon",
+        "sign": "Vir",
+        "position": 10.965811186510194,
+        "abs_pos": 160.9658111865102,
+        "house": "Fifth_House",
+        "retrograde": false,
+        "declination": 7.4552
+      },
+      "mercury": {
+        "name": "Mercury",
+        "sign": "Cap",
+        "position": 9.562873880818188,
+        "abs_pos": 279.5628738808182,
+        "house": "Ninth_House",
+        "retrograde": false,
+        "declination": -23.099
+      },
+      "venus": {
+        "name": "Venus",
+        "sign": "Cap",
+        "position": 10.209638063000625,
+        "abs_pos": 280.2096380630006,
+        "house": "Ninth_House",
+        "retrograde": false,
+        "declination": -23.051
+      },
+      "mars": {
+        "name": "Mars",
+        "sign": "Vir",
+        "position": 27.616578921945717,
+        "abs_pos": 177.61657892194572,
+        "house": "Sixth_House",
+        "retrograde": false,
+        "declination": 0.948
+      },
+      "jupiter": {
+        "name": "Jupiter",
+        "sign": "Tau",
+        "position": 16.27968663077776,
+        "abs_pos": 46.27968663077776,
+        "house": "Twelfth_House",
+        "retrograde": false,
+        "declination": 16.7104
+      },
+      "saturn": {
+        "name": "Saturn",
+        "sign": "Pis",
+        "position": 3.2508558862259633,
+        "abs_pos": 333.25085588622596,
+        "house": "Eleventh_House",
+        "retrograde": false,
+        "declination": -10.3154
+      },
+      "uranus": {
+        "name": "Uranus",
+        "sign": "Vir",
+        "position": 14.406191860556447,
+        "abs_pos": 164.40619186055645,
+        "house": "Fifth_House",
+        "retrograde": true,
+        "declination": 6.1394
+      },
+      "neptune": {
+        "name": "Neptune",
+        "sign": "Sco",
+        "position": 19.74432479568955,
+        "abs_pos": 229.74432479568955,
+        "house": "Sixth_House",
+        "retrograde": false,
+        "declination": -17.6756
+      },
+      "pluto": {
+        "name": "Pluto",
+        "sign": "Vir",
+        "position": 16.0505084600681,
+        "abs_pos": 166.0505084600681,
+        "house": "Fifth_House",
+        "retrograde": true,
+        "declination": 5.5036
+      },
+      "chiron": {
+        "name": "Chiron",
+        "sign": "Pis",
+        "position": 15.595580801631513,
+        "abs_pos": 345.5955808016315,
+        "house": "Eleventh_House",
+        "retrograde": false,
+        "declination": -5.6799
+      }
+    }
+  }
+}

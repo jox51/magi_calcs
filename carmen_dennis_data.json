@@ -1,0 +1,310 @@
+{
+  "person1": {
+    "subject": {
+      "name": "Carmen Electra",
+      "birth_data": {
+        "date": "1972-4-20",
+        "time": "12:00",
+        "location": "Sharonville, OH, USA",
+        "longitude": -84.4133,
+        "latitude": 39.2681
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Tau",
+          "position": 0.7061,
+          "abs_pos": 30.7061,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Leo",
+          "position": 2.8384,
+          "abs_pos": 122.8384,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Ari",
+          "position": 5.4515,
+          "abs_pos": 5.4515,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Gem",
+          "position": 15.7873,
+          "abs_pos": 75.7873,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Gem",
+          "position": 15.938,
+          "abs_pos": 75.938,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Cap",
+          "position": 8.2944,
+          "abs_pos": 278.2944,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Gem",
+          "position": 4.8733,
+          "abs_pos": 64.8733,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Lib",
+          "position": 15.6674,
+          "abs_pos": 195.6674,
+          "house": "Third_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sag",
+          "position": 4.7476,
+          "abs_pos": 244.7476,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 29.9218,
+          "abs_pos": 179.9218,
+          "house": "Third_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Ari",
+          "position": 14.3112,
+          "abs_pos": 14.3112,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": null
+        }
+      }
+    }
+  },
+  "person2": {
+    "subject": {
+      "name": "Dennis Rodman",
+      "birth_data": {
+        "date": "1961-5-13",
+        "time": "12:00",
+        "location": "Trenton, NJ, USA",
+        "longitude": -84.4133,
+        "latitude": 39.2681
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Tau",
+          "position": 22.6378,
+          "abs_pos": 52.6378,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Tau",
+          "position": 9.8634,
+          "abs_pos": 39.8634,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Gem",
+          "position": 6.0186,
+          "abs_pos": 66.0186,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Ari",
+          "position": 15.1307,
+          "abs_pos": 15.1307,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Leo",
+          "position": 3.98,
+          "abs_pos": 123.98,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Aqu",
+          "position": 6.9223,
+          "abs_pos": 306.9223,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Cap",
+          "position": 29.8422,
+          "abs_pos": 299.8422,
+          "house": "Sixth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Leo",
+          "position": 21.7465,
+          "abs_pos": 141.7465,
+          "house": "First_House",
+          "retrograde": false,
+          "declination": null
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 9.5982,
+          "abs_pos": 219.5982,
+          "house": "Fourth_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 5.5415,
+          "abs_pos": 155.5415,
+          "house": "First_House",
+          "retrograde": true,
+          "declination": null
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 6.3389,
+          "abs_pos": 336.3389,
+          "house": "Seventh_House",
+          "retrograde": false,
+          "declination": null
+        }
+      }
+    }
+  },
+  "person1_super_aspects": [],
+  "person2_super_aspects": [
+    {
+      "planet1_name": "jupiter",
+      "planet2_name": "pluto",
+      "aspect_name": "quincunx",
+      "aspect_degrees": 150,
+      "orbit": 1.3808,
+      "actual_degrees": 151.3808
+    }
+  ],
+  "saturn_clashes": [
+    {
+      "saturn_person": "Carmen Electra",
+      "planet_person": "Dennis Rodman",
+      "planet2_name": "pluto",
+      "aspect_name": "square",
+      "aspect_degrees": 90,
+      "orbit": 0.6682,
+      "actual_degrees": 90.6682
+    },
+    {
+      "saturn_person": "Carmen Electra",
+      "planet_person": "Dennis Rodman",
+      "planet2_name": "chiron",
+      "aspect_name": "square",
+      "aspect_degrees": 90,
+      "orbit": 1.4656,
+      "actual_degrees": 88.5344
+    },
+    {
+      "saturn_person": "Dennis Rodman",
+      "planet_person": "Carmen Electra",
+      "planet2_name": "sun",
+      "aspect_name": "square",
+      "aspect_degrees": 90,
+      "orbit": 0.8639,
+      "actual_degrees": 90.8639
+    },
+    {
+      "saturn_person": "Dennis Rodman",
+      "planet_person": "Carmen Electra",
+      "planet2_name": "moon",
+      "aspect_name": "opposition",
+      "aspect_degrees": 180,
+      "orbit": 2.9962,
+      "actual_degrees": 177.0038
+    }
+  ],
+  "cinderella_linkages": [
+    {
+      "person1_name": "Carmen Electra",
+      "person2_name": "Dennis Rodman",
+      "planet1_name": "jupiter",
+      "planet2_name": "chiron",
+      "aspect_name": "sextile",
+      "aspect_degrees": 60,
+      "orbit": 1.9555,
+      "actual_degrees": 58.0445
+    },
+    {
+      "person1_name": "Carmen Electra",
+      "person2_name": "Dennis Rodman",
+      "planet1_name": "neptune",
+      "planet2_name": "chiron",
+      "aspect_name": "square",
+      "aspect_degrees": 90,
+      "orbit": 1.5913,
+      "actual_degrees": 91.5913
+    },
+    {
+      "person1_name": "Carmen Electra",
+      "person2_name": "Dennis Rodman",
+      "planet1_name": "chiron",
+      "planet2_name": "venus",
+      "aspect_name": "conjunction",
+      "aspect_degrees": 0,
+      "orbit": 0.8195,
+      "actual_degrees": 0.8195
+    }
+  ],
+  "chart_path": "charts/Carmen_Electra_Dennis_Rodman_synastry.svg"
+}

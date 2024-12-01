@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "astro-charts"
+version = "0.1.0"
+description = "A project for creating and testing astrological charts using Kerykeion"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">3.9.6, <4.0.0"
+kerykeion = "^4.19.0"
+pandas = "^2.2.3"
+requests = "^2.32.3"
+python-dotenv = "^1.0.1"
+timezonefinder = "^6.5.5"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.0.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
