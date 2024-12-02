@@ -9,9 +9,13 @@ from kerykeion.astrological_subject import AstrologicalSubject
 from astro_charts.magi_synastry import MagiSynastryCalculator
 from astro_charts.services.geo_service import GeoService
 from timezonefinder import TimezoneFinder
+from astro_charts.services.pocketbase_service import PocketbaseService
 import sys
+import logging
 
 load_dotenv()
+
+logger = logging.getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Generate astrological charts.")
@@ -60,6 +64,10 @@ def parse_args():
     parser.add_argument('--minute2', type=int, help="Birth minute of second person")
     parser.add_argument('--city2', help="Birth city of second person")
     parser.add_argument('--nation2', help="Birth nation of second person")
+    
+    # Add new database identifier arguments
+    parser.add_argument('--user-id', help="User ID for database records")
+    parser.add_argument('--job-id', help="Job ID for database records")
     
     args = parser.parse_args()
     
@@ -142,6 +150,9 @@ def main():
     try:
         args = parse_args()
         
+        # Log the user_id and job_id arguments
+        logger.info(f"Received user_id: {args.user_id}, job_id: {args.job_id}")
+        
         # Initialize chart creator
         chart_creator = ChartCreator(
             name=args.name,
@@ -154,6 +165,9 @@ def main():
             nation=args.nation
         )
 
+        # Initialize PocketBase service
+        pb_service = PocketbaseService()
+
         if args.transit_loop:
             # Handle transit loop case
             results = chart_creator.create_transit_loop(
@@ -165,6 +179,18 @@ def main():
                 filter_aspects=args.filter_aspects,
                 filter_planets=args.filter_planets
             )
+            
+            # Save to PocketBase with user_id and job_id
+            try:
+                logger.info(f"Saving to PocketBase with user_id: {args.user_id}, job_id: {args.job_id}")
+                created_records = pb_service.create_transit_loop_charts(
+                    results,
+                    user_id=args.user_id,
+                    job_id=args.job_id
+                )
+                print(f"\nCreated {len(created_records)} records in PocketBase")
+            except Exception as e:
+                print(f"Failed to save to PocketBase: {str(e)}")
             
             # Print results
             print("\nTransit Loop Results:")
@@ -196,6 +222,30 @@ def main():
             # Generate chart data based on type
             if args.type == 'natal':
                 chart_data = chart_creator.get_chart_data_as_json()
+                # Parse the JSON string into a dictionary
+                data = json.loads(chart_data)
+                
+                # Save to PocketBase
+                try:
+                    record = pb_service.create_natal_chart(
+                        natal_data=data,  # Pass the parsed data
+                        user_id=args.user_id,
+                        job_id=args.job_id
+                    )
+                    print(f"\nCreated natal chart record in PocketBase with ID: {record['id']}")
+                except Exception as e:
+                    print(f"Failed to save to PocketBase: {str(e)}")
+                    logger.error(f"Chart data: {data}")
+                
+                # Print the data
+                print_chart_data(data, args.type)
+                
+                # Save to file if output specified
+                if args.output:
+                    with open(args.output, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"\nFull chart data saved to {args.output}")
+                    
             elif args.type == 'transit':
                 chart_data = chart_creator.create_transit_chart(
                     transit_year=args.transit_year,
@@ -204,6 +254,28 @@ def main():
                     transit_hour=args.transit_hour,
                     transit_minute=args.transit_minute
                 )
+                # Parse and print the data
+                data = json.loads(chart_data)
+                print_chart_data(data, args.type)
+
+                # Save to PocketBase
+                try:
+                    record = pb_service.create_single_transit_chart(
+                        transit_data=data,
+                        user_id=args.user_id,
+                        job_id=args.job_id
+                    )
+                    print(f"\nCreated single transit chart record in PocketBase with ID: {record['id']}")
+                except Exception as e:
+                    print(f"Failed to save to PocketBase: {str(e)}")
+                    logger.error(f"Chart data: {data}")
+                
+                # Save to file if output specified
+                if args.output:
+                    with open(args.output, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"\nFull chart data saved to {args.output}")
+                    
             elif args.type == 'synastry':
                 chart_data = chart_creator.create_synastry_chart(
                     name2=args.name2,
@@ -215,19 +287,31 @@ def main():
                     city2=args.city2,
                     nation2=args.nation2
                 )
+                # Parse and print the data
+                data = json.loads(chart_data)
+                print_chart_data(data, args.type)
 
-            # Parse and print the data
-            data = json.loads(chart_data)
-            print_chart_data(data, args.type)
-
-            # Save to file if output specified
-            if args.output:
-                with open(args.output, 'w') as f:
-                    f.write(chart_data)
-                print(f"\nFull chart data saved to {args.output}")
+                # Save to PocketBase
+                try:
+                    record = pb_service.create_synastry_chart(
+                        synastry_data=data,
+                        user_id=args.user_id,
+                        job_id=args.job_id
+                    )
+                    print(f"\nCreated synastry chart record in PocketBase with ID: {record['id']}")
+                except Exception as e:
+                    print(f"Failed to save to PocketBase: {str(e)}")
+                    logger.error(f"Chart data: {data}")
+                
+                # Save to file if output specified
+                if args.output:
+                    with open(args.output, 'w') as f:
+                        json.dump(data, f, indent=2)
+                    print(f"\nFull chart data saved to {args.output}")
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")
+        logger.error(f"Error details: {str(e)}")
         sys.exit(1)
 
 if __name__ == "__main__":

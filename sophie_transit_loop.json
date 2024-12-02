@@ -270,7 +270,8 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-15"
   },
   "2025-03-16": {
     "natal": {
@@ -543,7 +544,8 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-16"
   },
   "2025-03-17": {
     "natal": {
@@ -816,7 +818,8 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-17"
   },
   "2025-03-18": {
     "natal": {
@@ -1089,7 +1092,8 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-18"
   },
   "2025-03-19": {
     "natal": {
@@ -1362,7 +1366,8 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-19"
   },
   "2025-03-20": {
     "natal": {
@@ -1635,6 +1640,7 @@
         "actual_degrees": 60.6841
       }
     ],
-    "chart_path": "charts/transit_chart.svg"
+    "chart_path": "charts/transit_chart.svg",
+    "date": "2025-03-20"
   }
 }
