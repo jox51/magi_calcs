@@ -156,69 +156,38 @@ class ChartCreator:
             # Generate custom filename from name
             name_safe = self.subject.name.replace(" ", "_")
             svg_filename = f"{name_safe}_natal.svg"
+            chart_path = os.path.join('charts', svg_filename)
             
             # Create charts directory if it doesn't exist
-            charts_dir = os.path.join(os.getcwd(), "charts")
-            os.makedirs(charts_dir, exist_ok=True)
-            logger.info(f"Charts directory created/verified at: {charts_dir}")
+            os.makedirs('charts', exist_ok=True)
+            logger.info(f"Creating natal chart for {self.subject.name}")
             
-            # Create full path for the chart
-            target_path = os.path.join(charts_dir, svg_filename)
-            logger.info(f"Target path for chart: {target_path}")
+            # Generate natal chart only
+            natal_chart = KerykeionChartSVG(self.subject, chart_type="Natal")
+            natal_chart.makeSVG()
             
-            # Generate chart (it will create file in home directory by default)
-            try:
-                logger.info("Creating KerykeionChartSVG instance...")
-                chart = KerykeionChartSVG(self.subject, chart_type="Natal")
-                logger.info("KerykeionChartSVG instance created successfully")
-                
-                logger.info("Calling makeSVG()...")
-                chart.makeSVG()
-                logger.info("makeSVG() completed")
-            except Exception as e:
-                logger.error(f"Error during chart creation: {str(e)}")
-                raise
+            # Move the generated chart
+            expected_filename = f"{self.subject.name} - Natal Chart.svg"
+            source_path = os.path.join(os.path.expanduser('~'), expected_filename)
             
-            # Default file path used by the library
-            default_path = os.path.join(os.path.expanduser("~"), f"{self.subject.name} - Natal Chart.svg")
-            logger.info(f"Looking for generated chart at: {default_path}")
+            if os.path.exists(source_path):
+                shutil.move(source_path, chart_path)
+                logger.info(f"Natal chart moved from {source_path} to {os.path.abspath(chart_path)}")
             
-            # List files in home directory to debug
-            home_dir = os.path.expanduser("~")
-            files = os.listdir(home_dir)
-            svg_files = [f for f in files if f.endswith('.svg')]
-            logger.info(f"SVG files found in home directory: {svg_files}")
-            
-            # Move file to desired location if it exists
-            if os.path.exists(default_path):
-                shutil.move(default_path, target_path)
-                logger.info(f"Chart moved to: {target_path}")
-            else:
-                logger.error(f"Chart not found at default location: {default_path}")
-                raise FileNotFoundError(f"Generated chart file not found at {default_path}")
-            
-            # Verify final location
-            if os.path.exists(target_path):
-                logger.info(f"Chart successfully saved to: {target_path}")
-            else:
-                logger.error(f"Chart file not found at target location: {target_path}")
-                raise FileNotFoundError(f"Chart not found at target location: {target_path}")
-            
-            # Get chart data and parse it
+            # Get chart data using existing method but only include natal data
             chart_data = json.loads(self.get_chart_data_as_json())
             
-            # Add Cinderella analysis
-            cinderella_analysis = self.cinderella_analyzer.analyze_chart(chart_data)
-            chart_data['cinderella_analysis'] = cinderella_analysis
+            # Create simplified natal-only data structure
+            final_data = {
+                "natal": chart_data["subject"],
+                "super_aspects": chart_data.get("super_aspects", []),
+                "chart_path": chart_path
+            }
             
-            # Add chart path
-            chart_data['chart_path'] = target_path
-            
-            return chart_data
+            return final_data
             
         except Exception as e:
-            logger.error(f"Error in create_natal_chart: {str(e)}")
-            logger.exception("Full traceback:")
+            logger.error(f"Error creating natal chart: {str(e)}")
             raise
 
     def create_transit_chart(self, transit_year=None, transit_month=None, 
@@ -303,7 +272,7 @@ class ChartCreator:
                     "declination": round(declination, 4) if declination is not None else None
                 }
 
-            # Create data structures for both natal and transit
+            # Create natal data first
             natal_data = {
                 "subject": {
                     "name": self.subject.name,
@@ -317,12 +286,13 @@ class ChartCreator:
                     "planets": {
                         planet: get_planet_details(getattr(self.subject, planet))
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
-                                     "jupiter", "saturn", "uranus", "neptune", 
-                                     "pluto", "chiron"]
+                                    "jupiter", "saturn", "uranus", "neptune", 
+                                    "pluto", "chiron"]
                     }
                 }
             }
 
+            # Create transit data first without aspects
             transit_data = {
                 "subject": {
                     "name": "Transit",
@@ -333,27 +303,30 @@ class ChartCreator:
                     "planets": {
                         planet: get_planet_details(getattr(self.transit_subject, planet))
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
-                                     "jupiter", "saturn", "uranus", "neptune", 
-                                     "pluto", "chiron"]
+                                    "jupiter", "saturn", "uranus", "neptune", 
+                                    "pluto", "chiron"]
                     }
                 }
             }
 
-            # Calculate Cinderella aspects between natal and transit
-            linkage_calc = MagiLinkageCalculator()
-            cinderella_aspects = linkage_calc.find_cinderella_linkages(natal_data, transit_data)
-
-            # Calculate Super aspects between natal and transit
+            # Calculate aspects after both natal and transit data are created
             super_calc = SuperAspectCalculator()
             super_aspects = super_calc.find_super_aspects(natal_data)
             transit_super_aspects = super_calc.find_super_aspects(transit_data)
-            
+
+            # Calculate Cinderella aspects
+            linkage_calc = MagiLinkageCalculator()
+            cinderella_aspects = linkage_calc.find_cinderella_linkages(natal_data, transit_data)
+
+            # Add aspects to transit data
+            transit_data["transit_super_aspects"] = transit_super_aspects
+            transit_data["cinderella_aspects"] = cinderella_aspects
+
+            # Create final chart data
             chart_data = {
                 "natal": natal_data["subject"],
-                "transit": transit_data["subject"],
+                "transit": transit_data,
                 "natal_super_aspects": super_aspects,
-                "transit_super_aspects": transit_super_aspects,
-                "cinderella_aspects": cinderella_aspects,
                 "chart_path": chart_path
             }
 
@@ -761,4 +734,89 @@ class ChartCreator:
 
         except Exception as e:
             logger.error(f"Error converting synastry data to JSON: {str(e)}")
+            raise
+
+    def create_transit_loop(self, from_date, to_date, generate_chart=False, aspects_only=False, 
+                          filter_orb=None, filter_aspects=None, filter_planets=None):
+        """Create transit charts for a range of dates"""
+        try:
+            # Convert date strings to datetime objects
+            start_date = datetime.strptime(from_date, "%Y-%m-%d")
+            end_date = datetime.strptime(to_date, "%Y-%m-%d")
+            
+            # Initialize results dictionary
+            results = {}
+            
+            # Loop through each date
+            current_date = start_date
+            while current_date <= end_date:
+                # Create transit chart for current date (removed generate_chart parameter)
+                transit_data = self.create_transit_chart(
+                    transit_year=current_date.year,
+                    transit_month=current_date.month,
+                    transit_day=current_date.day,
+                    transit_hour=14,  # Default to 2 PM
+                    transit_minute=30
+                )
+                
+                # Process the transit data based on filters
+                if isinstance(transit_data, str):
+                    try:
+                        data = json.loads(transit_data)
+                        
+                        # Apply filters if specified
+                        if aspects_only or filter_orb or filter_aspects or filter_planets:
+                            filtered_data = self._filter_transit_data(
+                                data,
+                                aspects_only=aspects_only,
+                                filter_orb=filter_orb,
+                                filter_aspects=filter_aspects,
+                                filter_planets=filter_planets
+                            )
+                            results[current_date.strftime("%Y-%m-%d")] = filtered_data
+                        else:
+                            results[current_date.strftime("%Y-%m-%d")] = data
+                            
+                    except json.JSONDecodeError:
+                        results[current_date.strftime("%Y-%m-%d")] = transit_data
+                else:
+                    results[current_date.strftime("%Y-%m-%d")] = transit_data
+                
+                # Move to next day
+                current_date += timedelta(days=1)
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error in create_transit_loop: {str(e)}")
+            raise
+
+    def _filter_transit_data(self, data, aspects_only=False, filter_orb=None, 
+                           filter_aspects=None, filter_planets=None):
+        """Filter transit data based on specified criteria"""
+        try:
+            if aspects_only:
+                return {'aspects': data.get('aspects', [])}
+            
+            filtered_data = data.copy()
+            aspects = data.get('aspects', [])
+            
+            if filter_orb is not None:
+                aspects = [a for a in aspects if abs(float(a.get('orbit', 0))) <= filter_orb]
+            
+            if filter_aspects:
+                aspects = [a for a in aspects if a.get('aspect_name', '').lower() in 
+                          [asp.lower() for asp in filter_aspects]]
+            
+            if filter_planets:
+                filter_planets = [p.lower() for p in filter_planets]
+                aspects = [a for a in aspects if 
+                          a.get('planet1_name', '').lower() in filter_planets or 
+                          a.get('planet2_name', '').lower() in filter_planets]
+            
+            filtered_data['aspects'] = aspects
+            return filtered_data
+            
+        except Exception as e:
+            logger.error(f"Error in _filter_transit_data: {str(e)}")
             raise

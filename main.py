@@ -28,8 +28,21 @@ def parse_args():
     
     # Optional arguments
     parser.add_argument('--output', help="Output file name")
+    
+    # Transit loop arguments
+    parser.add_argument('--transit-loop', action='store_true', help="Generate transit charts for a date range")
+    parser.add_argument('--from-date', help="Start date for transit loop (YYYY-MM-DD)")
+    parser.add_argument('--to-date', help="End date for transit loop (YYYY-MM-DD)")
+    parser.add_argument('--generate-chart', action='store_true', help="Generate chart SVG files for transit loop")
+    parser.add_argument('--aspects-only', action='store_true', help="Only output aspects data for transit loop")
+    parser.add_argument('--filter-orb', type=float, help="Maximum orb for filtering aspects")
+    parser.add_argument('--filter-aspects', nargs='+', help="List of aspect types to filter for")
+    parser.add_argument('--filter-planets', nargs='+', help="List of planets to filter for")
+    
+    # Make type optional if transit-loop is used
     parser.add_argument('--type', choices=['natal', 'transit', 'synastry'], 
-                       required=True, help="Type of chart to generate")
+                       help="Type of chart to generate",
+                       required=False)
     
     # Transit date arguments (optional, defaults to current date/time)
     parser.add_argument('--transit-year', type=int, help="Transit year")
@@ -47,8 +60,17 @@ def parse_args():
     parser.add_argument('--minute2', type=int, help="Birth minute of second person")
     parser.add_argument('--city2', help="Birth city of second person")
     parser.add_argument('--nation2', help="Birth nation of second person")
-
-    return parser.parse_args()
+    
+    args = parser.parse_args()
+    
+    # Validate arguments
+    if not args.transit_loop and not args.type:
+        parser.error("--type is required when not using --transit-loop")
+    
+    if args.transit_loop and not (args.from_date and args.to_date):
+        parser.error("--from-date and --to-date are required when using --transit-loop")
+    
+    return args
 
 def print_chart_data(data, chart_type):
     """Print formatted chart data based on chart type"""
@@ -132,38 +154,77 @@ def main():
             nation=args.nation
         )
 
-        # Generate chart data based on type
-        if args.type == 'natal':
-            chart_data = chart_creator.get_chart_data_as_json()
-        elif args.type == 'transit':
-            chart_data = chart_creator.create_transit_chart(
-                transit_year=args.transit_year,
-                transit_month=args.transit_month,
-                transit_day=args.transit_day,
-                transit_hour=args.transit_hour,
-                transit_minute=args.transit_minute
+        if args.transit_loop:
+            # Handle transit loop case
+            results = chart_creator.create_transit_loop(
+                from_date=args.from_date,
+                to_date=args.to_date,
+                generate_chart=args.generate_chart,
+                aspects_only=args.aspects_only,
+                filter_orb=args.filter_orb,
+                filter_aspects=args.filter_aspects,
+                filter_planets=args.filter_planets
             )
-        elif args.type == 'synastry':
-            chart_data = chart_creator.create_synastry_chart(
-                name2=args.name2,
-                year2=args.year2,
-                month2=args.month2,
-                day2=args.day2,
-                hour2=args.hour2,
-                minute2=args.minute2,
-                city2=args.city2,
-                nation2=args.nation2
-            )
+            
+            # Print results
+            print("\nTransit Loop Results:")
+            print("====================")
+            for date, result in results.items():
+                print(f"\nDate: {date}")
+                if isinstance(result, str):
+                    try:
+                        parsed_result = json.loads(result)
+                        if args.aspects_only:
+                            # Only print aspects data
+                            aspects = parsed_result.get('aspects', [])
+                            print(json.dumps(aspects, indent=2))
+                        else:
+                            # Print full result
+                            print(json.dumps(parsed_result, indent=2))
+                    except json.JSONDecodeError:
+                        print(result)
+                else:
+                    print(json.dumps(result, indent=2))
+            
+            # Save to file if output specified
+            if args.output:
+                with open(args.output, 'w') as f:
+                    json.dump(results, f, indent=2)
+                print(f"\nTransit loop results saved to {args.output}")
+                
+        else:
+            # Generate chart data based on type
+            if args.type == 'natal':
+                chart_data = chart_creator.get_chart_data_as_json()
+            elif args.type == 'transit':
+                chart_data = chart_creator.create_transit_chart(
+                    transit_year=args.transit_year,
+                    transit_month=args.transit_month,
+                    transit_day=args.transit_day,
+                    transit_hour=args.transit_hour,
+                    transit_minute=args.transit_minute
+                )
+            elif args.type == 'synastry':
+                chart_data = chart_creator.create_synastry_chart(
+                    name2=args.name2,
+                    year2=args.year2,
+                    month2=args.month2,
+                    day2=args.day2,
+                    hour2=args.hour2,
+                    minute2=args.minute2,
+                    city2=args.city2,
+                    nation2=args.nation2
+                )
 
-        # Parse and print the data
-        data = json.loads(chart_data)
-        print_chart_data(data, args.type)
+            # Parse and print the data
+            data = json.loads(chart_data)
+            print_chart_data(data, args.type)
 
-        # Save to file if output specified
-        if args.output:
-            with open(args.output, 'w') as f:
-                f.write(chart_data)
-            print(f"\nFull chart data saved to {args.output}")
+            # Save to file if output specified
+            if args.output:
+                with open(args.output, 'w') as f:
+                    f.write(chart_data)
+                print(f"\nFull chart data saved to {args.output}")
 
     except Exception as e:
         print(f"An error occurred: {str(e)}")

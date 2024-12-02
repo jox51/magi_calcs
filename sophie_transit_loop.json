@@ -1,8 +1,1640 @@
-[
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-15\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Pis\",\n        \"position\": 25.4969,\n        \"abs_pos\": 355.4969,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Gem\",\n        \"position\": 6.3602,\n        \"abs_pos\": 66.3602,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 10.1062,\n        \"abs_pos\": 10.1062,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 4.5714,\n        \"abs_pos\": 334.5714,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 24.2535,\n        \"abs_pos\": 324.2535,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 13.9901,\n        \"abs_pos\": 43.9901,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 11.686,\n        \"abs_pos\": 341.686,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.0719,\n        \"abs_pos\": 50.0719,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.2884,\n        \"abs_pos\": 357.2884,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.5672,\n        \"abs_pos\": 301.5672,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.0061,\n        \"abs_pos\": 18.0061,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.7382,\n      \"actual_degrees\": 148.2618\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 1.6055,\n      \"actual_degrees\": 58.3945\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}",
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-16\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Pis\",\n        \"position\": 26.4929,\n        \"abs_pos\": 356.4929,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Gem\",\n        \"position\": 19.6524,\n        \"abs_pos\": 79.6524,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 11.8407,\n        \"abs_pos\": 11.8407,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 5.8089,\n        \"abs_pos\": 335.8089,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 25.0311,\n        \"abs_pos\": 325.0311,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 14.1856,\n        \"abs_pos\": 44.1856,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 11.8058,\n        \"abs_pos\": 341.8058,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.111,\n        \"abs_pos\": 50.111,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.3264,\n        \"abs_pos\": 357.3264,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.5885,\n        \"abs_pos\": 301.5885,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.0618,\n        \"abs_pos\": 18.0618,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.6825,\n      \"actual_degrees\": 148.3175\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 1.41,\n      \"actual_degrees\": 58.59\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}",
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-17\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Pis\",\n        \"position\": 27.4883,\n        \"abs_pos\": 357.4883,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Can\",\n        \"position\": 2.5558,\n        \"abs_pos\": 92.5558,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 13.5174,\n        \"abs_pos\": 13.5174,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 7.0463,\n        \"abs_pos\": 337.0463,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 25.8088,\n        \"abs_pos\": 325.8088,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 14.3825,\n        \"abs_pos\": 44.3825,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 11.9253,\n        \"abs_pos\": 341.9253,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.1508,\n        \"abs_pos\": 50.1508,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.3643,\n        \"abs_pos\": 357.3643,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.6095,\n        \"abs_pos\": 301.6095,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.1178,\n        \"abs_pos\": 18.1178,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.6265,\n      \"actual_degrees\": 148.3735\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 1.2131,\n      \"actual_degrees\": 58.7869\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}",
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-18\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Pis\",\n        \"position\": 28.4831,\n        \"abs_pos\": 358.4831,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Can\",\n        \"position\": 15.1278,\n        \"abs_pos\": 105.1278,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 15.1281,\n        \"abs_pos\": 15.1281,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 8.2836,\n        \"abs_pos\": 338.2836,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 26.5866,\n        \"abs_pos\": 326.5866,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 14.5807,\n        \"abs_pos\": 44.5807,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 12.0444,\n        \"abs_pos\": 342.0444,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.1911,\n        \"abs_pos\": 50.1911,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.4023,\n        \"abs_pos\": 357.4023,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.63,\n        \"abs_pos\": 301.63,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.174,\n        \"abs_pos\": 18.174,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.5703,\n      \"actual_degrees\": 148.4297\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 1.0149,\n      \"actual_degrees\": 58.9851\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}",
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-19\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Pis\",\n        \"position\": 29.4773,\n        \"abs_pos\": 359.4773,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Can\",\n        \"position\": 27.4319,\n        \"abs_pos\": 117.4319,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 16.665,\n        \"abs_pos\": 16.665,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 9.5208,\n        \"abs_pos\": 339.5208,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 27.3644,\n        \"abs_pos\": 327.3644,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 14.7802,\n        \"abs_pos\": 44.7802,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 12.1632,\n        \"abs_pos\": 342.1632,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.232,\n        \"abs_pos\": 50.232,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.4403,\n        \"abs_pos\": 357.4403,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.6502,\n        \"abs_pos\": 301.6502,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.2305,\n        \"abs_pos\": 18.2305,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.5138,\n      \"actual_degrees\": 148.4862\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.8154,\n      \"actual_degrees\": 59.1846\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}",
-  "{\n  \"natal\": {\n    \"name\": \"Sophie\",\n    \"birth_data\": {\n      \"date\": \"1965-1-20\",\n      \"time\": \"12:00\",\n      \"location\": \"Oxford, UK\",\n      \"longitude\": -1.256,\n      \"latitude\": 51.7522\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Aqu\",\n        \"position\": 0.2335,\n        \"abs_pos\": 300.2335,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Vir\",\n        \"position\": 10.9658,\n        \"abs_pos\": 160.9658,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Cap\",\n        \"position\": 9.5629,\n        \"abs_pos\": 279.5629,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Cap\",\n        \"position\": 10.2096,\n        \"abs_pos\": 280.2096,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Vir\",\n        \"position\": 27.6166,\n        \"abs_pos\": 177.6166,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 16.2797,\n        \"abs_pos\": 46.2797,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 3.2509,\n        \"abs_pos\": 333.2509,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Vir\",\n        \"position\": 14.4062,\n        \"abs_pos\": 164.4062,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Sco\",\n        \"position\": 19.7443,\n        \"abs_pos\": 229.7443,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Vir\",\n        \"position\": 16.0505,\n        \"abs_pos\": 166.0505,\n        \"house\": \"Fifth_House\",\n        \"retrograde\": true,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Pis\",\n        \"position\": 15.5956,\n        \"abs_pos\": 345.5956,\n        \"house\": \"Eleventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"transit\": {\n    \"name\": \"Transit\",\n    \"birth_data\": {\n      \"date\": \"2024-3-20\",\n      \"time\": \"14:30\"\n    },\n    \"planets\": {\n      \"sun\": {\n        \"name\": \"Sun\",\n        \"sign\": \"Ari\",\n        \"position\": 0.4708,\n        \"abs_pos\": 0.4708,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"moon\": {\n        \"name\": \"Moon\",\n        \"sign\": \"Leo\",\n        \"position\": 9.5314,\n        \"abs_pos\": 129.5314,\n        \"house\": \"Twelfth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mercury\": {\n        \"name\": \"Mercury\",\n        \"sign\": \"Ari\",\n        \"position\": 18.1205,\n        \"abs_pos\": 18.1205,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"venus\": {\n        \"name\": \"Venus\",\n        \"sign\": \"Pis\",\n        \"position\": 10.7579,\n        \"abs_pos\": 340.7579,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"mars\": {\n        \"name\": \"Mars\",\n        \"sign\": \"Aqu\",\n        \"position\": 28.1423,\n        \"abs_pos\": 328.1423,\n        \"house\": \"Seventh_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"jupiter\": {\n        \"name\": \"Jupiter\",\n        \"sign\": \"Tau\",\n        \"position\": 14.9811,\n        \"abs_pos\": 44.9811,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"saturn\": {\n        \"name\": \"Saturn\",\n        \"sign\": \"Pis\",\n        \"position\": 12.2816,\n        \"abs_pos\": 342.2816,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"uranus\": {\n        \"name\": \"Uranus\",\n        \"sign\": \"Tau\",\n        \"position\": 20.2735,\n        \"abs_pos\": 50.2735,\n        \"house\": \"Tenth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"neptune\": {\n        \"name\": \"Neptune\",\n        \"sign\": \"Pis\",\n        \"position\": 27.4782,\n        \"abs_pos\": 357.4782,\n        \"house\": \"Eighth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"pluto\": {\n        \"name\": \"Pluto\",\n        \"sign\": \"Aqu\",\n        \"position\": 1.6699,\n        \"abs_pos\": 301.6699,\n        \"house\": \"Sixth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      },\n      \"chiron\": {\n        \"name\": \"Chiron\",\n        \"sign\": \"Ari\",\n        \"position\": 18.2872,\n        \"abs_pos\": 18.2872,\n        \"house\": \"Ninth_House\",\n        \"retrograde\": false,\n        \"declination\": null\n      }\n    }\n  },\n  \"natal_super_aspects\": [\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"uranus\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 1.8735,\n      \"actual_degrees\": 118.1265\n    },\n    {\n      \"planet1_name\": \"jupiter\",\n      \"planet2_name\": \"pluto\",\n      \"aspect_name\": \"trine\",\n      \"aspect_degrees\": 120,\n      \"orbit\": 0.2292,\n      \"actual_degrees\": 119.7708\n    },\n    {\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6841,\n      \"actual_degrees\": 60.6841\n    }\n  ],\n  \"transit_super_aspects\": [],\n  \"cinderella_aspects\": [\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"neptune\",\n      \"planet2_name\": \"chiron\",\n      \"aspect_name\": \"quincunx\",\n      \"aspect_degrees\": 150,\n      \"orbit\": 1.4571,\n      \"actual_degrees\": 148.5429\n    },\n    {\n      \"person1_name\": \"Sophie\",\n      \"person2_name\": \"Transit\",\n      \"planet1_name\": \"chiron\",\n      \"planet2_name\": \"jupiter\",\n      \"aspect_name\": \"sextile\",\n      \"aspect_degrees\": 60,\n      \"orbit\": 0.6145,\n      \"actual_degrees\": 59.3855\n    }\n  ],\n  \"chart_path\": \"charts/transit_chart.svg\"\n}"
-]
+{
+  "2025-03-15": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-15",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Pis",
+            "position": 25.2528,
+            "abs_pos": 355.2528,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -1.8869
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Lib",
+            "position": 9.723,
+            "abs_pos": 189.723,
+            "house": "Third_House",
+            "retrograde": false,
+            "declination": -3.8527
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 9.5816,
+            "abs_pos": 9.5816,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.7971
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 7.084,
+            "abs_pos": 7.084,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 2.8123
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 19.1651,
+            "abs_pos": 109.1651,
+            "house": "Twelfth_House",
+            "retrograde": false,
+            "declination": 22.0737
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 13.7254,
+            "abs_pos": 73.7254,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 22.4519
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 22.4873,
+            "abs_pos": 352.4873,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.9817
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.0835,
+            "abs_pos": 54.0835,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.7965
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.4365,
+            "abs_pos": 359.4365,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.2242
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.244,
+            "abs_pos": 303.244,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4351
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.3656,
+            "abs_pos": 21.3656,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.334
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.6213,
+          "actual_degrees": 151.6213
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.8702,
+          "actual_degrees": 88.1298
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  },
+  "2025-03-16": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-16",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Pis",
+            "position": 26.2484,
+            "abs_pos": 356.2484,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -1.4917
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Lib",
+            "position": 21.606,
+            "abs_pos": 201.606,
+            "house": "Third_House",
+            "retrograde": false,
+            "declination": -8.424
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 9.4667,
+            "abs_pos": 9.4667,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.7519
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 6.5457,
+            "abs_pos": 6.5457,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 2.5995
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 19.3767,
+            "abs_pos": 109.3767,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 22.0438
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 13.8451,
+            "abs_pos": 73.8451,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 22.4663
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 22.6106,
+            "abs_pos": 352.6106,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.933
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.1197,
+            "abs_pos": 54.1197,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.8054
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.4744,
+            "abs_pos": 359.4744,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.2091
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.2659,
+            "abs_pos": 303.2659,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4301
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.4204,
+            "abs_pos": 21.4204,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.3545
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.6761,
+          "actual_degrees": 151.6761
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.7505,
+          "actual_degrees": 88.2495
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  },
+  "2025-03-17": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-17",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Pis",
+            "position": 27.2435,
+            "abs_pos": 357.2435,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -1.0963
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Sco",
+            "position": 3.4334,
+            "abs_pos": 213.4334,
+            "house": "Third_House",
+            "retrograde": false,
+            "declination": -12.6622
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 9.2168,
+            "abs_pos": 9.2168,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.6536
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 5.983,
+            "abs_pos": 5.983,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 2.3767
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 19.5968,
+            "abs_pos": 109.5968,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 22.0123
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 13.9672,
+            "abs_pos": 73.9672,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 22.4809
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 22.7338,
+            "abs_pos": 352.7338,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.8843
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.1566,
+            "abs_pos": 54.1566,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.8145
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.5123,
+            "abs_pos": 359.5123,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.194
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.2873,
+            "abs_pos": 303.2873,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4251
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.4755,
+            "abs_pos": 21.4755,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.3752
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.7312,
+          "actual_degrees": 151.7312
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.6284,
+          "actual_degrees": 88.3716
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  },
+  "2025-03-18": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-18",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Pis",
+            "position": 28.2381,
+            "abs_pos": 358.2381,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.7009
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Sco",
+            "position": 15.2523,
+            "abs_pos": 225.2523,
+            "house": "Fourth_House",
+            "retrograde": false,
+            "declination": -16.413
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 8.8396,
+            "abs_pos": 8.8396,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.5051
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 5.3992,
+            "abs_pos": 5.3992,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 2.1454
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 19.8251,
+            "abs_pos": 109.8251,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 21.9792
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 14.0918,
+            "abs_pos": 74.0918,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 22.4956
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 22.857,
+            "abs_pos": 352.857,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.8356
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.1941,
+            "abs_pos": 54.1941,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.8237
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.5502,
+            "abs_pos": 359.5502,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.179
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.3084,
+            "abs_pos": 303.3084,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4202
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.531,
+            "abs_pos": 21.531,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.3959
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.7867,
+          "actual_degrees": 151.7867
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.5038,
+          "actual_degrees": 88.4962
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  },
+  "2025-03-19": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-19",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Pis",
+            "position": 29.2322,
+            "abs_pos": 359.2322,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.3055
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Sco",
+            "position": 27.1177,
+            "abs_pos": 237.1177,
+            "house": "Fourth_House",
+            "retrograde": false,
+            "declination": -19.5184
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 8.3452,
+            "abs_pos": 8.3452,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.3102
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 4.7981,
+            "abs_pos": 4.7981,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 1.907
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 20.0615,
+            "abs_pos": 110.0615,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 21.9446
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 14.2188,
+            "abs_pos": 74.2188,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 22.5106
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 22.9801,
+            "abs_pos": 352.9801,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.787
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.2323,
+            "abs_pos": 54.2323,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.8331
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.5881,
+            "abs_pos": 359.5881,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.1639
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.3292,
+            "abs_pos": 303.3292,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4154
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.5868,
+            "abs_pos": 21.5868,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.4168
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.8425,
+          "actual_degrees": 151.8425
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.3768,
+          "actual_degrees": 88.6232
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  },
+  "2025-03-20": {
+    "natal": {
+      "name": "Sophie",
+      "birth_data": {
+        "date": "1965-1-20",
+        "time": "12:00",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
+      },
+      "planets": {
+        "sun": {
+          "name": "Sun",
+          "sign": "Aqu",
+          "position": 0.2335,
+          "abs_pos": 300.2335,
+          "house": "Tenth_House",
+          "retrograde": false,
+          "declination": -20.1046
+        },
+        "moon": {
+          "name": "Moon",
+          "sign": "Vir",
+          "position": 10.9658,
+          "abs_pos": 160.9658,
+          "house": "Fifth_House",
+          "retrograde": false,
+          "declination": 7.4552
+        },
+        "mercury": {
+          "name": "Mercury",
+          "sign": "Cap",
+          "position": 9.5629,
+          "abs_pos": 279.5629,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.099
+        },
+        "venus": {
+          "name": "Venus",
+          "sign": "Cap",
+          "position": 10.2096,
+          "abs_pos": 280.2096,
+          "house": "Ninth_House",
+          "retrograde": false,
+          "declination": -23.051
+        },
+        "mars": {
+          "name": "Mars",
+          "sign": "Vir",
+          "position": 27.6166,
+          "abs_pos": 177.6166,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": 0.948
+        },
+        "jupiter": {
+          "name": "Jupiter",
+          "sign": "Tau",
+          "position": 16.2797,
+          "abs_pos": 46.2797,
+          "house": "Twelfth_House",
+          "retrograde": false,
+          "declination": 16.7104
+        },
+        "saturn": {
+          "name": "Saturn",
+          "sign": "Pis",
+          "position": 3.2509,
+          "abs_pos": 333.2509,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -10.3154
+        },
+        "uranus": {
+          "name": "Uranus",
+          "sign": "Vir",
+          "position": 14.4062,
+          "abs_pos": 164.4062,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 6.1394
+        },
+        "neptune": {
+          "name": "Neptune",
+          "sign": "Sco",
+          "position": 19.7443,
+          "abs_pos": 229.7443,
+          "house": "Sixth_House",
+          "retrograde": false,
+          "declination": -17.6756
+        },
+        "pluto": {
+          "name": "Pluto",
+          "sign": "Vir",
+          "position": 16.0505,
+          "abs_pos": 166.0505,
+          "house": "Fifth_House",
+          "retrograde": true,
+          "declination": 5.5036
+        },
+        "chiron": {
+          "name": "Chiron",
+          "sign": "Pis",
+          "position": 15.5956,
+          "abs_pos": 345.5956,
+          "house": "Eleventh_House",
+          "retrograde": false,
+          "declination": -5.6799
+        }
+      }
+    },
+    "transit": {
+      "subject": {
+        "name": "Transit",
+        "birth_data": {
+          "date": "2025-3-20",
+          "time": "14:30"
+        },
+        "planets": {
+          "sun": {
+            "name": "Sun",
+            "sign": "Ari",
+            "position": 0.2258,
+            "abs_pos": 0.2258,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": 0.0899
+          },
+          "moon": {
+            "name": "Moon",
+            "sign": "Sag",
+            "position": 9.0924,
+            "abs_pos": 249.0924,
+            "house": "Fourth_House",
+            "retrograde": false,
+            "declination": -21.8177
+          },
+          "mercury": {
+            "name": "Mercury",
+            "sign": "Ari",
+            "position": 7.7458,
+            "abs_pos": 7.7458,
+            "house": "Ninth_House",
+            "retrograde": true,
+            "declination": 3.0738
+          },
+          "venus": {
+            "name": "Venus",
+            "sign": "Ari",
+            "position": 4.1836,
+            "abs_pos": 4.1836,
+            "house": "Eighth_House",
+            "retrograde": true,
+            "declination": 1.6632
+          },
+          "mars": {
+            "name": "Mars",
+            "sign": "Can",
+            "position": 20.3059,
+            "abs_pos": 110.3059,
+            "house": "Eleventh_House",
+            "retrograde": false,
+            "declination": 21.9085
+          },
+          "jupiter": {
+            "name": "Jupiter",
+            "sign": "Gem",
+            "position": 14.3481,
+            "abs_pos": 74.3481,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 22.5257
+          },
+          "saturn": {
+            "name": "Saturn",
+            "sign": "Pis",
+            "position": 23.103,
+            "abs_pos": 353.103,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -2.7384
+          },
+          "uranus": {
+            "name": "Uranus",
+            "sign": "Tau",
+            "position": 24.2712,
+            "abs_pos": 54.2712,
+            "house": "Tenth_House",
+            "retrograde": false,
+            "declination": 18.8427
+          },
+          "neptune": {
+            "name": "Neptune",
+            "sign": "Pis",
+            "position": 29.626,
+            "abs_pos": 359.626,
+            "house": "Eighth_House",
+            "retrograde": false,
+            "declination": -0.1488
+          },
+          "pluto": {
+            "name": "Pluto",
+            "sign": "Aqu",
+            "position": 3.3496,
+            "abs_pos": 303.3496,
+            "house": "Sixth_House",
+            "retrograde": false,
+            "declination": -19.4107
+          },
+          "chiron": {
+            "name": "Chiron",
+            "sign": "Ari",
+            "position": 21.6429,
+            "abs_pos": 21.6429,
+            "house": "Ninth_House",
+            "retrograde": false,
+            "declination": 8.4378
+          }
+        }
+      },
+      "transit_super_aspects": [],
+      "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "neptune",
+          "planet2_name": "chiron",
+          "aspect_name": "quincunx",
+          "aspect_degrees": 150,
+          "orbit": 1.8986,
+          "actual_degrees": 151.8986
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "jupiter",
+          "aspect_name": "square",
+          "aspect_degrees": 90,
+          "orbit": 1.2475,
+          "actual_degrees": 88.7525
+        }
+      ]
+    },
+    "natal_super_aspects": [
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "uranus",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.8735,
+        "actual_degrees": 118.1265
+      },
+      {
+        "planet1_name": "jupiter",
+        "planet2_name": "pluto",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 0.2292,
+        "actual_degrees": 119.7708
+      },
+      {
+        "planet1_name": "chiron",
+        "planet2_name": "jupiter",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.6841,
+        "actual_degrees": 60.6841
+      }
+    ],
+    "chart_path": "charts/transit_chart.svg"
+  }
+}
