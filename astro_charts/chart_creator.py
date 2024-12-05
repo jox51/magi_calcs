@@ -15,7 +15,7 @@ from .magi_synastry import MagiSynastryCalculator
 from .magi_linkages import MagiLinkageCalculator
 from .services.cinderella_analyzer import CinderellaAnalyzer
 from .sexual_linkages import SexualLinkageCalculator
-from .services.astronomy_api_service import AstronomyAPIService
+from .services.nasa_horizons_service import NASAHorizonsService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -151,7 +151,7 @@ class ChartCreator:
 
         self.cinderella_analyzer = CinderellaAnalyzer()
         self.sexual_linkage_calculator = SexualLinkageCalculator()
-        self.astronomy_service = AstronomyAPIService()
+        self.nasa_service = NASAHorizonsService()
 
     def create_natal_chart(self):
         """Create and save a natal chart"""
@@ -256,19 +256,20 @@ class ChartCreator:
     def _get_transit_data_as_json(self, chart_path):
         """Get transit chart data as JSON"""
         try:
-            def get_planet_details(planet_obj, date):
+            def get_planet_details(planet_obj):
                 # Get planet name and position
                 planet_name = planet_obj.name.lower()
                 abs_pos = planet_obj.abs_pos
                 
-                # Calculate declination with date, longitude, and latitude
+                # Calculate declination
                 declination = self.get_declination(
-                    body_name=planet_name,
-                    date=date,
+                    planet_name=planet_name,
+                    date_str=f"{self.transit_subject.year}-{self.transit_subject.month:02d}-{self.transit_subject.day:02d}",
+                    abs_pos=abs_pos,
                     longitude=self.longitude,
                     latitude=self.latitude
-                )
-                logger.info(f"Got declination for {planet_name} on {date}: {declination}")
+    )
+                logger.info(f"Got declination for {planet_name}: {declination}")
 
                 return {
                     "name": planet_obj.name,
@@ -280,23 +281,19 @@ class ChartCreator:
                     "declination": round(declination, 4) if declination is not None else None
                 }
 
-            # Format dates for natal and transit subjects
-            natal_date = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
-            transit_date = f"{self.transit_subject.year}-{self.transit_subject.month:02d}-{self.transit_subject.day:02d}"
-
             # Create natal data first
             natal_data = {
                 "subject": {
                     "name": self.subject.name,
                     "birth_data": {
-                        "date": natal_date,
+                        "date": f"{self.subject.year}-{self.subject.month}-{self.subject.day}",
                         "time": f"{self.subject.hour}:{self.subject.minute:02d}",
                         "location": f"{self.subject.city}, {self.subject.nation}",
                         "longitude": round(self.longitude, 4),
                         "latitude": round(self.latitude, 4)
                     },
                     "planets": {
-                        planet: get_planet_details(getattr(self.subject, planet), natal_date)
+                        planet: get_planet_details(getattr(self.subject, planet))
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                     "jupiter", "saturn", "uranus", "neptune", 
                                     "pluto", "chiron"]
@@ -304,16 +301,16 @@ class ChartCreator:
                 }
             }
 
-            # Create transit data
+            # Create transit data first without aspects
             transit_data = {
                 "subject": {
                     "name": "Transit",
                     "birth_data": {
-                        "date": transit_date,
+                        "date": f"{self.transit_subject.year}-{self.transit_subject.month}-{self.transit_subject.day}",
                         "time": f"{self.transit_subject.hour}:{self.transit_subject.minute:02d}",
                     },
                     "planets": {
-                        planet: get_planet_details(getattr(self.transit_subject, planet), transit_date)
+                        planet: get_planet_details(getattr(self.transit_subject, planet))
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                     "jupiter", "saturn", "uranus", "neptune", 
                                     "pluto", "chiron"]
@@ -432,52 +429,30 @@ class ChartCreator:
             logger.error(f"Error calculating declination: {str(e)}")
             return None
 
-    def get_declination(self, body_name: str, date: str, longitude: float, latitude: float) -> float:
-        """Get declination for a celestial body"""
-        declination = self.astronomy_service.get_declination(
-            body_name=body_name,
-            date=date,
-            longitude=longitude,
-            latitude=latitude
-        )
-        
-        if declination is not None:
-            logger.info(f"Got declination for {body_name} on {date}: {declination}")
-            return declination
-            
-        # Fall back to calculation if API fails
-        logger.warning(f"Astronomy API failed for {body_name}, using calculation fallback")
-        return self._calculate_declination(body_name, date)
-
-    def _calculate_declination(self, body_name: str, date: str):
-        """Calculate declination using astronomical formula"""
+    def get_declination(self, planet_name, date_str, abs_pos, longitude=None, latitude=None):
+        """Get declination for a planet"""
         try:
-            # Use existing obliquity calculation
-            year = self.subject.year
-            month = self.subject.month
-            day = self.subject.day
-            obliquity = self.calculate_obliquity(year, month, day)
+            # Use provided coordinates or fall back to subject's coordinates
+            lng = longitude if longitude is not None else self.subject.lng
+            lat = latitude if latitude is not None else self.subject.lat
             
-            # Convert to radians
-            lon_rad = math.radians(self.longitude)
-            lat_rad = math.radians(self.latitude)
-            obliquity_rad = math.radians(obliquity)
-            
-            # Calculate declination using the full spherical astronomy formula
-            sin_dec = (
-                math.sin(lat_rad) * math.cos(obliquity_rad) +
-                math.cos(lat_rad) * math.sin(obliquity_rad) * math.sin(lon_rad)
+            print(f"Getting declination for {planet_name} on {date_str}")
+            declination = self.nasa_service.get_declination(
+                planet_name,
+                date_str,
+                lng,
+                lat
             )
             
-            # Convert to degrees and round
-            declination = math.degrees(math.asin(sin_dec))
-            result = round(declination, 4)
-            
-            logger.info(f"Calculated declination for {body_name} on {date}: {result}°")
-            return result
+            # Only fall back to calculation if NASA API fails
+            if declination is None:
+                logger.warning(f"NASA API failed for {planet_name}, using calculation fallback")
+                return self.calculate_declination(abs_pos)
+                
+            return declination
                 
         except Exception as e:
-            logger.error(f"Error calculating declination: {str(e)}")
+            logger.error(f"Error in get_declination for {planet_name}: {str(e)}")
             return None
 
     def get_chart_data_as_json(self):
@@ -653,32 +628,30 @@ class ChartCreator:
     def _get_synastry_data_as_json(self, chart_path):
         """Get synastry chart data as JSON"""
         try:
-            def get_planet_details(planet_obj, date):
-                # Get planet name and position
-                body_name = planet_obj.name.lower()  # Changed from planet_name to body_name
+            def get_planet_details(planet_obj, birth_date, longitude=None, latitude=None):
+                planet_name = planet_obj.name.lower()
                 abs_pos = planet_obj.abs_pos
                 
-                # Calculate declination with date, longitude, and latitude
+                # Pass abs_pos along with other parameters
                 declination = self.get_declination(
-                    body_name=body_name,  # Changed from planet_name to body_name
-                    date=date,
-                    longitude=self.longitude,
-                    latitude=self.latitude
+                    planet_name=planet_name,
+                    date_str=birth_date,
+                    abs_pos=abs_pos,  # Add this parameter
+                    longitude=longitude,
+                    latitude=latitude
                 )
-                logger.info(f"Got declination for {body_name} on {date}: {declination}")
+                logger.info(f"Got declination for {planet_name} on {birth_date}: {declination}")
 
                 return {
                     "name": planet_obj.name,
                     "sign": planet_obj.sign,
                     "position": round(planet_obj.position, 4),
-                    "abs_pos": round(abs_pos, 4),
+                    "abs_pos": round(planet_obj.abs_pos, 4),
                     "house": planet_obj.house,
                     "retrograde": planet_obj.retrograde,
                     "declination": round(declination, 4) if declination is not None else None
                 }
 
-            # Format dates
-            person1_date = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
             # Format dates for both people
             date1 = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
             date2 = f"{self.subject2.year}-{self.subject2.month:02d}-{self.subject2.day:02d}"

@@ -3,6 +3,8 @@ import re
 import logging
 from datetime import datetime
 from typing import Optional, Dict, Any
+from .horizons_parser import HorizonsParser
+
 
 logger = logging.getLogger(__name__)
 
@@ -29,6 +31,7 @@ class NASAHorizonsService:
     def __init__(self):
         """Initialize the NASA Horizons Service"""
         logger.info("Initializing NASA Horizons Service")
+        self.parser = HorizonsParser()
     
     def get_declination(self, 
                        body_name: str, 
@@ -55,13 +58,14 @@ class NASAHorizonsService:
                 
             params = self._build_query_params(body_id, date, longitude, latitude)
             response = self._make_api_request(params)
-            print("Response Horizons API: " + str(response))
             
             if response:
-                declination = self._parse_declination(response)
-                logger.info(f"Got declination for {body_name} on {date}: {declination}°")
-                return declination
-                
+                declination = self.parser.parse_declination(response)
+                print("Declination: " + str(declination))
+                if declination is not None:
+                    logger.info(f"Got declination for {body_name} on {date}: {declination}°")
+                    return declination
+            
             return None
             
         except Exception as e:
@@ -108,41 +112,4 @@ class NASAHorizonsService:
             
         except requests.exceptions.RequestException as e:
             logger.error(f"API request failed: {str(e)}")
-            return None
-    
-    def _parse_declination(self, response: Dict) -> Optional[float]:
-        """Parse declination from NASA Horizons API response"""
-        try:
-            # Extract the result string from the response dictionary
-            data = response.get('result', '')
-            if not data:
-                return None
-            
-            # Look for data between $$SOE and $$EOE markers
-            if '$$SOE' in data and '$$EOE' in data:
-                soe_index = data.index('$$SOE')
-                eoe_index = data.index('$$EOE')
-                data_section = data[soe_index:eoe_index].strip()
-                
-                # Parse the declination from the data section
-                for line in data_section.split('\n'):
-                    if line.strip():  # Skip empty lines
-                        parts = line.strip().split()
-                        if len(parts) >= 8:
-                            dec_parts = parts[3].split()  # Get declination parts
-                            if len(dec_parts) >= 1:
-                                return float(dec_parts[0])
-            else:
-                # If no markers, try to parse from the raw output
-                lines = data.split('\n')
-                for line in lines:
-                    if line.strip().startswith('1'):  # Lines with data start with date
-                        parts = line.strip().split()
-                        if len(parts) >= 8:
-                            dec_str = parts[3]  # Declination is in the 4th column
-                            return float(dec_str.split()[0])  # Get degrees part
-                            
-            return None
-        except Exception as e:
-            logging.error(f"Error parsing declination: {str(e)}")
             return None 

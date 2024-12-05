@@ -17,7 +17,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": -2.264
         },
         "moon": {
           "name": "Moon",
@@ -26,7 +26,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -2.0193
         },
         "mercury": {
           "name": "Mercury",
@@ -35,7 +35,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.5706
         },
         "venus": {
           "name": "Venus",
@@ -44,7 +44,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 10.5544
         },
         "mars": {
           "name": "Mars",
@@ -53,7 +53,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 25.2276
         },
         "jupiter": {
           "name": "Jupiter",
@@ -62,7 +62,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.0414
         },
         "saturn": {
           "name": "Saturn",
@@ -71,7 +71,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.9085
         },
         "uranus": {
           "name": "Uranus",
@@ -80,7 +80,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.4778
         },
         "neptune": {
           "name": "Neptune",
@@ -89,7 +89,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.5292
         },
         "pluto": {
           "name": "Pluto",
@@ -98,7 +98,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.8228
         },
         "chiron": {
           "name": "Chiron",
@@ -107,7 +107,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 8.9331
         }
       }
     },
@@ -126,7 +126,7 @@
             "abs_pos": 355.2528,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -1.8869
+            "declination": -2.264
           },
           "moon": {
             "name": "Moon",
@@ -135,7 +135,7 @@
             "abs_pos": 189.723,
             "house": "Third_House",
             "retrograde": false,
-            "declination": -3.8527
+            "declination": -2.0193
           },
           "mercury": {
             "name": "Mercury",
@@ -144,7 +144,7 @@
             "abs_pos": 9.5816,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.7971
+            "declination": 6.5706
           },
           "venus": {
             "name": "Venus",
@@ -153,7 +153,7 @@
             "abs_pos": 7.084,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 2.8123
+            "declination": 10.5544
           },
           "mars": {
             "name": "Mars",
@@ -162,7 +162,7 @@
             "abs_pos": 109.1651,
             "house": "Twelfth_House",
             "retrograde": false,
-            "declination": 22.0737
+            "declination": 25.2276
           },
           "jupiter": {
             "name": "Jupiter",
@@ -171,7 +171,7 @@
             "abs_pos": 73.7254,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 22.4519
+            "declination": 22.0414
           },
           "saturn": {
             "name": "Saturn",
@@ -180,7 +180,7 @@
             "abs_pos": 352.4873,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.9817
+            "declination": -4.9085
           },
           "uranus": {
             "name": "Uranus",
@@ -189,7 +189,7 @@
             "abs_pos": 54.0835,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.7965
+            "declination": 18.4778
           },
           "neptune": {
             "name": "Neptune",
@@ -198,7 +198,7 @@
             "abs_pos": 359.4365,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.2242
+            "declination": -1.5292
           },
           "pluto": {
             "name": "Pluto",
@@ -207,7 +207,7 @@
             "abs_pos": 303.244,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4351
+            "declination": -22.8228
           },
           "chiron": {
             "name": "Chiron",
@@ -216,7 +216,7 @@
             "abs_pos": 21.3656,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.334
+            "declination": 8.9331
           }
         }
       },
@@ -291,7 +291,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": -1.8693
         },
         "moon": {
           "name": "Moon",
@@ -300,7 +300,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -7.7613
         },
         "mercury": {
           "name": "Mercury",
@@ -309,7 +309,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.6735
         },
         "venus": {
           "name": "Venus",
@@ -318,7 +318,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 10.3903
         },
         "mars": {
           "name": "Mars",
@@ -327,7 +327,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 25.1698
         },
         "jupiter": {
           "name": "Jupiter",
@@ -336,7 +336,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.0588
         },
         "saturn": {
           "name": "Saturn",
@@ -345,7 +345,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.8605
         },
         "uranus": {
           "name": "Uranus",
@@ -354,7 +354,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.487
         },
         "neptune": {
           "name": "Neptune",
@@ -363,7 +363,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.5142
         },
         "pluto": {
           "name": "Pluto",
@@ -372,7 +372,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.8203
         },
         "chiron": {
           "name": "Chiron",
@@ -381,7 +381,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 8.9523
         }
       }
     },
@@ -400,7 +400,7 @@
             "abs_pos": 356.2484,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -1.4917
+            "declination": -1.8693
           },
           "moon": {
             "name": "Moon",
@@ -409,7 +409,7 @@
             "abs_pos": 201.606,
             "house": "Third_House",
             "retrograde": false,
-            "declination": -8.424
+            "declination": -7.7613
           },
           "mercury": {
             "name": "Mercury",
@@ -418,7 +418,7 @@
             "abs_pos": 9.4667,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.7519
+            "declination": 6.6735
           },
           "venus": {
             "name": "Venus",
@@ -427,7 +427,7 @@
             "abs_pos": 6.5457,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 2.5995
+            "declination": 10.3903
           },
           "mars": {
             "name": "Mars",
@@ -436,7 +436,7 @@
             "abs_pos": 109.3767,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 22.0438
+            "declination": 25.1698
           },
           "jupiter": {
             "name": "Jupiter",
@@ -445,7 +445,7 @@
             "abs_pos": 73.8451,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 22.4663
+            "declination": 22.0588
           },
           "saturn": {
             "name": "Saturn",
@@ -454,7 +454,7 @@
             "abs_pos": 352.6106,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.933
+            "declination": -4.8605
           },
           "uranus": {
             "name": "Uranus",
@@ -463,7 +463,7 @@
             "abs_pos": 54.1197,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.8054
+            "declination": 18.487
           },
           "neptune": {
             "name": "Neptune",
@@ -472,7 +472,7 @@
             "abs_pos": 359.4744,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.2091
+            "declination": -1.5142
           },
           "pluto": {
             "name": "Pluto",
@@ -481,7 +481,7 @@
             "abs_pos": 303.2659,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4301
+            "declination": -22.8203
           },
           "chiron": {
             "name": "Chiron",
@@ -490,7 +490,7 @@
             "abs_pos": 21.4204,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.3545
+            "declination": 8.9523
           }
         }
       },
@@ -565,7 +565,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": -1.4744
         },
         "moon": {
           "name": "Moon",
@@ -574,7 +574,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -13.2053
         },
         "mercury": {
           "name": "Mercury",
@@ -583,7 +583,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.6993
         },
         "venus": {
           "name": "Venus",
@@ -592,7 +592,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 10.2024
         },
         "mars": {
           "name": "Mars",
@@ -601,7 +601,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 25.1108
         },
         "jupiter": {
           "name": "Jupiter",
@@ -610,7 +610,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.0764
         },
         "saturn": {
           "name": "Saturn",
@@ -619,7 +619,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.8125
         },
         "uranus": {
           "name": "Uranus",
@@ -628,7 +628,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.4964
         },
         "neptune": {
           "name": "Neptune",
@@ -637,7 +637,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.4992
         },
         "pluto": {
           "name": "Pluto",
@@ -646,7 +646,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.8178
         },
         "chiron": {
           "name": "Chiron",
@@ -655,7 +655,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 8.9716
         }
       }
     },
@@ -674,7 +674,7 @@
             "abs_pos": 357.2435,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -1.0963
+            "declination": -1.4744
           },
           "moon": {
             "name": "Moon",
@@ -683,7 +683,7 @@
             "abs_pos": 213.4334,
             "house": "Third_House",
             "retrograde": false,
-            "declination": -12.6622
+            "declination": -13.2053
           },
           "mercury": {
             "name": "Mercury",
@@ -692,7 +692,7 @@
             "abs_pos": 9.2168,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.6536
+            "declination": 6.6993
           },
           "venus": {
             "name": "Venus",
@@ -701,7 +701,7 @@
             "abs_pos": 5.983,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 2.3767
+            "declination": 10.2024
           },
           "mars": {
             "name": "Mars",
@@ -710,7 +710,7 @@
             "abs_pos": 109.5968,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 22.0123
+            "declination": 25.1108
           },
           "jupiter": {
             "name": "Jupiter",
@@ -719,7 +719,7 @@
             "abs_pos": 73.9672,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 22.4809
+            "declination": 22.0764
           },
           "saturn": {
             "name": "Saturn",
@@ -728,7 +728,7 @@
             "abs_pos": 352.7338,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.8843
+            "declination": -4.8125
           },
           "uranus": {
             "name": "Uranus",
@@ -737,7 +737,7 @@
             "abs_pos": 54.1566,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.8145
+            "declination": 18.4964
           },
           "neptune": {
             "name": "Neptune",
@@ -746,7 +746,7 @@
             "abs_pos": 359.5123,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.194
+            "declination": -1.4992
           },
           "pluto": {
             "name": "Pluto",
@@ -755,7 +755,7 @@
             "abs_pos": 303.2873,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4251
+            "declination": -22.8178
           },
           "chiron": {
             "name": "Chiron",
@@ -764,7 +764,7 @@
             "abs_pos": 21.4755,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.3752
+            "declination": 8.9716
           }
         }
       },
@@ -839,7 +839,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": -1.0793
         },
         "moon": {
           "name": "Moon",
@@ -848,7 +848,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -18.1687
         },
         "mercury": {
           "name": "Mercury",
@@ -857,7 +857,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.6485
         },
         "venus": {
           "name": "Venus",
@@ -866,7 +866,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 9.9915
         },
         "mars": {
           "name": "Mars",
@@ -875,7 +875,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 25.0504
         },
         "jupiter": {
           "name": "Jupiter",
@@ -884,7 +884,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.0941
         },
         "saturn": {
           "name": "Saturn",
@@ -893,7 +893,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.7646
         },
         "uranus": {
           "name": "Uranus",
@@ -902,7 +902,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.5059
         },
         "neptune": {
           "name": "Neptune",
@@ -911,7 +911,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.4842
         },
         "pluto": {
           "name": "Pluto",
@@ -920,7 +920,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.8154
         },
         "chiron": {
           "name": "Chiron",
@@ -929,7 +929,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 8.9911
         }
       }
     },
@@ -948,7 +948,7 @@
             "abs_pos": 358.2381,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.7009
+            "declination": -1.0793
           },
           "moon": {
             "name": "Moon",
@@ -957,7 +957,7 @@
             "abs_pos": 225.2523,
             "house": "Fourth_House",
             "retrograde": false,
-            "declination": -16.413
+            "declination": -18.1687
           },
           "mercury": {
             "name": "Mercury",
@@ -966,7 +966,7 @@
             "abs_pos": 8.8396,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.5051
+            "declination": 6.6485
           },
           "venus": {
             "name": "Venus",
@@ -975,7 +975,7 @@
             "abs_pos": 5.3992,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 2.1454
+            "declination": 9.9915
           },
           "mars": {
             "name": "Mars",
@@ -984,7 +984,7 @@
             "abs_pos": 109.8251,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 21.9792
+            "declination": 25.0504
           },
           "jupiter": {
             "name": "Jupiter",
@@ -993,7 +993,7 @@
             "abs_pos": 74.0918,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 22.4956
+            "declination": 22.0941
           },
           "saturn": {
             "name": "Saturn",
@@ -1002,7 +1002,7 @@
             "abs_pos": 352.857,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.8356
+            "declination": -4.7646
           },
           "uranus": {
             "name": "Uranus",
@@ -1011,7 +1011,7 @@
             "abs_pos": 54.1941,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.8237
+            "declination": 18.5059
           },
           "neptune": {
             "name": "Neptune",
@@ -1020,7 +1020,7 @@
             "abs_pos": 359.5502,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.179
+            "declination": -1.4842
           },
           "pluto": {
             "name": "Pluto",
@@ -1029,7 +1029,7 @@
             "abs_pos": 303.3084,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4202
+            "declination": -22.8154
           },
           "chiron": {
             "name": "Chiron",
@@ -1038,7 +1038,7 @@
             "abs_pos": 21.531,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.3959
+            "declination": 8.9911
           }
         }
       },
@@ -1113,7 +1113,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": 0.684
         },
         "moon": {
           "name": "Moon",
@@ -1122,7 +1122,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -22.4622
         },
         "mercury": {
           "name": "Mercury",
@@ -1131,7 +1131,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.5227
         },
         "venus": {
           "name": "Venus",
@@ -1140,7 +1140,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 9.7586
         },
         "mars": {
           "name": "Mars",
@@ -1149,7 +1149,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 24.9886
         },
         "jupiter": {
           "name": "Jupiter",
@@ -1158,7 +1158,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.112
         },
         "saturn": {
           "name": "Saturn",
@@ -1167,7 +1167,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.7167
         },
         "uranus": {
           "name": "Uranus",
@@ -1176,7 +1176,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.5155
         },
         "neptune": {
           "name": "Neptune",
@@ -1185,7 +1185,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.4692
         },
         "pluto": {
           "name": "Pluto",
@@ -1194,7 +1194,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.8132
         },
         "chiron": {
           "name": "Chiron",
@@ -1203,7 +1203,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 9.0106
         }
       }
     },
@@ -1222,7 +1222,7 @@
             "abs_pos": 359.2322,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.3055
+            "declination": 0.684
           },
           "moon": {
             "name": "Moon",
@@ -1231,7 +1231,7 @@
             "abs_pos": 237.1177,
             "house": "Fourth_House",
             "retrograde": false,
-            "declination": -19.5184
+            "declination": -22.4622
           },
           "mercury": {
             "name": "Mercury",
@@ -1240,7 +1240,7 @@
             "abs_pos": 8.3452,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.3102
+            "declination": 6.5227
           },
           "venus": {
             "name": "Venus",
@@ -1249,7 +1249,7 @@
             "abs_pos": 4.7981,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 1.907
+            "declination": 9.7586
           },
           "mars": {
             "name": "Mars",
@@ -1258,7 +1258,7 @@
             "abs_pos": 110.0615,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 21.9446
+            "declination": 24.9886
           },
           "jupiter": {
             "name": "Jupiter",
@@ -1267,7 +1267,7 @@
             "abs_pos": 74.2188,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 22.5106
+            "declination": 22.112
           },
           "saturn": {
             "name": "Saturn",
@@ -1276,7 +1276,7 @@
             "abs_pos": 352.9801,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.787
+            "declination": -4.7167
           },
           "uranus": {
             "name": "Uranus",
@@ -1285,7 +1285,7 @@
             "abs_pos": 54.2323,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.8331
+            "declination": 18.5155
           },
           "neptune": {
             "name": "Neptune",
@@ -1294,7 +1294,7 @@
             "abs_pos": 359.5881,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.1639
+            "declination": -1.4692
           },
           "pluto": {
             "name": "Pluto",
@@ -1303,7 +1303,7 @@
             "abs_pos": 303.3292,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4154
+            "declination": -22.8132
           },
           "chiron": {
             "name": "Chiron",
@@ -1312,12 +1312,22 @@
             "abs_pos": 21.5868,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.4168
+            "declination": 9.0106
           }
         }
       },
       "transit_super_aspects": [],
       "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "venus",
+          "planet2_name": "chiron",
+          "aspect_name": "parallel",
+          "aspect_degrees": 0,
+          "orbit": 0.748,
+          "actual_degrees": 0.748
+        },
         {
           "person1_name": "Sophie",
           "person2_name": "Transit",
@@ -1337,6 +1347,16 @@
           "aspect_degrees": 90,
           "orbit": 1.3768,
           "actual_degrees": 88.6232
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "venus",
+          "aspect_name": "parallel",
+          "aspect_degrees": 0,
+          "orbit": 0.748,
+          "actual_degrees": 0.748
         }
       ]
     },
@@ -1387,7 +1407,7 @@
           "abs_pos": 300.2335,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": -20.1046
+          "declination": 0.2889
         },
         "moon": {
           "name": "Moon",
@@ -1396,7 +1416,7 @@
           "abs_pos": 160.9658,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": 7.4552
+          "declination": -25.8849
         },
         "mercury": {
           "name": "Mercury",
@@ -1405,7 +1425,7 @@
           "abs_pos": 279.5629,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.099
+          "declination": 6.3249
         },
         "venus": {
           "name": "Venus",
@@ -1414,7 +1434,7 @@
           "abs_pos": 280.2096,
           "house": "Ninth_House",
           "retrograde": false,
-          "declination": -23.051
+          "declination": 9.5051
         },
         "mars": {
           "name": "Mars",
@@ -1423,7 +1443,7 @@
           "abs_pos": 177.6166,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": 0.948
+          "declination": 24.9255
         },
         "jupiter": {
           "name": "Jupiter",
@@ -1432,7 +1452,7 @@
           "abs_pos": 46.2797,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 16.7104
+          "declination": 22.1301
         },
         "saturn": {
           "name": "Saturn",
@@ -1441,7 +1461,7 @@
           "abs_pos": 333.2509,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -10.3154
+          "declination": -4.6689
         },
         "uranus": {
           "name": "Uranus",
@@ -1450,7 +1470,7 @@
           "abs_pos": 164.4062,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 6.1394
+          "declination": 18.5253
         },
         "neptune": {
           "name": "Neptune",
@@ -1459,7 +1479,7 @@
           "abs_pos": 229.7443,
           "house": "Sixth_House",
           "retrograde": false,
-          "declination": -17.6756
+          "declination": -1.4543
         },
         "pluto": {
           "name": "Pluto",
@@ -1468,7 +1488,7 @@
           "abs_pos": 166.0505,
           "house": "Fifth_House",
           "retrograde": true,
-          "declination": 5.5036
+          "declination": -22.811
         },
         "chiron": {
           "name": "Chiron",
@@ -1477,7 +1497,7 @@
           "abs_pos": 345.5956,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": -5.6799
+          "declination": 9.0303
         }
       }
     },
@@ -1496,7 +1516,7 @@
             "abs_pos": 0.2258,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": 0.0899
+            "declination": 0.2889
           },
           "moon": {
             "name": "Moon",
@@ -1505,7 +1525,7 @@
             "abs_pos": 249.0924,
             "house": "Fourth_House",
             "retrograde": false,
-            "declination": -21.8177
+            "declination": -25.8849
           },
           "mercury": {
             "name": "Mercury",
@@ -1514,7 +1534,7 @@
             "abs_pos": 7.7458,
             "house": "Ninth_House",
             "retrograde": true,
-            "declination": 3.0738
+            "declination": 6.3249
           },
           "venus": {
             "name": "Venus",
@@ -1523,7 +1543,7 @@
             "abs_pos": 4.1836,
             "house": "Eighth_House",
             "retrograde": true,
-            "declination": 1.6632
+            "declination": 9.5051
           },
           "mars": {
             "name": "Mars",
@@ -1532,7 +1552,7 @@
             "abs_pos": 110.3059,
             "house": "Eleventh_House",
             "retrograde": false,
-            "declination": 21.9085
+            "declination": 24.9255
           },
           "jupiter": {
             "name": "Jupiter",
@@ -1541,7 +1561,7 @@
             "abs_pos": 74.3481,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 22.5257
+            "declination": 22.1301
           },
           "saturn": {
             "name": "Saturn",
@@ -1550,7 +1570,7 @@
             "abs_pos": 353.103,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -2.7384
+            "declination": -4.6689
           },
           "uranus": {
             "name": "Uranus",
@@ -1559,7 +1579,7 @@
             "abs_pos": 54.2712,
             "house": "Tenth_House",
             "retrograde": false,
-            "declination": 18.8427
+            "declination": 18.5253
           },
           "neptune": {
             "name": "Neptune",
@@ -1568,7 +1588,7 @@
             "abs_pos": 359.626,
             "house": "Eighth_House",
             "retrograde": false,
-            "declination": -0.1488
+            "declination": -1.4543
           },
           "pluto": {
             "name": "Pluto",
@@ -1577,7 +1597,7 @@
             "abs_pos": 303.3496,
             "house": "Sixth_House",
             "retrograde": false,
-            "declination": -19.4107
+            "declination": -22.811
           },
           "chiron": {
             "name": "Chiron",
@@ -1586,12 +1606,22 @@
             "abs_pos": 21.6429,
             "house": "Ninth_House",
             "retrograde": false,
-            "declination": 8.4378
+            "declination": 9.0303
           }
         }
       },
       "transit_super_aspects": [],
       "cinderella_aspects": [
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "venus",
+          "planet2_name": "chiron",
+          "aspect_name": "parallel",
+          "aspect_degrees": 0,
+          "orbit": 0.4748,
+          "actual_degrees": 0.4748
+        },
         {
           "person1_name": "Sophie",
           "person2_name": "Transit",
@@ -1611,6 +1641,16 @@
           "aspect_degrees": 90,
           "orbit": 1.2475,
           "actual_degrees": 88.7525
+        },
+        {
+          "person1_name": "Sophie",
+          "person2_name": "Transit",
+          "planet1_name": "chiron",
+          "planet2_name": "venus",
+          "aspect_name": "parallel",
+          "aspect_degrees": 0,
+          "orbit": 0.4748,
+          "actual_degrees": 0.4748
         }
       ]
     },
