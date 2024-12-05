@@ -11,7 +11,7 @@ class HorizonsParser:
         # Regex to match the line containing coordinates and capture the declination components
         # Format: YYYY-MMM-DD HH:MM m HH MM SS.fff sDD MM SS.fff
         self.dec_pattern = re.compile(
-            r'\d{4}-[A-Za-z]+-\d+\s+\d+:\d+\s+[m ]\s+\d+\s+\d+\s+[\d.]+\s+([-+]?\d+)\s+(\d+)\s+([\d.]+)',
+            r'\d{4}-[A-Za-z]+-\d+\s+\d+:\d+\s+[A-Za-z ]?\s+\d+\s+\d+\s+[\d.]+\s+([-+]?\d+)\s+(\d+)\s+([\d.]+)',
             re.MULTILINE
         )
     

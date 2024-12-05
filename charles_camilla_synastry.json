@@ -130,7 +130,7 @@
           "abs_pos": 113.7912,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 21.3505
+          "declination": 21.2546
         },
         "moon": {
           "name": "Moon",
@@ -139,7 +139,7 @@
           "abs_pos": 100.0349,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 23.0663
+          "declination": 25.2142
         },
         "mercury": {
           "name": "Mercury",
@@ -148,7 +148,7 @@
           "abs_pos": 109.9212,
           "house": "Twelfth_House",
           "retrograde": true,
-          "declination": 21.9672
+          "declination": 16.957
         },
         "venus": {
           "name": "Venus",
@@ -157,7 +157,7 @@
           "abs_pos": 100.5765,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 23.0245
+          "declination": 23.1167
         },
         "mars": {
           "name": "Mars",
@@ -166,7 +166,7 @@
           "abs_pos": 71.2817,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": 22.138
+          "declination": 22.079
         },
         "jupiter": {
           "name": "Jupiter",
@@ -175,7 +175,7 @@
           "abs_pos": 227.6947,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -17.1133
+          "declination": -16.3868
         },
         "saturn": {
           "name": "Saturn",
@@ -184,7 +184,7 @@
           "abs_pos": 129.9483,
           "house": "First_House",
           "retrograde": false,
-          "declination": 17.7598
+          "declination": 18.254
         },
         "uranus": {
           "name": "Uranus",
@@ -193,7 +193,7 @@
           "abs_pos": 83.8394,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": 23.3025
+          "declination": 23.4444
         },
         "neptune": {
           "name": "Neptune",
@@ -202,7 +202,7 @@
           "abs_pos": 188.2265,
           "house": "Third_House",
           "retrograde": false,
-          "declination": -3.2637
+          "declination": -2.1688
         },
         "pluto": {
           "name": "Pluto",
@@ -211,7 +211,7 @@
           "abs_pos": 132.384,
           "house": "First_House",
           "retrograde": false,
-          "declination": 17.0912
+          "declination": 23.37
         },
         "chiron": {
           "name": "Chiron",
@@ -220,7 +220,7 @@
           "abs_pos": 212.5183,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -12.3504
+          "declination": -11.3955
         }
       }
     }
@@ -265,8 +265,8 @@
       "planet2_name": "jupiter",
       "aspect_name": "parallel",
       "aspect_degrees": 0,
-      "orbit": 0.2897,
-      "actual_degrees": 0.2897
+      "orbit": 0.4368,
+      "actual_degrees": 0.4368
     }
   ],
   "sexual_linkages": [
@@ -277,8 +277,8 @@
       "planet2_name": "venus",
       "aspect_name": "contraparallel",
       "aspect_degrees": 180,
-      "orbit": 0.7999,
-      "actual_degrees": 47.0867
+      "orbit": 0.8921,
+      "actual_degrees": 47.1789
     },
     {
       "person1_name": "Prince Charles",
@@ -287,8 +287,8 @@
       "planet2_name": "pluto",
       "aspect_name": "contraparallel",
       "aspect_degrees": 180,
-      "orbit": 5.1334,
-      "actual_degrees": 41.1534
+      "orbit": 1.1454,
+      "actual_degrees": 47.4322
     },
     {
       "person1_name": "Prince Charles",
@@ -297,8 +297,8 @@
       "planet2_name": "venus",
       "aspect_name": "parallel",
       "aspect_degrees": 0,
-      "orbit": 0.1825,
-      "actual_degrees": 0.1825
+      "orbit": 0.2747,
+      "actual_degrees": 0.2747
     },
     {
       "person1_name": "Prince Charles",
@@ -307,8 +307,8 @@
       "planet2_name": "mars",
       "aspect_name": "parallel",
       "aspect_degrees": 0,
-      "orbit": 0.704,
-      "actual_degrees": 0.704
+      "orbit": 0.763,
+      "actual_degrees": 0.763
     }
   ],
   "chart_path": "charts/Prince_Charles_Camilla_Parker_Bowles_synastry.svg"

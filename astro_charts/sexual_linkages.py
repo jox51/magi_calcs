@@ -52,7 +52,7 @@ class SexualLinkageCalculator:
     def find_sexual_linkages(self, person1_data: Dict, person2_data: Dict) -> List[Dict]:
         """Find all Sexual linkages between two people's charts"""
         linkages = []
-        PARALLEL_ORB = 7  # Increased from 1.5 to match chart
+        PARALLEL_ORB = 2  # Increased from 1.5 to match chart
         
         try:
             person1_planets = person1_data['subject']['planets']
