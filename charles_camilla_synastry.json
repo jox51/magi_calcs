@@ -17,7 +17,7 @@
           "abs_pos": 232.4222,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -18.3809
+          "declination": 15.0
         },
         "moon": {
           "name": "Moon",
@@ -26,7 +26,7 @@
           "abs_pos": 30.427,
           "house": "Tenth_House",
           "retrograde": false,
-          "declination": 11.6249
+          "declination": 1.0
         },
         "mercury": {
           "name": "Mercury",
@@ -35,7 +35,7 @@
           "abs_pos": 216.9565,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -13.84
+          "declination": 14.0
         },
         "venus": {
           "name": "Venus",
@@ -44,7 +44,7 @@
           "abs_pos": 196.3835,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -6.4438
+          "declination": 13.0
         },
         "mars": {
           "name": "Mars",
@@ -53,7 +53,7 @@
           "abs_pos": 260.9484,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": -23.1369
+          "declination": 17.0
         },
         "jupiter": {
           "name": "Jupiter",
@@ -62,7 +62,7 @@
           "abs_pos": 269.8855,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": -23.4459
+          "declination": 18.0
         },
         "saturn": {
           "name": "Saturn",
@@ -71,7 +71,7 @@
           "abs_pos": 155.2674,
           "house": "Second_House",
           "retrograde": false,
-          "declination": 9.5825
+          "declination": 10.0
         },
         "uranus": {
           "name": "Uranus",
@@ -80,7 +80,7 @@
           "abs_pos": 89.929,
           "house": "Eleventh_House",
           "retrograde": true,
-          "declination": 23.4459
+          "declination": 6.0
         },
         "neptune": {
           "name": "Neptune",
@@ -89,7 +89,7 @@
           "abs_pos": 194.129,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -5.5737
+          "declination": 12.0
         },
         "pluto": {
           "name": "Pluto",
@@ -98,7 +98,7 @@
           "abs_pos": 136.5629,
           "house": "First_House",
           "retrograde": false,
-          "declination": 15.8767
+          "declination": 9.0
         },
         "chiron": {
           "name": "Chiron",
@@ -107,7 +107,7 @@
           "abs_pos": 238.2246,
           "house": "Fifth_House",
           "retrograde": false,
-          "declination": -19.7702
+          "declination": 15.0
         }
       }
     }
@@ -116,7 +116,7 @@
     "subject": {
       "name": "Camilla Parker Bowles",
       "birth_data": {
-        "date": "1947-7-17",
+        "date": "1947-07-17",
         "time": "7:10",
         "location": "London, UK",
         "longitude": -0.1257,
@@ -130,7 +130,7 @@
           "abs_pos": 113.7912,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 21.3505
+          "declination": 7.0
         },
         "moon": {
           "name": "Moon",
@@ -139,7 +139,7 @@
           "abs_pos": 100.0349,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 23.0663
+          "declination": 6.0
         },
         "mercury": {
           "name": "Mercury",
@@ -148,7 +148,7 @@
           "abs_pos": 109.9212,
           "house": "Twelfth_House",
           "retrograde": true,
-          "declination": 21.9672
+          "declination": 7.0
         },
         "venus": {
           "name": "Venus",
@@ -157,7 +157,7 @@
           "abs_pos": 100.5765,
           "house": "Twelfth_House",
           "retrograde": false,
-          "declination": 23.0245
+          "declination": 6.0
         },
         "mars": {
           "name": "Mars",
@@ -166,7 +166,7 @@
           "abs_pos": 71.2817,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": 22.138
+          "declination": 4.0
         },
         "jupiter": {
           "name": "Jupiter",
@@ -175,7 +175,7 @@
           "abs_pos": 227.6947,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -17.1133
+          "declination": 15.0
         },
         "saturn": {
           "name": "Saturn",
@@ -184,7 +184,7 @@
           "abs_pos": 129.9483,
           "house": "First_House",
           "retrograde": false,
-          "declination": 17.7598
+          "declination": 8.0
         },
         "uranus": {
           "name": "Uranus",
@@ -193,7 +193,7 @@
           "abs_pos": 83.8394,
           "house": "Eleventh_House",
           "retrograde": false,
-          "declination": 23.3025
+          "declination": 5.0
         },
         "neptune": {
           "name": "Neptune",
@@ -202,7 +202,7 @@
           "abs_pos": 188.2265,
           "house": "Third_House",
           "retrograde": false,
-          "declination": -3.2637
+          "declination": 12.0
         },
         "pluto": {
           "name": "Pluto",
@@ -211,7 +211,7 @@
           "abs_pos": 132.384,
           "house": "First_House",
           "retrograde": false,
-          "declination": 17.0912
+          "declination": 9.0
         },
         "chiron": {
           "name": "Chiron",
@@ -220,7 +220,7 @@
           "abs_pos": 212.5183,
           "house": "Fourth_House",
           "retrograde": false,
-          "declination": -12.3504
+          "declination": 14.0
         }
       }
     }
@@ -235,7 +235,16 @@
       "actual_degrees": 179.9565
     }
   ],
-  "person2_super_aspects": [],
+  "person2_super_aspects": [
+    {
+      "planet1_name": "chiron",
+      "planet2_name": "jupiter",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 1.0,
+      "actual_degrees": 1.0
+    }
+  ],
   "saturn_clashes": [
     {
       "saturn_person": "Camilla Parker Bowles",
@@ -257,28 +266,48 @@
       "aspect_degrees": 60,
       "orbit": 2.6328,
       "actual_degrees": 57.3672
+    },
+    {
+      "person1_name": "Prince Charles",
+      "person2_name": "Camilla Parker Bowles",
+      "planet1_name": "venus",
+      "planet2_name": "chiron",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 1.0,
+      "actual_degrees": 1.0
+    },
+    {
+      "person1_name": "Prince Charles",
+      "person2_name": "Camilla Parker Bowles",
+      "planet1_name": "chiron",
+      "planet2_name": "jupiter",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 0.0,
+      "actual_degrees": 0.0
     }
   ],
   "sexual_linkages": [
     {
       "person1_name": "Prince Charles",
       "person2_name": "Camilla Parker Bowles",
-      "planet1_name": "mars",
-      "planet2_name": "venus",
-      "aspect_name": "contraparallel",
-      "aspect_degrees": 180,
-      "orbit": 0.1254,
-      "actual_degrees": 46.1614
+      "planet1_name": "venus",
+      "planet2_name": "pluto",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 4.0,
+      "actual_degrees": 4.0
     },
     {
       "person1_name": "Prince Charles",
       "person2_name": "Camilla Parker Bowles",
-      "planet1_name": "mars",
-      "planet2_name": "pluto",
-      "aspect_name": "contraparallel",
-      "aspect_degrees": 180,
-      "orbit": 6.0587,
-      "actual_degrees": 40.2281
+      "planet1_name": "pluto",
+      "planet2_name": "venus",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 3.0,
+      "actual_degrees": 3.0
     },
     {
       "person1_name": "Prince Charles",
@@ -287,8 +316,8 @@
       "planet2_name": "mars",
       "aspect_name": "parallel",
       "aspect_degrees": 0,
-      "orbit": 6.2613,
-      "actual_degrees": 6.2613
+      "orbit": 5.0,
+      "actual_degrees": 5.0
     }
   ],
   "chart_path": "charts/Prince_Charles_Camilla_Parker_Bowles_synastry.svg"

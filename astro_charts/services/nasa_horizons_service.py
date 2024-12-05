@@ -23,7 +23,7 @@ class NASAHorizonsService:
         'uranus': '799',
         'neptune': '899',
         'pluto': '999',
-        'chiron': '2001'
+        'chiron': '2060'
     }
     
     def __init__(self):
@@ -55,6 +55,7 @@ class NASAHorizonsService:
                 
             params = self._build_query_params(body_id, date, longitude, latitude)
             response = self._make_api_request(params)
+            print("Response Horizons API: " + str(response))
             
             if response:
                 declination = self._parse_declination(response)
@@ -73,17 +74,30 @@ class NASAHorizonsService:
                           longitude: float, 
                           latitude: float) -> Dict[str, str]:
         """Build query parameters for the API request"""
-        return {
-            'format': 'json',
-            'COMMAND': f"'{body_id}'",
-            'EPHEM_TYPE': "'OBSERVER'",
-            'CENTER': "'coord@399'",
-            'SITE_COORD': f"'{longitude},{latitude},0'",
-            'START_TIME': f"'{date}'",
-            'STOP_TIME': f"'{date}'",
-            'STEP_SIZE': "'1d'",
-            'QUANTITIES': "'1'"
-        }
+        try:
+            dt = datetime.strptime(date, '%Y-%m-%d')
+            start_time = dt.strftime('%Y-%m-%d %H:%M')
+            stop_time = (dt.replace(hour=23, minute=59)).strftime('%Y-%m-%d %H:%M')
+            
+            return {
+                'format': 'json',
+                'COMMAND': f"'{body_id}'",
+                'EPHEM_TYPE': "'OBSERVER'",
+                'CENTER': "'coord@399'",
+                'SITE_COORD': f"'{longitude},{latitude},0'",
+                'START_TIME': f"'{start_time}'",
+                'STOP_TIME': f"'{stop_time}'",
+                'STEP_SIZE': "'1d'",
+                'QUANTITIES': "'1,2'",
+                'CAL_FORMAT': "'CAL'",
+                'TIME_DIGITS': "'MINUTES'",
+                'ANG_FORMAT': "'HMS'",
+                'EXTRA_PREC': "'YES'",
+                'CSV_FORMAT': "'NO'"
+            }
+        except Exception as e:
+            logger.error(f"Error building query parameters: {str(e)}")
+            raise
     
     def _make_api_request(self, params: Dict[str, str]) -> Optional[Dict[str, Any]]:
         """Make request to NASA Horizons API"""
@@ -96,27 +110,39 @@ class NASAHorizonsService:
             logger.error(f"API request failed: {str(e)}")
             return None
     
-    def _parse_declination(self, response: Dict[str, Any]) -> Optional[float]:
-        """Parse declination from API response"""
+    def _parse_declination(self, response: Dict) -> Optional[float]:
+        """Parse declination from NASA Horizons API response"""
         try:
-            result = response.get('result', '')
+            # Extract the result string from the response dictionary
+            data = response.get('result', '')
+            if not data:
+                return None
             
-            # Pattern looks for declination in format: DD MM SS.f
-            pattern = r'R\.A\._{5}\(ICRF\)_{5}DEC\n\*{46}\n\$\$SOE\n.*?(-?\d+)\s+(\d+)\s+(\d+\.\d+)'
-            match = re.search(pattern, result)
-            
-            if match:
-                degrees = float(match.group(1))
-                minutes = float(match.group(2))
-                seconds = float(match.group(3))
+            # Look for data between $$SOE and $$EOE markers
+            if '$$SOE' in data and '$$EOE' in data:
+                soe_index = data.index('$$SOE')
+                eoe_index = data.index('$$EOE')
+                data_section = data[soe_index:eoe_index].strip()
                 
-                # Convert to decimal degrees
-                declination = degrees + (minutes/60) + (seconds/3600)
-                return round(declination, 4)
-                
-            logger.error("Could not parse declination from response")
+                # Parse the declination from the data section
+                for line in data_section.split('\n'):
+                    if line.strip():  # Skip empty lines
+                        parts = line.strip().split()
+                        if len(parts) >= 8:
+                            dec_parts = parts[3].split()  # Get declination parts
+                            if len(dec_parts) >= 1:
+                                return float(dec_parts[0])
+            else:
+                # If no markers, try to parse from the raw output
+                lines = data.split('\n')
+                for line in lines:
+                    if line.strip().startswith('1'):  # Lines with data start with date
+                        parts = line.strip().split()
+                        if len(parts) >= 8:
+                            dec_str = parts[3]  # Declination is in the 4th column
+                            return float(dec_str.split()[0])  # Get degrees part
+                            
             return None
-            
         except Exception as e:
-            logger.error(f"Error parsing declination: {str(e)}")
+            logging.error(f"Error parsing declination: {str(e)}")
             return None 

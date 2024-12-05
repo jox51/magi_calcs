@@ -339,7 +339,6 @@ class ChartCreator:
             logger.error(f"Error converting transit data to JSON: {str(e)}")
             raise
 
-
     def calculate_obliquity(self, year, month, day):
         """
         Calculate the mean obliquity of the ecliptic using IAU 1980 formula
@@ -424,16 +423,19 @@ class ChartCreator:
             logger.error(f"Error calculating declination: {str(e)}")
             return None
 
-    def get_declination(self, planet_name, abs_pos):
+    def get_declination(self, planet_name, date_str, abs_pos, longitude=None, latitude=None):
         """Get declination for a planet"""
         try:
-            # Use NASA Horizons API for all planets
-            date_str = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
+            # Use provided coordinates or fall back to subject's coordinates
+            lng = longitude if longitude is not None else self.subject.lng
+            lat = latitude if latitude is not None else self.subject.lat
+            
+            print(f"Getting declination for {planet_name} on {date_str}")
             declination = self.nasa_service.get_declination(
                 planet_name,
                 date_str,
-                self.subject.lng,
-                self.subject.lat
+                lng,
+                lat
             )
             
             # Only fall back to calculation if NASA API fails
@@ -455,7 +457,15 @@ class ChartCreator:
                 abs_pos = planet_obj["abs_pos"]
                 logger.info(f"Processing planet {planet_name} at position {abs_pos}")
                 
-                declination = self.get_declination(planet_name, abs_pos)
+                date_str = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
+            
+                declination = self.get_declination(
+                planet_name,
+                date_str,
+                abs_pos,
+                longitude=self.subject.lng,
+                latitude=self.subject.lat
+            )
                 logger.info(f"Got declination for {planet_name}: {declination}")
                 
                 return {
@@ -612,14 +622,19 @@ class ChartCreator:
     def _get_synastry_data_as_json(self, chart_path):
         """Get synastry chart data as JSON"""
         try:
-            def get_planet_details(planet_obj):
-                # Get planet name and position
+            def get_planet_details(planet_obj, birth_date, longitude=None, latitude=None):
                 planet_name = planet_obj.name.lower()
                 abs_pos = planet_obj.abs_pos
                 
-                # Calculate declination
-                declination = self.get_declination(planet_name, abs_pos)
-                logger.info(f"Got declination for {planet_name}: {declination}")
+                # Pass abs_pos along with other parameters
+                declination = self.get_declination(
+                    planet_name=planet_name,
+                    date_str=birth_date,
+                    abs_pos=abs_pos,  # Add this parameter
+                    longitude=longitude,
+                    latitude=latitude
+                )
+                logger.info(f"Got declination for {planet_name} on {birth_date}: {declination}")
 
                 return {
                     "name": planet_obj.name,
@@ -631,19 +646,23 @@ class ChartCreator:
                     "declination": round(declination, 4) if declination is not None else None
                 }
 
-            # Create the data structure for both charts
+            # Format dates for both people
+            date1 = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
+            date2 = f"{self.subject2.year}-{self.subject2.month:02d}-{self.subject2.day:02d}"
+
+            # Create data structure with correct dates
             person1_data = {
                 "subject": {
                     "name": self.subject.name,
                     "birth_data": {
-                        "date": f"{self.subject.year}-{self.subject.month}-{self.subject.day}",
+                        "date": date1,
                         "time": f"{self.subject.hour}:{self.subject.minute:02d}",
                         "location": f"{self.subject.city}, {self.subject.nation}",
                         "longitude": round(self.longitude, 4),
                         "latitude": round(self.latitude, 4)
                     },
                     "planets": {
-                        planet: get_planet_details(getattr(self.subject, planet))
+                        planet: get_planet_details(getattr(self.subject, planet), date1)
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                      "jupiter", "saturn", "uranus", "neptune", 
                                      "pluto", "chiron"]
@@ -655,14 +674,14 @@ class ChartCreator:
                 "subject": {
                     "name": self.subject2.name,
                     "birth_data": {
-                        "date": f"{self.subject2.year}-{self.subject2.month}-{self.subject2.day}",
+                        "date": date2,
                         "time": f"{self.subject2.hour}:{self.subject2.minute:02d}",
                         "location": f"{self.subject2.city}, {self.subject2.nation}",
                         "longitude": round(self.longitude, 4),
                         "latitude": round(self.latitude, 4)
                     },
                     "planets": {
-                        planet: get_planet_details(getattr(self.subject2, planet))
+                        planet: get_planet_details(getattr(self.subject2, planet), date2)
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                      "jupiter", "saturn", "uranus", "neptune", 
                                      "pluto", "chiron"]

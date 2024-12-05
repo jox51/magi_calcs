@@ -88,15 +88,15 @@ def print_chart_data(data, chart_type):
     try:
         if chart_type == 'synastry':
             # Print Person 1 data
-            print(f"\nPerson 1 ({data['person1']['subject']['name']}):")
-            print(f"Birth Date: {data['person1']['subject']['birth_data']['date']}")
-            print(f"Birth Time: {data['person1']['subject']['birth_data']['time']}")
-            print(f"Location: {data['person1']['subject']['birth_data']['location']}")
+            # print(f"\nPerson 1 ({data['person1']['subject']['name']}):")
+            # print(f"Birth Date: {data['person1']['subject']['birth_data']['date']}")
+            # print(f"Birth Time: {data['person1']['subject']['birth_data']['time']}")
+            # print(f"Location: {data['person1']['subject']['birth_data']['location']}")
             
-            # Print Person 2 data
-            print(f"\nPerson 2 ({data['person2']['subject']['name']}):")
-            print(f"Birth Date: {data['person2']['subject']['birth_data']['date']}")
-            print(f"Birth Time: {data['person2']['subject']['birth_data']['time']}")
+            # # Print Person 2 data
+            # print(f"\nPerson 2 ({data['person2']['subject']['name']}):")
+            # print(f"Birth Date: {data['person2']['subject']['birth_data']['date']}")
+            # print(f"Birth Time: {data['person2']['subject']['birth_data']['time']}")
             print(f"Location: {data['person2']['subject']['birth_data']['location']}")
             
             # Print Saturn Clashes
@@ -135,9 +135,9 @@ def print_chart_data(data, chart_type):
             print(f"\nChart saved to: {data['chart_path']}")
 
             # Print full JSON data
-            print("\nFull JSON Data:")
-            print("===============")
-            print(json.dumps(data, indent=2))
+            # print("\nFull JSON Data:")
+            # print("===============")
+            # print(json.dumps(data, indent=2))
 
         elif chart_type == 'transit':
             # ... existing transit printing code ...
