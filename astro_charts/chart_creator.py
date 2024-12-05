@@ -14,7 +14,8 @@ from timezonefinder import TimezoneFinder
 from .magi_synastry import MagiSynastryCalculator
 from .magi_linkages import MagiLinkageCalculator
 from .services.cinderella_analyzer import CinderellaAnalyzer
-
+from .sexual_linkages import SexualLinkageCalculator
+from .services.nasa_horizons_service import NASAHorizonsService
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -149,6 +150,8 @@ class ChartCreator:
         }
 
         self.cinderella_analyzer = CinderellaAnalyzer()
+        self.sexual_linkage_calculator = SexualLinkageCalculator()
+        self.nasa_service = NASAHorizonsService()
 
     def create_natal_chart(self):
         """Create and save a natal chart"""
@@ -336,70 +339,6 @@ class ChartCreator:
             logger.error(f"Error converting transit data to JSON: {str(e)}")
             raise
 
-    def get_horizons_data(self, planet_name):
-        """Get planet data from Horizons API"""
-        try:
-            # Convert local time to UTC
-            local_tz = pytz.timezone(self.subject.tz_str)
-            local_dt = local_tz.localize(datetime(
-                self.subject.year,
-                self.subject.month,
-                self.subject.day,
-                self.subject.hour,
-                self.subject.minute
-            ))
-            utc_dt = local_dt.astimezone(pytz.UTC)
-            
-            # Format time for Horizons (add a small time window)
-            start_time = (utc_dt - timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M")
-            stop_time = (utc_dt + timedelta(minutes=1)).strftime("%Y-%m-%d %H:%M")
-            
-            # Use the longitude and latitude from the constructor
-            observer_longitude = self.longitude  # Use class attribute
-            observer_latitude = self.latitude    # Use class attribute
-            
-            # Set up query parameters
-            params = {
-                'format': 'text',
-                'COMMAND': f"'{self.planet_mappings.get(planet_name.lower())}'",
-                'EPHEM_TYPE': 'OBSERVER',
-                'CENTER': 'coord@399',
-                'COORD_TYPE': 'GEODETIC',
-                'SITE_COORD': f"{observer_longitude},{observer_latitude},0",
-                'START_TIME': start_time,
-                'STOP_TIME': stop_time,
-                'STEP_SIZE': '1m',
-                'QUANTITIES': '1,2',  # RA/DEC and alt/az
-                'REF_SYSTEM': 'J2000'
-            }
-            
-            logger.debug(f"Sending request to Horizons with params: {params}")
-            
-            # Make request
-            response = requests.get(self.horizons_url, params=params)
-            response.raise_for_status()
-            
-            # Log the full response for debugging
-            logger.debug(f"API Response for {planet_name}:\n{response.text}")
-            
-            # Parse the text response
-            if '$$SOE' in response.text and '$$EOE' in response.text:
-                data = response.text.split('$$SOE\n')[1].split('\n$$EOE')[0].strip()
-                lines = data.split('\n')
-                if lines:
-                    # Parse the first line of data
-                    fields = lines[0].split(',')
-                    if len(fields) >= 4:  # We expect at least 4 fields
-                        declination = float(fields[3].strip())
-                        logger.info(f"Got declination from Horizons for {planet_name}: {declination}")
-                        return declination
-                
-            raise ValueError(f"Could not parse declination from response for {planet_name}")
-            
-        except Exception as e:
-            logger.error(f"Error getting Horizons data for {planet_name}: {str(e)}")
-            logger.error(f"Response content: {response.text if 'response' in locals() else 'No response'}")
-            return None
 
     def calculate_obliquity(self, year, month, day):
         """
@@ -447,35 +386,40 @@ class ChartCreator:
 
     def calculate_declination(self, longitude, latitude=0):
         """
-        Calculate declination using both longitude and latitude with date-specific obliquity
+        Calculate declination using astronomical formula
         
         Args:
             longitude (float): Ecliptic longitude in degrees
             latitude (float): Ecliptic latitude in degrees (optional)
+            
+        Returns:
+            float: Declination in degrees
         """
         try:
-            # Get date-specific obliquity
-            obliquity = self.calculate_obliquity(
-                self.subject.year,
-                self.subject.month,
-                self.subject.day
-            )
+            # Use existing obliquity calculation
+            year = self.subject.year
+            month = self.subject.month
+            day = self.subject.day
+            obliquity = self.calculate_obliquity(year, month, day)
             
             # Convert to radians
             lon_rad = math.radians(longitude)
             lat_rad = math.radians(latitude)
             obliquity_rad = math.radians(obliquity)
             
-            # Full formula including latitude
-            declination = math.asin(
+            # Calculate declination using the full spherical astronomy formula
+            sin_dec = (
                 math.sin(lat_rad) * math.cos(obliquity_rad) +
                 math.cos(lat_rad) * math.sin(obliquity_rad) * math.sin(lon_rad)
             )
             
-            result = round(math.degrees(declination), 4)
-            logger.info(f"Calculated declination using obliquity {obliquity}° for lon:{longitude}, lat:{latitude}: {result}")
-            return result
+            # Convert to degrees and round
+            declination = math.degrees(math.asin(sin_dec))
+            result = round(declination, 4)
             
+            logger.info(f"Calculated declination for lon:{longitude}, lat:{latitude}, obliquity:{obliquity}°: {result}°")
+            return result
+                
         except Exception as e:
             logger.error(f"Error calculating declination: {str(e)}")
             return None
@@ -483,9 +427,22 @@ class ChartCreator:
     def get_declination(self, planet_name, abs_pos):
         """Get declination for a planet"""
         try:
-            logger.info(f"Calculating declination for {planet_name} at position {abs_pos}")
-            return self.calculate_declination(abs_pos)
+            # Use NASA Horizons API for all planets
+            date_str = f"{self.subject.year}-{self.subject.month:02d}-{self.subject.day:02d}"
+            declination = self.nasa_service.get_declination(
+                planet_name,
+                date_str,
+                self.subject.lng,
+                self.subject.lat
+            )
             
+            # Only fall back to calculation if NASA API fails
+            if declination is None:
+                logger.warning(f"NASA API failed for {planet_name}, using calculation fallback")
+                return self.calculate_declination(abs_pos)
+                
+            return declination
+                
         except Exception as e:
             logger.error(f"Error in get_declination for {planet_name}: {str(e)}")
             return None
@@ -656,6 +613,14 @@ class ChartCreator:
         """Get synastry chart data as JSON"""
         try:
             def get_planet_details(planet_obj):
+                # Get planet name and position
+                planet_name = planet_obj.name.lower()
+                abs_pos = planet_obj.abs_pos
+                
+                # Calculate declination
+                declination = self.get_declination(planet_name, abs_pos)
+                logger.info(f"Got declination for {planet_name}: {declination}")
+
                 return {
                     "name": planet_obj.name,
                     "sign": planet_obj.sign,
@@ -663,7 +628,7 @@ class ChartCreator:
                     "abs_pos": round(planet_obj.abs_pos, 4),
                     "house": planet_obj.house,
                     "retrograde": planet_obj.retrograde,
-                    "declination": round(planet_obj.declination, 4) if hasattr(planet_obj, 'declination') else None
+                    "declination": round(declination, 4) if declination is not None else None
                 }
 
             # Create the data structure for both charts
@@ -711,12 +676,15 @@ class ChartCreator:
 
             # Calculate Cinderella linkages
             linkage_calc = MagiLinkageCalculator()
+            sexual_calc = SexualLinkageCalculator()
             cinderella_linkages = linkage_calc.find_cinderella_linkages(person1_data, person2_data)
 
             # Calculate Super aspects for both charts
             super_calc = SuperAspectCalculator()
             person1_super_aspects = super_calc.find_super_aspects(person1_data)
             person2_super_aspects = super_calc.find_super_aspects(person2_data)
+            sexual_linkages = sexual_calc.find_sexual_linkages(person1_data, person2_data)
+
             
             # Create the final data structure
             chart_data = {
@@ -726,6 +694,7 @@ class ChartCreator:
                 "person2_super_aspects": person2_super_aspects,
                 "saturn_clashes": saturn_clashes,
                 "cinderella_linkages": cinderella_linkages,
+                "sexual_linkages": sexual_linkages,
                 "chart_path": chart_path
             }
 
@@ -735,7 +704,6 @@ class ChartCreator:
         except Exception as e:
             logger.error(f"Error converting synastry data to JSON: {str(e)}")
             raise
-
     def create_transit_loop(self, from_date, to_date, generate_chart=False, aspects_only=False, 
                           filter_orb=None, filter_aspects=None, filter_planets=None):
         """Create transit charts for a range of dates"""
@@ -792,7 +760,7 @@ class ChartCreator:
             raise
 
     def _filter_transit_data(self, data, aspects_only=False, filter_orb=None, 
-                           filter_aspects=None, filter_planets=None):
+                       filter_aspects=None, filter_planets=None):
         """Filter transit data based on specified criteria"""
         try:
             if aspects_only:
@@ -819,4 +787,57 @@ class ChartCreator:
             
         except Exception as e:
             logger.error(f"Error in _filter_transit_data: {str(e)}")
+            raise
+
+    def get_synastry_as_data(self, person2_name, person2_birth_data):
+        """Get synastry data as JSON"""
+        try:
+            # Create second subject
+            self.create_second_subject(person2_name, person2_birth_data)
+            
+            # Generate SVG chart
+            chart_filename = f"{self.subject.name} - Synastry Chart.svg"
+            chart_path = os.path.join(os.path.expanduser("~"), chart_filename)
+            
+            # Create and save chart
+            kerykeion_chart = KerykeionChartSVG(self.subject, self.second_subject, chart_path)
+            kerykeion_chart.makeSVG()
+            
+            # Move chart to charts directory
+            new_chart_path = f"charts/{self.subject.name}_{person2_name}_synastry.svg"
+            new_chart_path = new_chart_path.replace(" ", "_")
+            shutil.move(chart_path, new_chart_path)
+            
+            # Calculate aspects and linkages
+            super_calc = SuperAspectCalculator(self.subject, self.second_subject)
+            cinderella_calc = CinderellaAnalyzer(self.subject, self.second_subject)
+            sexual_calc = SexualLinkageCalculator(self.subject, self.second_subject)
+            
+            # Get all aspects and linkages
+            person1_super_aspects = super_calc.get_super_aspects(self.subject)
+            person2_super_aspects = super_calc.get_super_aspects(self.second_subject)
+            saturn_clashes = super_calc.get_saturn_clashes()
+            cinderella_linkages = cinderella_calc.get_cinderella_linkages()
+            sexual_linkages = sexual_calc.get_sexual_linkages()
+            
+            # Create data dictionary
+            data = {
+                "person1": {
+                    "subject": self._get_subject_data(self.subject)
+                },
+                "person2": {
+                    "subject": self._get_subject_data(self.second_subject)
+                },
+                "person1_super_aspects": person1_super_aspects,
+                "person2_super_aspects": person2_super_aspects,
+                "saturn_clashes": saturn_clashes,
+                "cinderella_linkages": cinderella_linkages,
+                "sexual_linkages": sexual_linkages,
+                "chart_path": new_chart_path
+            }
+            
+            return data
+            
+        except Exception as e:
+            logger.error(f"Error in get_synastry_as_data: {str(e)}")
             raise

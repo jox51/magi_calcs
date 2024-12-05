@@ -306,5 +306,17 @@
       "actual_degrees": 0.8195
     }
   ],
+  "sexual_linkages": [
+    {
+      "person1_name": "Carmen Electra",
+      "person2_name": "Dennis Rodman",
+      "planet1_name": "mars",
+      "planet2_name": "venus",
+      "aspect_name": "sextile",
+      "aspect_degrees": 60,
+      "orbit": 0.8073,
+      "actual_degrees": 60.8073
+    }
+  ],
   "chart_path": "charts/Carmen_Electra_Dennis_Rodman_synastry.svg"
 }

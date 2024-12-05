@@ -121,6 +121,17 @@ def print_chart_data(data, chart_type):
             else:
                 print("\nNo Cinderella Linkages found")
             
+            # Print Sexual Linkages
+            if data.get('sexual_linkages'):
+                print("\nSexual Linkages:")
+                for linkage in data['sexual_linkages']:
+                    print(f"{linkage['person1_name']}'s {linkage['planet1_name'].title()} {linkage['aspect_name']} to")
+                    print(f"{linkage['person2_name']}'s {linkage['planet2_name'].title()}")
+                    print(f"Aspect: {linkage['aspect_degrees']}° (orb: {round(linkage['orbit'], 2)}°)")
+                    print()
+            else:
+                print("\nNo Sexual Linkages found")
+            
             print(f"\nChart saved to: {data['chart_path']}")
 
             # Print full JSON data
@@ -238,7 +249,7 @@ def main():
                     logger.error(f"Chart data: {data}")
                 
                 # Print the data
-                print_chart_data(data, args.type)
+                # print_chart_data(data, args.type)
                 
                 # Save to file if output specified
                 if args.output:
