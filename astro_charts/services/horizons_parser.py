@@ -8,10 +8,19 @@ class HorizonsParser:
     """Parser for NASA Horizons API responses"""
     
     def __init__(self):
-        # Regex to match the line containing coordinates and capture the declination components
-        # Format: YYYY-MMM-DD HH:MM m HH MM SS.fff sDD MM SS.fff
-        self.dec_pattern = re.compile(
-            r'\d{4}-[A-Za-z]+-\d+\s+\d+:\d+\s+[A-Za-z ]?\s+\d+\s+\d+\s+[\d.]+\s+([-+]?\d+)\s+(\d+)\s+([\d.]+)',
+        # Original pattern for natal/transit format
+        self.dec_pattern1 = re.compile(
+            r'\d{4}-[A-Za-z]+-\d+\s+\d+:\d+\s+\*?[A-Za-z]?\s+'  # Date and time part
+            r'\d+\s+\d+\s+[\d.]+\s+'                            # RA part
+            r'([-+]?\d+)\s+(\d+)\s+([\d.]+)',                   # DEC part
+            re.MULTILINE
+        )
+        
+        # New pattern for synastry format
+        self.dec_pattern2 = re.compile(
+            r'R\.A\._+\([\w-]+\)_+DEC\s*=\s*'           # Header part
+            r'\d+\s+\d+\s+[\d.]+\s*'                    # RA part
+            r'([-+]?\d+)\s+(\d+)\s+([\d.]+)',           # DEC part
             re.MULTILINE
         )
     
@@ -27,12 +36,22 @@ class HorizonsParser:
         """
         try:
             data = response.get('result', '')
-            print("Data: " + str(data))
+            logger.debug(f"Parsing data: {data[:200]}...")  # Log first 200 chars for debugging
+            
             if not data:
                 logger.error("Empty response data")
                 return None
 
-            match = self.dec_pattern.search(data)
+            # Try first pattern
+            match = self.dec_pattern1.search(data)
+            if match:
+                logger.debug("Found match with pattern 1")
+            else:
+                # Try second pattern if first one fails
+                match = self.dec_pattern2.search(data)
+                if match:
+                    logger.debug("Found match with pattern 2")
+
             if not match:
                 logger.error("Could not find declination pattern in response")
                 return None

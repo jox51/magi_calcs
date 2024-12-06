@@ -16,6 +16,9 @@ from .magi_linkages import MagiLinkageCalculator
 from .services.cinderella_analyzer import CinderellaAnalyzer
 from .sexual_linkages import SexualLinkageCalculator
 from .services.nasa_horizons_service import NASAHorizonsService
+from .services.turbulent_transit_service import TurbulentTransitService
+from .romance_linkages import RomanceLinkageCalculator
+from .marital_linkages import MaritalLinkageCalculator
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -152,6 +155,7 @@ class ChartCreator:
         self.cinderella_analyzer = CinderellaAnalyzer()
         self.sexual_linkage_calculator = SexualLinkageCalculator()
         self.nasa_service = NASAHorizonsService()
+        self.turbulent_transit_service = TurbulentTransitService()
 
     def create_natal_chart(self):
         """Create and save a natal chart"""
@@ -172,6 +176,7 @@ class ChartCreator:
             # Move the generated chart
             expected_filename = f"{self.subject.name} - Natal Chart.svg"
             source_path = os.path.join(os.path.expanduser('~'), expected_filename)
+            print("Source path: ", source_path)
             
             if os.path.exists(source_path):
                 shutil.move(source_path, chart_path)
@@ -187,14 +192,14 @@ class ChartCreator:
                 "chart_path": chart_path
             }
             
-            return final_data
+            return final_data, source_path
             
         except Exception as e:
             logger.error(f"Error creating natal chart: {str(e)}")
             raise
 
     def create_transit_chart(self, transit_year=None, transit_month=None, 
-                            transit_day=None, transit_hour=None, transit_minute=None):
+                             transit_day=None, transit_hour=None, transit_minute=None):
         """Create a transit chart for a specific date (or current date if not specified)"""
         try:
             # Use provided transit date or current date
@@ -228,8 +233,10 @@ class ChartCreator:
             )
             logger.info("Transit subject created successfully")
 
-            # Create target directory and generate chart
-            chart_path = os.path.join('charts', 'transit_chart.svg')
+            # Generate a filename with the subject's name
+            name_safe = self.subject.name.replace(" ", "_")
+            svg_filename = f"{name_safe}_transit_chart.svg"
+            chart_path = os.path.join('charts', svg_filename)
             os.makedirs('charts', exist_ok=True)
             
             transit_chart = KerykeionChartSVG(
@@ -268,7 +275,7 @@ class ChartCreator:
                     abs_pos=abs_pos,
                     longitude=self.longitude,
                     latitude=self.latitude
-    )
+                )
                 logger.info(f"Got declination for {planet_name}: {declination}")
 
                 return {
@@ -301,13 +308,16 @@ class ChartCreator:
                 }
             }
 
-            # Create transit data first without aspects
+            # Create transit data with same structure
             transit_data = {
                 "subject": {
                     "name": "Transit",
                     "birth_data": {
-                        "date": f"{self.transit_subject.year}-{self.transit_subject.month}-{self.transit_subject.day}",
+                        "date": f"{self.transit_subject.year}-{self.transit_subject.month:02d}-{self.transit_subject.day:02d}",
                         "time": f"{self.transit_subject.hour}:{self.transit_subject.minute:02d}",
+                        "location": f"{self.transit_subject.city}, {self.transit_subject.nation}",
+                        "longitude": round(self.longitude, 4),
+                        "latitude": round(self.latitude, 4)
                     },
                     "planets": {
                         planet: get_planet_details(getattr(self.transit_subject, planet))
@@ -331,14 +341,22 @@ class ChartCreator:
             transit_data["transit_super_aspects"] = transit_super_aspects
             transit_data["cinderella_aspects"] = cinderella_aspects
 
+            # Add turbulent transit analysis
+            turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
+                natal_data=natal_data,
+                transit_data=transit_data["subject"]
+            )
+
             # Create final chart data
             chart_data = {
                 "natal": natal_data["subject"],
                 "transit": transit_data,
                 "natal_super_aspects": super_aspects,
-                "chart_path": chart_path
+                "chart_path": chart_path,
+                "turbulent_transits": turbulent_transits
             }
 
+            logger.info(f"Found {len(turbulent_transits)} turbulent transits")
             return json.dumps(chart_data, indent=2)
 
         except Exception as e:
@@ -710,6 +728,13 @@ class ChartCreator:
             person2_super_aspects = super_calc.find_super_aspects(person2_data)
             sexual_linkages = sexual_calc.find_sexual_linkages(person1_data, person2_data)
 
+            # Calculate Romance linkages
+            romance_calc = RomanceLinkageCalculator()
+            romance_linkages = romance_calc.find_romance_linkages(person1_data, person2_data)
+            
+            # Calculate Marital linkages
+            marital_calc = MaritalLinkageCalculator()
+            marital_linkages = marital_calc.find_marital_linkages(person1_data, person2_data)
             
             # Create the final data structure
             chart_data = {
@@ -720,6 +745,8 @@ class ChartCreator:
                 "saturn_clashes": saturn_clashes,
                 "cinderella_linkages": cinderella_linkages,
                 "sexual_linkages": sexual_linkages,
+                "romance_linkages": romance_linkages,
+                "marital_linkages": marital_linkages,
                 "chart_path": chart_path
             }
 
@@ -757,6 +784,15 @@ class ChartCreator:
                     try:
                         data = json.loads(transit_data)
                         
+                        # Add turbulent transit analysis for each day
+                        turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
+                            natal_data={"subject": data["natal"]},
+                            transit_data=data["transit"]["subject"]
+                        )
+                        
+                        # Add turbulent transits to the data
+                        data["turbulent_transits"] = turbulent_transits
+                        
                         # Apply filters if specified
                         if aspects_only or filter_orb or filter_aspects or filter_planets:
                             filtered_data = self._filter_transit_data(
@@ -789,11 +825,15 @@ class ChartCreator:
         """Filter transit data based on specified criteria"""
         try:
             if aspects_only:
-                return {'aspects': data.get('aspects', [])}
+                return {
+                    'aspects': data.get('aspects', []),
+                    'turbulent_transits': data.get('turbulent_transits', [])
+                }
             
             filtered_data = data.copy()
-            aspects = data.get('aspects', [])
             
+            # Filter regular aspects
+            aspects = data.get('aspects', [])
             if filter_orb is not None:
                 aspects = [a for a in aspects if abs(float(a.get('orbit', 0))) <= filter_orb]
             
@@ -808,6 +848,22 @@ class ChartCreator:
                           a.get('planet2_name', '').lower() in filter_planets]
             
             filtered_data['aspects'] = aspects
+            
+            # Filter turbulent transits
+            turbulent_transits = data.get('turbulent_transits', [])
+            if filter_orb is not None:
+                turbulent_transits = [t for t in turbulent_transits if abs(float(t.get('orbit', 0))) <= filter_orb]
+            
+            if filter_aspects:
+                turbulent_transits = [t for t in turbulent_transits if t.get('aspect_name', '').lower() in 
+                                    [asp.lower() for asp in filter_aspects]]
+            
+            if filter_planets:
+                turbulent_transits = [t for t in turbulent_transits if 
+                                    t.get('natal_planet', '').lower() in filter_planets or 
+                                    t.get('transit_planet', '').lower() in filter_planets]
+            
+            filtered_data['turbulent_transits'] = turbulent_transits
             return filtered_data
             
         except Exception as e:

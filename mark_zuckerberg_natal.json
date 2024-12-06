@@ -1,0 +1,314 @@
+{
+  "subject": {
+    "name": "Mark Zuckerberg",
+    "birth_data": {
+      "date": "1984-5-14",
+      "time": "14:39",
+      "location": "White Plains, US",
+      "longitude": -73.7629,
+      "latitude": 41.034
+    },
+    "planets": {
+      "sun": {
+        "name": "Sun",
+        "quality": "Fixed",
+        "element": "Earth",
+        "sign": "Tau",
+        "sign_num": 1,
+        "position": 24.12995928245398,
+        "abs_pos": 54.12995928245398,
+        "emoji": "\u2649\ufe0f",
+        "point_type": "Planet",
+        "house": "Ninth_House",
+        "retrograde": false,
+        "declination": 18.6757
+      },
+      "moon": {
+        "name": "Moon",
+        "quality": "Fixed",
+        "element": "Water",
+        "sign": "Sco",
+        "sign_num": 7,
+        "position": 18.716358196607075,
+        "abs_pos": 228.71635819660708,
+        "emoji": "\u264f\ufe0f",
+        "point_type": "Planet",
+        "house": "Third_House",
+        "retrograde": false,
+        "declination": -12.4194
+      },
+      "mercury": {
+        "name": "Mercury",
+        "quality": "Cardinal",
+        "element": "Fire",
+        "sign": "Ari",
+        "sign_num": 0,
+        "position": 29.48447645421633,
+        "abs_pos": 29.48447645421633,
+        "emoji": "\u2648\ufe0f",
+        "point_type": "Planet",
+        "house": "Eighth_House",
+        "retrograde": false,
+        "declination": 8.1997
+      },
+      "venus": {
+        "name": "Venus",
+        "quality": "Fixed",
+        "element": "Earth",
+        "sign": "Tau",
+        "sign_num": 1,
+        "position": 15.459201812664823,
+        "abs_pos": 45.45920181266482,
+        "emoji": "\u2649\ufe0f",
+        "point_type": "Planet",
+        "house": "Eighth_House",
+        "retrograde": false,
+        "declination": 15.2928
+      },
+      "mars": {
+        "name": "Mars",
+        "quality": "Fixed",
+        "element": "Water",
+        "sign": "Sco",
+        "sign_num": 7,
+        "position": 19.614407068075735,
+        "abs_pos": 229.61440706807574,
+        "emoji": "\u264f\ufe0f",
+        "point_type": "Planet",
+        "house": "Third_House",
+        "retrograde": true,
+        "declination": -18.0223
+      },
+      "jupiter": {
+        "name": "Jupiter",
+        "quality": "Cardinal",
+        "element": "Earth",
+        "sign": "Cap",
+        "sign_num": 9,
+        "position": 12.611112924793645,
+        "abs_pos": 282.61111292479364,
+        "emoji": "\u2651\ufe0f",
+        "point_type": "Planet",
+        "house": "Fourth_House",
+        "retrograde": true,
+        "declination": -22.6595
+      },
+      "saturn": {
+        "name": "Saturn",
+        "quality": "Fixed",
+        "element": "Water",
+        "sign": "Sco",
+        "sign_num": 7,
+        "position": 12.22817718692616,
+        "abs_pos": 222.22817718692616,
+        "emoji": "\u264f\ufe0f",
+        "point_type": "Planet",
+        "house": "Second_House",
+        "retrograde": true,
+        "declination": -13.1139
+      },
+      "uranus": {
+        "name": "Uranus",
+        "quality": "Mutable",
+        "element": "Fire",
+        "sign": "Sag",
+        "sign_num": 8,
+        "position": 12.29800690181898,
+        "abs_pos": 252.29800690181898,
+        "emoji": "\u2650\ufe0f",
+        "point_type": "Planet",
+        "house": "Third_House",
+        "retrograde": true,
+        "declination": -22.2651
+      },
+      "neptune": {
+        "name": "Neptune",
+        "quality": "Cardinal",
+        "element": "Earth",
+        "sign": "Cap",
+        "sign_num": 9,
+        "position": 0.9713394282337617,
+        "abs_pos": 270.97133942823376,
+        "emoji": "\u2651\ufe0f",
+        "point_type": "Planet",
+        "house": "Fourth_House",
+        "retrograde": true,
+        "declination": -22.2229
+      },
+      "pluto": {
+        "name": "Pluto",
+        "quality": "Fixed",
+        "element": "Water",
+        "sign": "Sco",
+        "sign_num": 7,
+        "position": 0.09421264039147559,
+        "abs_pos": 210.09421264039148,
+        "emoji": "\u264f\ufe0f",
+        "point_type": "Planet",
+        "house": "Second_House",
+        "retrograde": true,
+        "declination": 4.7278
+      },
+      "chiron": {
+        "name": "Chiron",
+        "quality": "Mutable",
+        "element": "Air",
+        "sign": "Gem",
+        "sign_num": 2,
+        "position": 2.3303486111724183,
+        "abs_pos": 62.33034861117242,
+        "emoji": "\u264a\ufe0f",
+        "point_type": "Planet",
+        "house": "Ninth_House",
+        "retrograde": false,
+        "declination": 17.1126
+      }
+    },
+    "houses": {
+      "ascendant": {
+        "sign": "Vir",
+        "position": 21.03856610610194,
+        "abs_pos": 171.03856610610194,
+        "house_num": 1
+      },
+      "midheaven": {
+        "sign": "Gem",
+        "position": 19.58383568349896,
+        "abs_pos": 79.58383568349896,
+        "house_num": 10
+      }
+    },
+    "aspects": [
+      {
+        "p1_name": "moon",
+        "p2_name": "mars",
+        "aspect_name": "conjunction",
+        "aspect_degrees": 0,
+        "orbit": 0.898,
+        "actual_degrees": 0.898,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "moon",
+        "p2_name": "saturn",
+        "aspect_name": "parallel",
+        "aspect_degrees": 0,
+        "orbit": 0.6945,
+        "actual_degrees": 0.6945,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "mercury",
+        "p2_name": "neptune",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 1.4869,
+        "actual_degrees": 118.5131,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "mercury",
+        "p2_name": "pluto",
+        "aspect_name": "opposition",
+        "aspect_degrees": 180,
+        "orbit": 0.6097,
+        "actual_degrees": 179.3903,
+        "is_harmonious": false,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "venus",
+        "p2_name": "jupiter",
+        "aspect_name": "trine",
+        "aspect_degrees": 120,
+        "orbit": 2.8481,
+        "actual_degrees": 122.8481,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "jupiter",
+        "p2_name": "saturn",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.3829,
+        "actual_degrees": 60.3829,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "jupiter",
+        "p2_name": "uranus",
+        "aspect_name": "parallel",
+        "aspect_degrees": 0,
+        "orbit": 0.3944,
+        "actual_degrees": 0.3944,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "jupiter",
+        "p2_name": "neptune",
+        "aspect_name": "parallel",
+        "aspect_degrees": 0,
+        "orbit": 0.4366,
+        "actual_degrees": 0.4366,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "uranus",
+        "p2_name": "neptune",
+        "aspect_name": "parallel",
+        "aspect_degrees": 0,
+        "orbit": 0.0422,
+        "actual_degrees": 0.0422,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "neptune",
+        "p2_name": "pluto",
+        "aspect_name": "sextile",
+        "aspect_degrees": 60,
+        "orbit": 0.8771,
+        "actual_degrees": 60.8771,
+        "is_harmonious": true,
+        "is_cinderella": false
+      },
+      {
+        "p1_name": "neptune",
+        "p2_name": "chiron",
+        "aspect_name": "quincunx",
+        "aspect_degrees": 150,
+        "orbit": 1.359,
+        "actual_degrees": 151.359,
+        "is_harmonious": false,
+        "is_cinderella": true
+      },
+      {
+        "p1_name": "pluto",
+        "p2_name": "chiron",
+        "aspect_name": "quincunx",
+        "aspect_degrees": 150,
+        "orbit": 2.2361,
+        "actual_degrees": 147.7639,
+        "is_harmonious": false,
+        "is_cinderella": false
+      }
+    ]
+  },
+  "super_aspects": [
+    {
+      "planet1_name": "jupiter",
+      "planet2_name": "uranus",
+      "aspect_name": "parallel",
+      "aspect_degrees": 0,
+      "orbit": 0.3944,
+      "actual_degrees": 0.3944
+    }
+  ]
+}

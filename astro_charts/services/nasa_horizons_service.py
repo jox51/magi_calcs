@@ -61,7 +61,7 @@ class NASAHorizonsService:
             
             if response:
                 declination = self.parser.parse_declination(response)
-                print("Declination: " + str(declination))
+
                 if declination is not None:
                     logger.info(f"Got declination for {body_name} on {date}: {declination}°")
                     return declination

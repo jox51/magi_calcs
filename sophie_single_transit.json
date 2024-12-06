@@ -114,8 +114,11 @@
     "subject": {
       "name": "Transit",
       "birth_data": {
-        "date": "2025-3-15",
-        "time": "14:30"
+        "date": "2025-03-15",
+        "time": "14:30",
+        "location": "Oxford, UK",
+        "longitude": -1.256,
+        "latitude": 51.7522
       },
       "planets": {
         "sun": {
@@ -269,5 +272,6 @@
       "actual_degrees": 60.6841
     }
   ],
-  "chart_path": "charts/transit_chart.svg"
+  "chart_path": "charts/transit_chart.svg",
+  "turbulent_transits": []
 }

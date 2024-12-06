@@ -115,8 +115,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-15",
-          "time": "14:30"
+          "date": "2025-03-15",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -271,6 +274,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-15"
   },
   "2025-03-16": {
@@ -389,8 +393,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-16",
-          "time": "14:30"
+          "date": "2025-03-16",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -545,6 +552,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-16"
   },
   "2025-03-17": {
@@ -663,8 +671,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-17",
-          "time": "14:30"
+          "date": "2025-03-17",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -819,6 +830,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-17"
   },
   "2025-03-18": {
@@ -937,8 +949,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-18",
-          "time": "14:30"
+          "date": "2025-03-18",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -1093,6 +1108,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-18"
   },
   "2025-03-19": {
@@ -1211,8 +1227,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-19",
-          "time": "14:30"
+          "date": "2025-03-19",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -1387,6 +1406,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-19"
   },
   "2025-03-20": {
@@ -1505,8 +1525,11 @@
       "subject": {
         "name": "Transit",
         "birth_data": {
-          "date": "2025-3-20",
-          "time": "14:30"
+          "date": "2025-03-20",
+          "time": "14:30",
+          "location": "Oxford, UK",
+          "longitude": -1.256,
+          "latitude": 51.7522
         },
         "planets": {
           "sun": {
@@ -1681,6 +1704,7 @@
       }
     ],
     "chart_path": "charts/transit_chart.svg",
+    "turbulent_transits": [],
     "date": "2025-03-20"
   }
 }

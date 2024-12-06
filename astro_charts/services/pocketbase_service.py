@@ -3,6 +3,7 @@ import json
 import logging
 from typing import Dict, Any, Optional
 import os
+import aiohttp
 
 logger = logging.getLogger(__name__)
 
@@ -133,149 +134,175 @@ class PocketbaseService:
             logger.error(f"Error creating transit loop records: {str(e)}")
             raise
 
-    def create_natal_chart(self, natal_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new natal chart record in PocketBase"""
+    def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create a new natal chart record in PocketBase with chart file"""
         try:
             endpoint = f"{self.base_url}/api/collections/natal_charts/records"
             
-            # Ensure natal_data is properly formatted
-            if isinstance(natal_data, str):
-                try:
-                    natal_data = json.loads(natal_data)
-                except json.JSONDecodeError:
-                    logger.warning("Could not parse natal data as JSON")
-            
-            # Prepare the data
-            payload = {
-                "natal_data": json.dumps(natal_data) if isinstance(natal_data, dict) else natal_data
+            # Prepare the form data
+            data = {
+                'natal_data': json.dumps(natal_data) if isinstance(natal_data, dict) else natal_data,
             }
             
-            # Add user_id and job_id if provided
             if user_id:
-                payload["user_id"] = user_id
+                data['user_id'] = user_id
             if job_id:
-                payload["job_id"] = job_id
+                data['job_id'] = job_id
+            print("Chart path: ", chart_path)
             
-            # Log the payload for debugging
-            logger.info(f"Creating natal chart with payload: {payload}")
+            # Prepare files if chart exists
+            files = None
+            if chart_path and os.path.exists(chart_path):
+                files = {
+                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+                }
+                logger.info(f"Adding chart file from {chart_path}")
             
-            # Make the request
-            response = requests.post(
-                endpoint,
-                headers=self.headers,
-                json=payload
-            )
+            # Remove Content-Type header for multipart request
+            headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             
-            # Check if request was successful
-            response.raise_for_status()
+            # Log request details
+            logger.info(f"Sending request to {endpoint}")
+            logger.info(f"Headers: {headers}")
+            logger.info(f"Data fields: {list(data.keys())}")
+            if files:
+                logger.info(f"File fields: {list(files.keys())}")
             
-            # Log the response for debugging
-            logger.info(f"PocketBase response: {response.json()}")
-            
-            # Return the created record
-            return response.json()
-            
+            try:
+                # Make the request
+                response = requests.post(
+                    endpoint,
+                    headers=headers,
+                    data=data,
+                    files=files
+                )
+                
+                # Log the actual request payload for debugging
+                logger.info(f"Request data: {data}")
+                
+                # Check if request was successful
+                response.raise_for_status()
+                
+                return response.json()
+                
+            finally:
+                # Clean up file handle if it was opened
+                if files and 'chart' in files:
+                    files['chart'][1].close()
+        
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating natal chart record: {str(e)}")
             if hasattr(e.response, 'text'):
                 logger.error(f"Response: {e.response.text}")
-                logger.error(f"Attempted payload: {payload}")
+                logger.error(f"Request data: {data}")
+                if files:
+                    logger.error(f"Files included: {list(files.keys())}")
             raise
 
-    def create_single_transit_chart(self, transit_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new single transit chart record in PocketBase"""
+    def create_single_transit_chart(self, transit_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create a new single transit chart record in PocketBase with chart file"""
         try:
             endpoint = f"{self.base_url}/api/collections/single_transit_chart/records"
             
-            # Ensure transit_data is properly formatted
-            if isinstance(transit_data, str):
-                try:
-                    transit_data = json.loads(transit_data)
-                except json.JSONDecodeError:
-                    logger.warning("Could not parse transit data as JSON")
-            
-            # Prepare the data
-            payload = {
-                "transit_data": json.dumps(transit_data) if isinstance(transit_data, dict) else transit_data
+            # Prepare the form data
+            data = {
+                'transit_data': json.dumps(transit_data) if isinstance(transit_data, dict) else transit_data,
             }
             
-            # Add user_id and job_id if provided
             if user_id:
-                payload["user_id"] = user_id
+                data['user_id'] = user_id
             if job_id:
-                payload["job_id"] = job_id
+                data['job_id'] = job_id
             
-            # Log the payload for debugging
-            logger.info(f"Creating single transit chart with payload: {payload}")
+            # Prepare files if chart exists
+            files = None
+            if chart_path and os.path.exists(chart_path):
+                files = {
+                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+                }
+                logger.info(f"Adding transit chart file from {chart_path}")
             
-            # Make the request
-            response = requests.post(
-                endpoint,
-                headers=self.headers,
-                json=payload
-            )
+            # Remove Content-Type header for multipart request
+            headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             
-            # Check if request was successful
-            response.raise_for_status()
-            
-            # Log the response for debugging
-            logger.info(f"PocketBase response: {response.json()}")
-            
-            # Return the created record
-            return response.json()
-            
+            try:
+                # Make the request
+                response = requests.post(
+                    endpoint,
+                    headers=headers,
+                    data=data,
+                    files=files
+                )
+                
+                # Check if request was successful
+                response.raise_for_status()
+                
+                return response.json()
+                
+            finally:
+                # Clean up file handle if it was opened
+                if files and 'chart' in files:
+                    files['chart'][1].close()
+        
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating single transit chart record: {str(e)}")
             if hasattr(e.response, 'text'):
                 logger.error(f"Response: {e.response.text}")
-                logger.error(f"Attempted payload: {payload}")
+                logger.error(f"Request data: {data}")
+                if files:
+                    logger.error(f"Files included: {list(files.keys())}")
             raise
 
-    def create_synastry_chart(self, synastry_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new synastry chart record in PocketBase"""
+    def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create a new synastry chart record in PocketBase with chart file"""
         try:
             endpoint = f"{self.base_url}/api/collections/synastry_charts/records"
             
-            # Ensure synastry_data is properly formatted
-            if isinstance(synastry_data, str):
-                try:
-                    synastry_data = json.loads(synastry_data)
-                except json.JSONDecodeError:
-                    logger.warning("Could not parse synastry data as JSON")
-            
-            # Prepare the data
-            payload = {
-                "synastry_data": json.dumps(synastry_data) if isinstance(synastry_data, dict) else synastry_data
+            # Prepare the form data
+            data = {
+                'synastry_data': json.dumps(synastry_data) if isinstance(synastry_data, dict) else synastry_data,
             }
             
-            # Add user_id and job_id if provided
             if user_id:
-                payload["user_id"] = user_id
+                data['user_id'] = user_id
             if job_id:
-                payload["job_id"] = job_id
+                data['job_id'] = job_id
             
-            # Log the payload for debugging
-            logger.info(f"Creating synastry chart with payload: {payload}")
+            # Prepare files if chart exists
+            files = None
+            if chart_path and os.path.exists(chart_path):
+                files = {
+                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+                }
+                logger.info(f"Adding synastry chart file from {chart_path}")
             
-            # Make the request
-            response = requests.post(
-                endpoint,
-                headers=self.headers,
-                json=payload
-            )
+            # Remove Content-Type header for multipart request
+            headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             
-            # Check if request was successful
-            response.raise_for_status()
-            
-            # Log the response for debugging
-            logger.info(f"PocketBase response: {response.json()}")
-            
-            # Return the created record
-            return response.json()
-            
+            try:
+                # Make the request
+                response = requests.post(
+                    endpoint,
+                    headers=headers,
+                    data=data,
+                    files=files
+                )
+                
+                # Check if request was successful
+                response.raise_for_status()
+                
+                return response.json()
+                
+            finally:
+                # Clean up file handle if it was opened
+                if files and 'chart' in files:
+                    files['chart'][1].close()
+        
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating synastry chart record: {str(e)}")
             if hasattr(e.response, 'text'):
                 logger.error(f"Response: {e.response.text}")
-                logger.error(f"Attempted payload: {payload}")
+                logger.error(f"Request data: {data}")
+                if files:
+                    logger.error(f"Files included: {list(files.keys())}")
             raise
