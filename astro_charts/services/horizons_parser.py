@@ -23,6 +23,14 @@ class HorizonsParser:
             r'([-+]?\d+)\s+(\d+)\s+([\d.]+)',           # DEC part
             re.MULTILINE
         )
+        
+        # Add this pattern in the __init__ method after dec_pattern2
+        self.dec_pattern3 = re.compile(
+            r'\d{4}-[A-Za-z]+-\d+\s+\d+:\d+\s+[A-Za-z]{1,2}\s+'  # Date and time part with Am
+            r'\d+\s+\d+\s+[\d.]+\s+'                              # RA part
+            r'([-+]?\d+)\s+(\d+)\s+([\d.]+)',                     # DEC part
+            re.MULTILINE
+        )
     
     def parse_declination(self, response: Dict[str, Any]) -> Optional[float]:
         """
@@ -38,6 +46,8 @@ class HorizonsParser:
             data = response.get('result', '')
             logger.debug(f"Parsing data: {data[:200]}...")  # Log first 200 chars for debugging
             
+            # print("data: ", data)
+            
             if not data:
                 logger.error("Empty response data")
                 return None
@@ -51,6 +61,11 @@ class HorizonsParser:
                 match = self.dec_pattern2.search(data)
                 if match:
                     logger.debug("Found match with pattern 2")
+                else:
+                    # Try third pattern if second one fails
+                    match = self.dec_pattern3.search(data)
+                    if match:
+                        logger.debug("Found match with pattern 3")
 
             if not match:
                 logger.error("Could not find declination pattern in response")

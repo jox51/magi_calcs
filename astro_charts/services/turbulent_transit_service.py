@@ -31,19 +31,22 @@ class TurbulentTransitService:
         # Define specific transit types and their planet combinations
         self.heartbreak_pairs = [
             ('saturn', 'chiron'),
-            ('chiron', 'saturn')
+            ('chiron', 'saturn'),
+            ('venus', 'chiron'),  # Added Venus-Chiron pair
+            ('chiron', 'venus')   # Added Chiron-Venus pair
         ]
         
         self.nuclear_pairs = [
             ('saturn', 'jupiter'),
-            ('jupiter', 'saturn')
+            ('jupiter', 'saturn'),
+            ('jupiter', 'pluto'),  # Added Jupiter-Pluto pair
+            ('pluto', 'jupiter')   # Added Pluto-Jupiter pair
         ]
 
         # Define Saturn-sensitive planets
         self.saturn_sensitive_planets = [
             'sun', 'moon', 'mercury', 'venus', 
-            'mars', 'jupiter', 'saturn', 'uranus', 
-            'neptune', 'pluto', 'chiron'
+            'mars', 'chiron'
         ]
 
     def calculate_angle_distance(self, pos1: float, pos2: float) -> float:

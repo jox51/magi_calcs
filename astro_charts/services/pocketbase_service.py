@@ -101,37 +101,74 @@ class PocketbaseService:
                 logger.error(f"Response: {e.response.text}")
             raise
 
-    def create_transit_loop_charts(self, transit_loop_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> list:
-        """Create multiple transit chart records for a transit loop"""
-        created_records = []
-        
+    def create_transit_loop_charts(self, transit_loop_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create transit loop record with visualization in PocketBase"""
         try:
-            # Log the received user_id and job_id
-            logger.info(f"Creating transit loop charts with user_id: {user_id}, job_id: {job_id}")
+            endpoint = f"{self.base_url}/api/collections/transit_charts/records"
             
-            for date, transit_data in transit_loop_data.items():
-                # Add the date to the transit data
-                if isinstance(transit_data, str):
-                    try:
-                        transit_data = json.loads(transit_data)
-                    except json.JSONDecodeError:
-                        logger.warning(f"Could not parse transit data for {date} as JSON")
-                        continue
+            # Prepare the form data
+            data = {
+                'transit_data': json.dumps(transit_loop_data)
+            }
+            
+            if user_id:
+                data['user_id'] = user_id
+            if job_id:
+                data['job_id'] = job_id
                 
-                transit_data['date'] = date
-                
-                # Create the record with user_id and job_id
-                record = self.create_transit_chart(
-                    transit_data=transit_data,
-                    user_id=user_id,
-                    job_id=job_id
+            # Get the visualization chart path
+            # Extract name from the first date's natal data
+            first_date = list(transit_loop_data.keys())[0]
+            name_safe = transit_loop_data[first_date]['natal']['name'].replace(" ", "_")
+            viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.html")
+            
+            # Prepare files if visualization exists
+            files = None
+            if os.path.exists(viz_path):
+                files = {
+                    'loop_chart': ('loop_chart.html', open(viz_path, 'rb'), 'text/html')
+                }
+                logger.info(f"Adding visualization file from {viz_path}")
+            
+            # Remove Content-Type header for multipart request
+            headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
+            
+            # Log request details
+            logger.info(f"Sending request to {endpoint}")
+            logger.info(f"Headers: {headers}")
+            logger.info(f"Data fields: {list(data.keys())}")
+            if files:
+                logger.info(f"File fields: {list(files.keys())}")
+            
+            try:
+                # Make the request
+                response = requests.post(
+                    endpoint,
+                    headers=headers,
+                    data=data,
+                    files=files
                 )
-                created_records.append(record)
-            
-            return created_records
-            
-        except Exception as e:
-            logger.error(f"Error creating transit loop records: {str(e)}")
+                
+                # Log the actual request payload for debugging
+                logger.info(f"Request data: {data}")
+                
+                # Check if request was successful
+                response.raise_for_status()
+                
+                return response.json()
+                
+            finally:
+                # Clean up file handle if it was opened
+                if files and 'loop_chart' in files:
+                    files['loop_chart'][1].close()
+        
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error creating transit loop record: {str(e)}")
+            if hasattr(e.response, 'text'):
+                logger.error(f"Response: {e.response.text}")
+                logger.error(f"Request data: {data}")
+                if files:
+                    logger.error(f"Files included: {list(files.keys())}")
             raise
 
     def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
@@ -148,7 +185,6 @@ class PocketbaseService:
                 data['user_id'] = user_id
             if job_id:
                 data['job_id'] = job_id
-            print("Chart path: ", chart_path)
             
             # Prepare files if chart exists
             files = None
@@ -157,7 +193,7 @@ class PocketbaseService:
                     'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
                 }
                 logger.info(f"Adding chart file from {chart_path}")
-            
+            print("files: ", files)
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             

@@ -791,7 +791,7 @@ class ChartCreator:
                         )
                         
                         # Add turbulent transits to the data
-                        data["turbulent_transits"] = turbulent_transits
+                        data['transit']["turbulent_transits"] = turbulent_transits
                         
                         # Apply filters if specified
                         if aspects_only or filter_orb or filter_aspects or filter_planets:

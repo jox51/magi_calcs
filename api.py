@@ -9,6 +9,7 @@ from dotenv import load_dotenv
 from astro_charts.services.pocketbase_service import PocketbaseService
 import os
 import shutil
+from astro_charts.services.transit_visualization_service import TransitVisualizationService
 
 # Load environment variables at startup
 load_dotenv()
@@ -217,6 +218,7 @@ async def create_transit_loop(request: TransitLoopRequest):
             nation=request.nation
         )
         
+        # Get transit loop results
         results = chart_creator.create_transit_loop(
             from_date=request.from_date,
             to_date=request.to_date,
@@ -226,7 +228,32 @@ async def create_transit_loop(request: TransitLoopRequest):
             filter_aspects=request.filter_aspects,
             filter_planets=request.filter_planets
         )
-        return results
+
+        # Create visualization
+        name_safe = request.name.replace(" ", "_")
+        viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.html")
+        
+        viz_service = TransitVisualizationService()
+        viz_chart_path = viz_service.create_visualization(results, viz_path)
+
+        if viz_chart_path:
+            logger.info(f"Created visualization at {viz_chart_path}")
+        
+        # Save to PocketBase
+        pb_service = PocketbaseService()
+        record = pb_service.create_transit_loop_charts(
+            transit_loop_data=results,
+            user_id=request.user_id,
+            job_id=request.job_id
+        )
+
+        # Return results with visualization path and PocketBase record
+        return {
+            "chart_data": results,
+            "visualization_path": viz_chart_path if viz_chart_path else None,
+            "record": record
+        }
+
     except Exception as e:
         logger.error(f"Error creating transit loop: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
