@@ -231,7 +231,7 @@ async def create_transit_loop(request: TransitLoopRequest):
 
         # Create visualization
         name_safe = request.name.replace(" ", "_")
-        viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.html")
+        viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.svg")
         
         viz_service = TransitVisualizationService()
         viz_chart_path = viz_service.create_visualization(results, viz_path)

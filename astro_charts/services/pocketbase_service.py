@@ -120,15 +120,15 @@ class PocketbaseService:
             # Extract name from the first date's natal data
             first_date = list(transit_loop_data.keys())[0]
             name_safe = transit_loop_data[first_date]['natal']['name'].replace(" ", "_")
-            viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.html")
+            viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.svg")
             
             # Prepare files if visualization exists
             files = None
             if os.path.exists(viz_path):
                 files = {
-                    'loop_chart': ('loop_chart.html', open(viz_path, 'rb'), 'text/html')
+                    'loop_chart': ('loop_chart.svg', open(viz_path, 'rb'), 'image/svg+xml')
                 }
-                logger.info(f"Adding visualization HTML from {viz_path}")
+                logger.info(f"Adding visualization SVG from {viz_path}")
             
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}

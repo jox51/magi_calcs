@@ -19,6 +19,9 @@ from .services.nasa_horizons_service import NASAHorizonsService
 from .services.turbulent_transit_service import TurbulentTransitService
 from .romance_linkages import RomanceLinkageCalculator
 from .marital_linkages import MaritalLinkageCalculator
+from .transit_calculator import calculate_transit_data
+
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -783,6 +786,16 @@ class ChartCreator:
                 if isinstance(transit_data, str):
                     try:
                         data = json.loads(transit_data)
+                        
+                         # Use Cython-optimized calculation with correct data structure
+                        filtered_data = calculate_transit_data(
+                            natal_data=data,  # Pass the full data object
+                            transit_data=data.get('transit', {}),  # Get the transit section
+                            filter_orb=-1.0 if filter_orb is None else float(filter_orb)
+                            )
+                
+                        # Update the transit section in the original data
+                        data['transit'] = filtered_data
                         
                         # Add turbulent transit analysis for each day
                         turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
