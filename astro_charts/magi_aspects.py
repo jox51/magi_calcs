@@ -24,7 +24,7 @@ class MagiAspectCalculator:
             'opposition': {'degrees': 180, 'orb': 3, 'harmonious': False},
             'trine': {'degrees': 120, 'orb': 3, 'harmonious': True},
             'square': {'degrees': 90, 'orb': 3, 'harmonious': False},
-            'sextile': {'degrees': 60, 'orb': 3, 'harmonious': True},
+            # 'sextile': {'degrees': 60, 'orb': 3, 'harmonious': True},
             'quincunx': {'degrees': 150, 'orb': 3, 'harmonious': False},
             'parallel': {'degrees': 0, 'orb': 1, 'harmonious': True},  # For declination
             'contraparallel': {'degrees': 180, 'orb': 1, 'harmonious': False}  # For declination
@@ -182,7 +182,7 @@ class SuperAspectCalculator:
             'opposition': {'angle': 180, 'orb': 3},
             'trine': {'angle': 120, 'orb': 3},
             'square': {'angle': 90, 'orb': 3},
-            'sextile': {'angle': 60, 'orb': 3},
+            # 'sextile': {'angle': 60, 'orb': 3},
             'quincunx': {'angle': 150, 'orb': 3},
             'parallel': {'angle': 0, 'orb': 1},  # For declination
             'contraparallel': {'angle': 180, 'orb': 1}  # For declination
