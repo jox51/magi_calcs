@@ -128,7 +128,7 @@ class PocketbaseService:
                 files = {
                     'loop_chart': ('loop_chart.html', open(viz_path, 'rb'), 'text/html')
                 }
-                logger.info(f"Adding visualization file from {viz_path}")
+                logger.info(f"Adding visualization HTML from {viz_path}")
             
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
