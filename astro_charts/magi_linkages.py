@@ -32,7 +32,7 @@ class MagiLinkageCalculator:
             'conjunction': {'angle': 0, 'orb': 3},
             'opposition': {'angle': 180, 'orb': 3},
             'trine': {'angle': 120, 'orb': 3},
-            'square': {'angle': 90, 'orb': 3},
+            # 'square': {'angle': 90, 'orb': 3},
             # 'sextile': {'angle': 60, 'orb': 3},
             'quincunx': {'angle': 150, 'orb': 3},
             'parallel': {'angle': 0, 'orb': 1},  # For declination

@@ -10,6 +10,7 @@ from astro_charts.services.pocketbase_service import PocketbaseService
 import os
 import shutil
 from astro_charts.services.transit_visualization_service import TransitVisualizationService
+from astro_charts.services.synastry_visualization_service import SynastryVisualizationService
 
 # Load environment variables at startup
 load_dotenv()
@@ -287,28 +288,38 @@ async def create_synastry_chart(request: SynastryRequest):
         # Parse chart data
         chart_data = json.loads(chart_data)
         
-        # Construct the file path where the chart was moved
+        # Construct the file paths
         name_safe = f"{request.name}_{request.name2}".replace(" ", "_")
         final_chart_path = os.path.join('charts', f"{name_safe}_synastry.svg")
+        easy_chart_path = os.path.join('charts', f"{name_safe}_synastry_easy.svg")
         
         logger.info(f"Using final chart path: {os.path.abspath(final_chart_path)}")
         
-        # Verify file exists
+        # Verify traditional chart exists
         if not os.path.exists(final_chart_path):
             raise FileNotFoundError(f"Synastry chart file not found at {final_chart_path}")
         
-        # Save to PocketBase
+        # Create easy visualization
+        viz_service = SynastryVisualizationService()
+        viz_chart_path = viz_service.create_visualization(chart_data, easy_chart_path)
+
+        if viz_chart_path:
+            logger.info(f"Created easy visualization at {viz_chart_path}")
+        
+        # Save to PocketBase with both charts
         pb_service = PocketbaseService()
         record = pb_service.create_synastry_chart(
             synastry_data=chart_data,
             chart_path=final_chart_path,
+            easy_chart_path=viz_chart_path,
             user_id=request.user_id,
             job_id=request.job_id
         )
         
-        # Return both chart data and PocketBase record
+        # Return both chart data, visualization path and PocketBase record
         return {
             "chart_data": chart_data,
+            "visualization_path": viz_chart_path if viz_chart_path else None,
             "record": record
         }
         

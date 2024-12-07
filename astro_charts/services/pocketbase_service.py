@@ -289,14 +289,14 @@ class PocketbaseService:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
 
-    def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new synastry chart record in PocketBase with chart file"""
+    def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, easy_chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create synastry record with visualization in PocketBase"""
         try:
             endpoint = f"{self.base_url}/api/collections/synastry_charts/records"
             
             # Prepare the form data
             data = {
-                'synastry_data': json.dumps(synastry_data) if isinstance(synastry_data, dict) else synastry_data,
+                'synastry_data': json.dumps(synastry_data)
             }
             
             if user_id:
@@ -304,41 +304,27 @@ class PocketbaseService:
             if job_id:
                 data['job_id'] = job_id
             
-            # Prepare files if chart exists
-            files = None
+            # Prepare files
+            files = {}
             if chart_path and os.path.exists(chart_path):
-                files = {
-                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
-                }
-                logger.info(f"Adding synastry chart file from {chart_path}")
-            
-            # Remove Content-Type header for multipart request
+                files['chart'] = ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+            if easy_chart_path and os.path.exists(easy_chart_path):
+                files['easy_chart'] = ('easy_chart.svg', open(easy_chart_path, 'rb'), 'image/svg+xml')
+        
+              # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             
-            try:
-                # Make the request
-                response = requests.post(
-                    endpoint,
-                    headers=headers,
-                    data=data,
-                    files=files
-                )
-                
-                # Check if request was successful
-                response.raise_for_status()
-                
-                return response.json()
-                
-            finally:
-                # Clean up file handle if it was opened
-                if files and 'chart' in files:
-                    files['chart'][1].close()
-        
-        except requests.exceptions.RequestException as e:
+            # Make the request
+            response = requests.post(
+                endpoint,
+                headers=headers,
+                data=data,
+                files=files if files else None
+            )
+            
+            response.raise_for_status()
+            return response.json()
+            
+        except Exception as e:
             logger.error(f"Error creating synastry chart record: {str(e)}")
-            if hasattr(e.response, 'text'):
-                logger.error(f"Response: {e.response.text}")
-                logger.error(f"Request data: {data}")
-                if files:
-                    logger.error(f"Files included: {list(files.keys())}")
             raise

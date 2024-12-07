@@ -3,6 +3,7 @@ from typing import List, Dict
 from datetime import datetime
 import ephem
 import logging
+from astro_charts.utils.ecliptic_tilt import get_ecliptic_tilt
 
 logger = logging.getLogger(__name__)
 
@@ -28,24 +29,9 @@ class MaritalLinkageCalculator:
             ('chiron', 'venus')
         ]
 
-    def get_ecliptic_tilt(self, date_str: str) -> float:
-        """Calculate the ecliptic tilt for a given date"""
-        try:
-            # Convert date string to datetime
-            date = datetime.strptime(date_str, "%Y-%m-%d")
-            
-            # Create ephem Date object
-            ephem_date = ephem.Date(date)
-            
-            # Calculate obliquity
-            tilt = float(ephem.epsilon(ephem_date)) * 180 / ephem.pi
-            
-            return tilt
-            
-        except Exception as e:
-            logger.error(f"Error calculating ecliptic tilt: {str(e)}")
-            # Fallback to J2000 value if calculation fails
-            return 23.43929111
+    def calculate_ecliptic_tilt(self, date_str: str) -> float:
+        """Get ecliptic tilt for a given date"""
+        return get_ecliptic_tilt(date_str)
 
     def find_marital_linkages(self, person1_data: Dict, person2_data: Dict) -> List[Dict]:
         """Find all Marital linkages between two people's charts"""
@@ -68,8 +54,8 @@ class MaritalLinkageCalculator:
             date2 = person2_data['subject']['birth_data']['date']
             
             # Calculate average ecliptic tilt between both birth dates
-            tilt1 = self.get_ecliptic_tilt(date1)
-            tilt2 = self.get_ecliptic_tilt(date2)
+            tilt1 = self.calculate_ecliptic_tilt(date1)
+            tilt2 = self.calculate_ecliptic_tilt(date2)
             ecliptic_tilt = (tilt1 + tilt2) / 2
             
             logger.info(f"Calculated ecliptic tilt for marital linkages: {ecliptic_tilt}° "

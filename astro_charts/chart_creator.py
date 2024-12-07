@@ -20,6 +20,7 @@ from .services.turbulent_transit_service import TurbulentTransitService
 from .romance_linkages import RomanceLinkageCalculator
 from .marital_linkages import MaritalLinkageCalculator
 from .transit_calculator import calculate_transit_data
+from .services.synastry_score_calculator import SynastryScoreCalculator
 
 
 
@@ -739,7 +740,19 @@ class ChartCreator:
             marital_calc = MaritalLinkageCalculator()
             marital_linkages = marital_calc.find_marital_linkages(person1_data, person2_data)
             
-            # Create the final data structure
+            # Calculate synastry score
+            score_calculator = SynastryScoreCalculator()
+            synastry_scores = score_calculator.calculate_scores({
+                'saturn_clashes': saturn_clashes,
+                'cinderella_linkages': cinderella_linkages,
+                'sexual_linkages': sexual_linkages,
+                'romance_linkages': romance_linkages,
+                'marital_linkages': marital_linkages,
+                'person1_super_aspects': person1_super_aspects,
+                'person2_super_aspects': person2_super_aspects
+            })
+
+            # Add scores to chart data
             chart_data = {
                 "person1": person1_data,
                 "person2": person2_data,
@@ -750,7 +763,8 @@ class ChartCreator:
                 "sexual_linkages": sexual_linkages,
                 "romance_linkages": romance_linkages,
                 "marital_linkages": marital_linkages,
-                "chart_path": chart_path
+                "chart_path": chart_path,
+                "compatibility_scores": synastry_scores
             }
 
             logger.info("Synastry chart data successfully converted to JSON")
