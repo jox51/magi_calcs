@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from typing import Optional, List
+from typing import Optional, List, Dict
 from datetime import datetime
 from astro_charts.chart_creator import ChartCreator
 import json
@@ -11,6 +11,7 @@ import os
 import shutil
 from astro_charts.services.transit_visualization_service import TransitVisualizationService
 from astro_charts.services.synastry_visualization_service import SynastryVisualizationService
+from astro_charts.services.marriage_date_finder import MarriageDateFinder
 
 # Load environment variables at startup
 load_dotenv()
@@ -98,10 +99,18 @@ class SynastryRequest(BaseModel):
     # Job identifiers
     user_id: str
     job_id: str
+    
+    # New fields
+    find_marriage_date: bool = False
+    from_date: Optional[str] = None
+    to_date: Optional[str] = None
+    transit_hour: Optional[int] = 12
+    transit_minute: Optional[int] = 0
 
 class TransitChartRequest(BaseModel):
     birth_data: BaseBirthData
     transit_data: TransitDateData
+
 
 @app.post("/charts/natal")
 async def create_natal_chart(data: BaseBirthData):
@@ -252,12 +261,64 @@ async def create_transit_loop(request: TransitLoopRequest):
         return {
             "chart_data": results,
             "visualization_path": viz_chart_path if viz_chart_path else None,
-            "record": record
+             "daily_aspects": results.get("daily_aspects", {}),  # Add this line
+            "turbulent_transits": results.get("turbulent_transits", {})  # Add this line
         }
 
     except Exception as e:
         logger.error(f"Error creating transit loop: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# Add this function before initializing MarriageDateFinder
+async def transit_loop_wrapper(
+    name: str, 
+    year: int, 
+    month: int, 
+    day: int, 
+    hour: int, 
+    minute: int, 
+    city: str, 
+    nation: str,
+    from_date: str, 
+    to_date: str, 
+    transit_hour: int,
+    transit_minute: int, 
+    user_id: str, 
+    job_id: str,
+    filter_planets: Optional[List[str]] = None,
+    generate_chart: bool = False,  # Add these optional parameters
+    aspects_only: bool = False,
+    filter_orb: Optional[float] = None,
+    filter_aspects: Optional[List[str]] = None
+) -> Dict:
+    """Wrapper function to convert parameters into TransitLoopRequest"""
+    request = TransitLoopRequest(
+        name=name,
+        year=year,
+        month=month,
+        day=day,
+        hour=hour,
+        minute=minute,
+        city=city,
+        nation=nation,
+        from_date=from_date,
+        to_date=to_date,
+        transit_hour=transit_hour,
+        transit_minute=transit_minute,
+        user_id=user_id,
+        job_id=job_id,
+        generate_chart=generate_chart,
+        aspects_only=aspects_only,
+        filter_orb=filter_orb,
+        filter_aspects=filter_aspects,
+        filter_planets=filter_planets
+    )
+    
+    result = await create_transit_loop(request)
+    return result.get("chart_data", {})
+
+# Initialize MarriageDateFinder with the wrapper function
+marriage_finder = MarriageDateFinder(transit_loop_wrapper)
 
 @app.post("/charts/synastry")
 async def create_synastry_chart(request: SynastryRequest):
@@ -287,6 +348,26 @@ async def create_synastry_chart(request: SynastryRequest):
         
         # Parse chart data
         chart_data = json.loads(chart_data)
+        # print("chart_data in API", chart_data)
+        
+        # If marriage date finding is requested
+        if request.find_marriage_date and request.from_date and request.to_date:
+            logger.info("Finding potential marriage dates...")
+            
+            marriage_dates = await marriage_finder.find_matching_dates(
+                chart_data,
+                request.from_date,
+                request.to_date,
+                request.transit_hour or 12,
+                request.transit_minute or 0,
+                request.user_id,
+                request.job_id
+            )
+            
+            # logger.info(f"Marriage dates found: {marriage_dates}")
+            
+            # Add marriage dates to chart data
+            chart_data["potential_marriage_dates"] = marriage_dates
         
         # Construct the file paths
         name_safe = f"{request.name}_{request.name2}".replace(" ", "_")
@@ -320,9 +401,9 @@ async def create_synastry_chart(request: SynastryRequest):
         return {
             "chart_data": chart_data,
             "visualization_path": viz_chart_path if viz_chart_path else None,
-            "record": record
+            # "record": record
         }
         
     except Exception as e:
         logger.error(f"Error creating synastry chart: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e)) 
+        raise HTTPException(status_code=500, detail=str(e))

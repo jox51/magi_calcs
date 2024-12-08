@@ -131,6 +131,7 @@ class TransitVisualizationService:
         Create and save visualizations of transit aspects over time, split by month
         """
         try:
+            # print("transit_data", transit_data)
             # Prepare the data
             df = self.prepare_data(transit_data)
             df['date'] = pd.to_datetime(df['date'])

@@ -150,7 +150,7 @@ class PocketbaseService:
                 )
                 
                 # Log the actual request payload for debugging
-                logger.info(f"Request data: {data}")
+                # logger.info(f"Request data: {data}")
                 
                 # Check if request was successful
                 response.raise_for_status()
@@ -214,7 +214,7 @@ class PocketbaseService:
                 )
                 
                 # Log the actual request payload for debugging
-                logger.info(f"Request data: {data}")
+                # logger.info(f"Request data: {data}")
                 
                 # Check if request was successful
                 response.raise_for_status()
