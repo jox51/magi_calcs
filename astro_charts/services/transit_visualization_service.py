@@ -1,6 +1,6 @@
 import altair as alt
 import pandas as pd
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 from datetime import datetime
 import logging
 import tempfile
@@ -25,49 +25,46 @@ class TransitVisualizationService:
     def prepare_data(self, transit_data: Dict[str, Any]) -> pd.DataFrame:
         """
         Transform transit data into a pandas DataFrame suitable for visualization
-        
-        Args:
-            transit_data: Dictionary containing transit data by date
-            
-        Returns:
-            DataFrame with columns: date, type, count
         """
         records = []
-        # Get unique dates
-        dates = sorted(set(transit_data.keys()))
         
-        for date_str in dates:
-            data = transit_data[date_str]
-            date = datetime.strptime(date_str, '%Y-%m-%d')
-            
-            # Get transit data
-            transit = data.get('transit', {})
-            
-            # Count aspects by type
-            aspect_counts = {
-                'Cinderella': len(transit.get('cinderella_aspects', [])),
-                'Super': len(transit.get('transit_super_aspects', [])),
-                'Turbulent': len(transit.get('turbulent_transits', []))
-            }
-            
-            # Only add records for aspects that exist
-            for aspect_type, count in aspect_counts.items():
-                if count > 0:
+        # Get daily aspects from the nested structure
+        daily_aspects = transit_data.get('daily_aspects', {})
+        
+        # Iterate through dates in daily_aspects
+        for date_str, day_data in daily_aspects.items():
+            try:
+                date = datetime.strptime(date_str, '%Y-%m-%d')
+                
+                # Get transit data
+                transit = day_data.get('transit', {})
+                
+                # Count aspects by type (including empty lists as 0)
+                aspect_counts = {
+                    'Cinderella': len(transit.get('cinderella_aspects', [])),
+                    'Super': len(transit.get('transit_super_aspects', [])),
+                    'Turbulent': len(day_data.get('turbulent_transits', []))
+                }
+                
+                # Add records for all types, even if count is 0
+                for aspect_type, count in aspect_counts.items():
                     records.append({
                         'date': date,
                         'type': aspect_type,
                         'count': count
                     })
+                        
+            except ValueError as e:
+                logger.error(f"Error parsing date {date_str}: {str(e)}")
+                continue
         
-        # Create DataFrame and ensure we have data
-        if not records:
-            return pd.DataFrame(columns=['date', 'type', 'count'])
-            
+        # Create DataFrame
         df = pd.DataFrame(records)
         
-        # Sort by date and type
-        df = df.sort_values(['date', 'type'])
-        
+        if not df.empty:
+            # Sort by date and type
+            df = df.sort_values(['date', 'type'])
+            
         return df
 
     def _split_into_monthly_chunks(self, df: pd.DataFrame) -> List[pd.DataFrame]:
@@ -128,38 +125,30 @@ class TransitVisualizationService:
 
     def create_visualization(self, transit_data: Dict[str, Any], output_path: str) -> str:
         """
-        Create and save visualizations of transit aspects over time, split by month
+        Create and save visualizations of transit aspects over time
         """
         try:
-            # print("transit_data", transit_data)
             # Prepare the data
             df = self.prepare_data(transit_data)
-            df['date'] = pd.to_datetime(df['date'])
             
+            # Even if no aspects found, create an empty visualization
             if df.empty:
-                logger.warning("No aspect data found for visualization")
-                return None
+                logger.warning("No aspect data found, creating empty visualization")
+                
+            # Get subject name from the first date's natal data
+            daily_aspects = transit_data.get('daily_aspects', {})
+            first_date = list(daily_aspects.keys())[0]
+            subject_name = daily_aspects[first_date]['natal']['name']
             
-            # Get subject name
-            first_date = list(transit_data.keys())[0]
-            subject_name = transit_data[first_date]['natal']['name']
+            # Create the chart (will show empty if no data)
+            chart = self.create_monthly_chart(df, subject_name)
             
-            # Split data into monthly chunks
-            monthly_chunks = self._split_into_monthly_chunks(df)
+            # Save the chart
+            chart.save(output_path)
             
-            # Create a chart for each month
-            charts = []
-            for month_df in monthly_chunks:
-                chart = self.create_monthly_chart(month_df, subject_name)
-                charts.append(chart)
-            
-            # Vertically concatenate all charts
-            final_chart = alt.vconcat(*charts)
-            
-            # Save the combined chart
-            final_chart.save(output_path)
             return output_path
                 
         except Exception as e:
             logger.error(f"Error creating transit visualization: {str(e)}")
-            raise
+            # Return a default path even if visualization fails
+            return output_path

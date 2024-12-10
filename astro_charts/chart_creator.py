@@ -21,7 +21,7 @@ from .romance_linkages import RomanceLinkageCalculator
 from .marital_linkages import MaritalLinkageCalculator
 from .transit_calculator import calculate_transit_data
 from .services.synastry_score_calculator import SynastryScoreCalculator
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 
 
@@ -810,75 +810,54 @@ class ChartCreator:
             logger.error(f"Error converting synastry data to JSON: {str(e)}")
             raise
 
-    def create_transit_loop(self, from_date, to_date, generate_chart=False, aspects_only=False, 
-                          filter_orb=None, filter_aspects=None, filter_planets=None):
-        """Create transit charts for a range of dates"""
+    async def create_transit_loop(
+        self,
+        from_date: str,
+        to_date: str,
+        generate_chart: bool = False,
+        aspects_only: bool = False,
+        filter_orb: Optional[float] = None,
+        filter_aspects: Optional[List[str]] = None,
+        filter_planets: Optional[List[str]] = None
+    ) -> Dict:
+        """Create transit loop charts for a date range"""
         try:
-            # Convert date strings to datetime objects
+            # Convert string dates to datetime objects
             start_date = datetime.strptime(from_date, "%Y-%m-%d")
             end_date = datetime.strptime(to_date, "%Y-%m-%d")
             
-            # Initialize results dictionary
-            results = {}
+            daily_aspects = {}
+            turbulent_transits = {}
             
-            # Loop through each date
             current_date = start_date
             while current_date <= end_date:
-                # Create transit chart for current date (removed generate_chart parameter)
-                transit_data = self.create_transit_chart(
+                # Create transit chart for current date
+                transit_data = await self.create_transit_chart(  # Add await here
                     transit_year=current_date.year,
                     transit_month=current_date.month,
                     transit_day=current_date.day,
-                    transit_hour=14,  # Default to 2 PM
-                    transit_minute=30
+                    transit_hour=12,  # Default to noon
+                    transit_minute=0
                 )
                 
-                # Process the transit data based on filters
+                # Process the transit data and store results
+                date_str = current_date.strftime("%Y-%m-%d")
                 if isinstance(transit_data, str):
-                    try:
-                        data = json.loads(transit_data)
-                        
-                         # Use Cython-optimized calculation with correct data structure
-                        filtered_data = calculate_transit_data(
-                            natal_data=data,  # Pass the full data object
-                            transit_data=data.get('transit', {}),  # Get the transit section
-                            filter_orb=-1.0 if filter_orb is None else float(filter_orb)
-                            )
+                    transit_data = json.loads(transit_data)
+                    
+                daily_aspects[date_str] = transit_data
                 
-                        # Update the transit section in the original data
-                        data['transit'] = filtered_data
-                        
-                        # Add turbulent transit analysis for each day
-                        turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
-                            natal_data={"subject": data["natal"]},
-                            transit_data=data["transit"]["subject"]
-                        )
-                        
-                        # Add turbulent transits to the data
-                        data['transit']["turbulent_transits"] = turbulent_transits
-                        
-                        # Apply filters if specified
-                        if aspects_only or filter_orb or filter_aspects or filter_planets:
-                            filtered_data = self._filter_transit_data(
-                                data,
-                                aspects_only=aspects_only,
-                                filter_orb=filter_orb,
-                                filter_aspects=filter_aspects,
-                                filter_planets=filter_planets
-                            )
-                            results[current_date.strftime("%Y-%m-%d")] = filtered_data
-                        else:
-                            results[current_date.strftime("%Y-%m-%d")] = data
-                            
-                    except json.JSONDecodeError:
-                        results[current_date.strftime("%Y-%m-%d")] = transit_data
-                else:
-                    results[current_date.strftime("%Y-%m-%d")] = transit_data
+                # Extract turbulent transits if they exist
+                if "turbulent_transits" in transit_data:
+                    turbulent_transits[date_str] = transit_data["turbulent_transits"]
                 
                 # Move to next day
                 current_date += timedelta(days=1)
             
-            return results
+            return {
+                "daily_aspects": daily_aspects,
+                "turbulent_transits": turbulent_transits
+            }
             
         except Exception as e:
             logger.error(f"Error in create_transit_loop: {str(e)}")

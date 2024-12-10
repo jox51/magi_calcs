@@ -173,7 +173,7 @@ async def create_transit_chart(request: TransitChartRequest):
         )
         
         # Get chart data and generate chart
-        chart_data = chart_creator.create_transit_chart(
+        chart_data = await chart_creator.create_transit_chart(
             transit_year=request.transit_data.transit_year,
             transit_month=request.transit_data.transit_month,
             transit_day=request.transit_data.transit_day,
@@ -229,7 +229,7 @@ async def create_transit_loop(request: TransitLoopRequest):
         )
         
         # Get transit loop results
-        results = chart_creator.create_transit_loop(
+        results = await chart_creator.create_transit_loop(
             from_date=request.from_date,
             to_date=request.to_date,
             generate_chart=request.generate_chart,
@@ -238,35 +238,50 @@ async def create_transit_loop(request: TransitLoopRequest):
             filter_aspects=request.filter_aspects,
             filter_planets=request.filter_planets
         )
+        
+        logger.info(f"Transit Loop Results: {results}")
 
         # Create visualization
         name_safe = request.name.replace(" ", "_")
-        viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.svg")
-        
+        viz_path = f"charts/{name_safe}_transit_loop_viz.svg"
         viz_service = TransitVisualizationService()
-        viz_chart_path = viz_service.create_visualization(results, viz_path)
+        try:
+            viz_chart_path = viz_service.create_visualization(results, viz_path)
+        except Exception as viz_error:
+            logger.error(f"Visualization error: {str(viz_error)}")
+            viz_chart_path = None  # Continue even if visualization fails
 
-        if viz_chart_path:
-            logger.info(f"Created visualization at {viz_chart_path}")
-        
         # Save to PocketBase
-        pb_service = PocketbaseService()
-        record = pb_service.create_transit_loop_charts(
-            transit_loop_data=results,
-            user_id=request.user_id,
-            job_id=request.job_id
-        )
+        try:
+            pb_service = PocketbaseService()
+            record = pb_service.create_transit_loop_charts(
+                transit_loop_data={
+                    "natal": results.get("natal", {}),
+                    "transit_data": results,
+                    "visualization_path": viz_chart_path,
+                    "date_range": {
+                        "from_date": request.from_date,
+                        "to_date": request.to_date
+                    }
+                },
+                user_id=request.user_id,
+                job_id=request.job_id
+            )
+        except Exception as pb_error:
+            logger.error(f"PocketBase error: {str(pb_error)}")
+            raise
 
-        # Return results with visualization path and PocketBase record
+        # Return results
         return {
             "chart_data": results,
             "visualization_path": viz_chart_path if viz_chart_path else None,
-             "daily_aspects": results.get("daily_aspects", {}),  # Add this line
-            "turbulent_transits": results.get("turbulent_transits", {})  # Add this line
+            "daily_aspects": results.get("daily_aspects", {}),
+            "turbulent_transits": results.get("turbulent_transits", {})
         }
 
     except Exception as e:
         logger.error(f"Error creating transit loop: {str(e)}")
+        logger.exception("Full traceback:")
         raise HTTPException(status_code=500, detail=str(e))
 
 # Add this function before initializing MarriageDateFinder

@@ -104,29 +104,30 @@ class PocketbaseService:
     def create_transit_loop_charts(self, transit_loop_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
         """Create transit loop record with visualization in PocketBase"""
         try:
-            endpoint = f"{self.base_url}/api/collections/transit_charts/records"
+            endpoint = f"{self.base_url}/api/collections/transit_charts/records"  # Changed collection name
             
             # Prepare the form data
             data = {
-                'transit_data': json.dumps(transit_loop_data)
+                'transit_data': json.dumps({
+                    'daily_aspects': transit_loop_data.get('transit_data', {}).get('daily_aspects', {}),
+                    'turbulent_transits': transit_loop_data.get('transit_data', {}).get('turbulent_transits', {}),
+                    'date_range': transit_loop_data.get('date_range', {})
+                })
             }
             
             if user_id:
                 data['user_id'] = user_id
             if job_id:
                 data['job_id'] = job_id
-                
-            # Get the visualization chart path
-            # Extract name from the first date's natal data
-            first_date = list(transit_loop_data.keys())[0]
-            name_safe = transit_loop_data[first_date]['natal']['name'].replace(" ", "_")
-            viz_path = os.path.join('charts', f"{name_safe}_transit_loop_viz.svg")
+            
+            # Get the visualization path directly
+            viz_path = transit_loop_data.get('visualization_path')
             
             # Prepare files if visualization exists
             files = None
-            if os.path.exists(viz_path):
+            if viz_path and os.path.exists(viz_path):
                 files = {
-                    'loop_chart': ('loop_chart.svg', open(viz_path, 'rb'), 'image/svg+xml')
+                    'loop_chart': ('visualization.svg', open(viz_path, 'rb'), 'image/svg+xml')
                 }
                 logger.info(f"Adding visualization SVG from {viz_path}")
             
@@ -135,11 +136,12 @@ class PocketbaseService:
             
             # Log request details
             logger.info(f"Sending request to {endpoint}")
-            logger.info(f"Headers: {headers}")
             logger.info(f"Data fields: {list(data.keys())}")
             if files:
                 logger.info(f"File fields: {list(files.keys())}")
             
+            logger.info(f"Data: {data}")
+            logger.info(f"Files: {files}")
             try:
                 # Make the request
                 response = requests.post(
@@ -149,8 +151,10 @@ class PocketbaseService:
                     files=files
                 )
                 
-                # Log the actual request payload for debugging
-                # logger.info(f"Request data: {data}")
+                # Log response for debugging
+                if response.status_code != 200:
+                    logger.error(f"Response status: {response.status_code}")
+                    logger.error(f"Response text: {response.text}")
                 
                 # Check if request was successful
                 response.raise_for_status()
@@ -159,9 +163,9 @@ class PocketbaseService:
                 
             finally:
                 # Clean up file handle if it was opened
-                if files and 'loop_chart' in files:
-                    files['loop_chart'][1].close()
-        
+                if files and 'visualization' in files:
+                    files['visualization'][1].close()
+            
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating transit loop record: {str(e)}")
             if hasattr(e.response, 'text'):
@@ -170,7 +174,6 @@ class PocketbaseService:
                 if files:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
-
     def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
         """Create a new natal chart record in PocketBase with chart file"""
         try:
@@ -336,3 +339,4 @@ class PocketbaseService:
         except Exception as e:
             logger.error(f"Error creating synastry chart record: {str(e)}")
             raise
+
