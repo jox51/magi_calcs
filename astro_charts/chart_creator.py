@@ -21,6 +21,7 @@ from .romance_linkages import RomanceLinkageCalculator
 from .marital_linkages import MaritalLinkageCalculator
 from .transit_calculator import calculate_transit_data
 from .services.synastry_score_calculator import SynastryScoreCalculator
+from typing import Dict, List
 
 
 
@@ -161,6 +162,41 @@ class ChartCreator:
         self.nasa_service = NASAHorizonsService()
         self.turbulent_transit_service = TurbulentTransitService()
 
+        self.name = name
+        self.year = year
+        self.month = month
+        self.day = day
+        self.hour = hour
+        self.minute = minute
+        self.city = city
+        self.nation = nation
+        self.natal_subject = None
+        self.transit_subject = None
+
+    def get_natal_planets(self) -> Dict:
+        """Return the natal planets data"""
+        if self.natal_subject and hasattr(self.natal_subject, 'planets'):
+            return self.natal_subject.planets
+        return {}
+
+    def get_transit_planets(self) -> Dict:
+        """Return the transit planets data"""
+        if self.transit_subject and hasattr(self.transit_subject, 'planets'):
+            return self.transit_subject.planets
+        return {}
+
+    def get_cinderella_aspects(self) -> List[Dict]:
+        """Return Cinderella aspects for current transit"""
+        if hasattr(self, '_cinderella_aspects'):
+            return self._cinderella_aspects
+        return []
+
+    def get_turbulent_transits(self) -> List[Dict]:
+        """Return turbulent transits for current transit"""
+        if hasattr(self, '_turbulent_transits'):
+            return self._turbulent_transits
+        return []
+
     def create_natal_chart(self):
         """Create and save a natal chart"""
         try:
@@ -202,7 +238,7 @@ class ChartCreator:
             logger.error(f"Error creating natal chart: {str(e)}")
             raise
 
-    def create_transit_chart(self, transit_year=None, transit_month=None, 
+    async def create_transit_chart(self, transit_year=None, transit_month=None, 
                              transit_day=None, transit_hour=None, transit_minute=None):
         """Create a transit chart for a specific date (or current date if not specified)"""
         try:
@@ -773,6 +809,7 @@ class ChartCreator:
         except Exception as e:
             logger.error(f"Error converting synastry data to JSON: {str(e)}")
             raise
+
     def create_transit_loop(self, from_date, to_date, generate_chart=False, aspects_only=False, 
                           filter_orb=None, filter_aspects=None, filter_planets=None):
         """Create transit charts for a range of dates"""
@@ -897,6 +934,7 @@ class ChartCreator:
             logger.error(f"Error in _filter_transit_data: {str(e)}")
             raise
 
+ 
     def get_synastry_as_data(self, person2_name, person2_birth_data):
         """Get synastry data as JSON"""
         try:
@@ -948,4 +986,90 @@ class ChartCreator:
             
         except Exception as e:
             logger.error(f"Error in get_synastry_as_data: {str(e)}")
+            raise
+
+    def create_marriage_transit_loop(self, from_date: str, to_date: str, 
+                               transit_hour: int = 12, transit_minute: int = 0) -> Dict:
+        """
+        Create specialized transit loop for marriage date analysis.
+        Focuses specifically on Cinderella and Turbulent transits.
+        """
+        try:
+            # Convert date strings to datetime objects
+            start_date = datetime.strptime(from_date, "%Y-%m-%d")
+            end_date = datetime.strptime(to_date, "%Y-%m-%d")
+            
+            # Initialize results dictionary
+            results = {}
+            
+            # Define marriage-relevant planets to filter
+            marriage_planets = ["chiron", "neptune", "venus", "saturn", "jupiter", "sun"]
+            
+            # Loop through each date
+            current_date = start_date
+            while current_date <= end_date:
+                # Create transit chart for current date
+                transit_data = self.create_transit_chart(
+                    transit_year=current_date.year,
+                    transit_month=current_date.month,
+                    transit_day=current_date.day,
+                    transit_hour=transit_hour,
+                    transit_minute=transit_minute
+                )
+                
+                if isinstance(transit_data, str):
+                    try:
+                        data = json.loads(transit_data)
+                        
+                        # Filter for marriage-relevant planets only
+                        natal_planets = data["natal"]["planets"]
+                        transit_planets = data["transit"]["subject"]["planets"]
+                        
+                        filtered_natal = {k: v for k, v in natal_planets.items() 
+                                       if k.lower() in marriage_planets}
+                        filtered_transit = {k: v for k, v in transit_planets.items() 
+                                         if k.lower() in marriage_planets}
+                        
+                        # Update the data with filtered planets
+                        data["natal"]["planets"] = filtered_natal
+                        data["transit"]["subject"]["planets"] = filtered_transit
+                        
+                        # Get Cinderella aspects
+                        linkage_calc = MagiLinkageCalculator()
+                        cinderella_aspects = linkage_calc.find_cinderella_linkages(
+                            {"subject": data["natal"]},
+                            data["transit"]
+                        )
+                        
+                        # Get turbulent transits
+                        turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
+                            natal_data={"subject": data["natal"]},
+                            transit_data=data["transit"]["subject"]
+                        )
+                        
+                        # Create final structure for this date
+                        date_data = {
+                            "date": current_date.strftime("%Y-%m-%d"),
+                            "time": f"{transit_hour:02d}:{transit_minute:02d}",
+                            "natal_planets": filtered_natal,
+                            "transit_planets": filtered_transit,
+                            "cinderella_aspects": cinderella_aspects,
+                            "turbulent_transits": turbulent_transits
+                        }
+                        
+                        # Only include dates with relevant aspects
+                        if cinderella_aspects or turbulent_transits:
+                            results[current_date.strftime("%Y-%m-%d")] = date_data
+                        
+                    except json.JSONDecodeError as e:
+                        logger.error(f"Error decoding transit data for {current_date}: {e}")
+                        continue
+                    
+                # Move to next day
+                current_date += timedelta(days=1)
+            
+            return results
+            
+        except Exception as e:
+            logger.error(f"Error in create_marriage_transit_loop: {str(e)}")
             raise

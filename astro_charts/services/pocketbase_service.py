@@ -289,7 +289,7 @@ class PocketbaseService:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
 
-    def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, easy_chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+    def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, easy_chart_path: str = None, easy_chart_html_path: str = None, user_id: str = None, job_id: str = None, is_marriage_request: bool = False) -> Dict[str, Any]:
         """Create synastry record with visualization in PocketBase"""
         try:
             endpoint = f"{self.base_url}/api/collections/synastry_charts/records"
@@ -298,18 +298,26 @@ class PocketbaseService:
             data = {
                 'synastry_data': json.dumps(synastry_data)
             }
+         
             
             if user_id:
                 data['user_id'] = user_id
             if job_id:
                 data['job_id'] = job_id
-            
+            if is_marriage_request:
+                data['is_marriage_request'] = True
+            else:
+                data['is_marriage_request'] = False
+                
+            logger.info(f"Easy chart html path: {easy_chart_html_path}")
             # Prepare files
             files = {}
             if chart_path and os.path.exists(chart_path):
                 files['chart'] = ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
             if easy_chart_path and os.path.exists(easy_chart_path):
                 files['easy_chart'] = ('easy_chart.svg', open(easy_chart_path, 'rb'), 'image/svg+xml')
+            if easy_chart_html_path and os.path.exists(easy_chart_html_path):
+                files['easy_chart_html'] = ('easy_chart_html.html', open(easy_chart_html_path, 'rb'), 'text/html')
         
               # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}

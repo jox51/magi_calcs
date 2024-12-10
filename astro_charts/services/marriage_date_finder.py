@@ -223,22 +223,7 @@ class MarriageDateFinder:
             logger.error(f"Error checking Cinderella aspect: {str(e)}")
             return False 
 
-    def find_marriage_dates(self, person1: Dict, person2: Dict, start_date: str, end_date: str) -> Dict:
-        """
-        Find potential marriage dates between two people based on their synastry and transits.
-        """
-        # Get marriage-specific transits for both people
-        person1_transits = self._marriage_transit_loop(person1, start_date, end_date)
-        person2_transits = self._marriage_transit_loop(person2, start_date, end_date)
-        
-        # Find dates where both people have favorable transits
-        matching_dates = self._find_cinderella_matches(person1_transits, person2_transits)
-        
-        return {
-            'matching_dates': matching_dates
-        }
-
-    def _marriage_transit_loop(self, person: Dict, start_date: str, end_date: str) -> Dict:
+  
         """
         Specialized transit loop for finding marriage-favorable dates.
         Only looks for aspects relevant to marriage potential.

@@ -11,7 +11,7 @@ import os
 import shutil
 from astro_charts.services.transit_visualization_service import TransitVisualizationService
 from astro_charts.services.synastry_visualization_service import SynastryVisualizationService
-from astro_charts.services.marriage_date_finder import MarriageDateFinder
+from astro_charts.services.alt_marriage_date_finder import AltMarriageDateFinder
 
 # Load environment variables at startup
 load_dotenv()
@@ -317,8 +317,8 @@ async def transit_loop_wrapper(
     result = await create_transit_loop(request)
     return result.get("chart_data", {})
 
-# Initialize MarriageDateFinder with the wrapper function
-marriage_finder = MarriageDateFinder(transit_loop_wrapper)
+# Initialize new marriage finder
+alt_marriage_finder = AltMarriageDateFinder(transit_loop_wrapper)
 
 @app.post("/charts/synastry")
 async def create_synastry_chart(request: SynastryRequest):
@@ -348,13 +348,15 @@ async def create_synastry_chart(request: SynastryRequest):
         
         # Parse chart data
         chart_data = json.loads(chart_data)
+        is_marriage_request = False
         # print("chart_data in API", chart_data)
         
         # If marriage date finding is requested
         if request.find_marriage_date and request.from_date and request.to_date:
-            logger.info("Finding potential marriage dates...")
+            logger.info("Finding potential marriage dates using alternative finder...")
             
-            marriage_dates = await marriage_finder.find_matching_dates(
+            # Replace old marriage_finder with alt_marriage_finder
+            marriage_dates = await alt_marriage_finder.find_matching_dates(
                 chart_data,
                 request.from_date,
                 request.to_date,
@@ -363,8 +365,8 @@ async def create_synastry_chart(request: SynastryRequest):
                 request.user_id,
                 request.job_id
             )
-            
-            # logger.info(f"Marriage dates found: {marriage_dates}")
+            logger.info(f"Marriage dates found: {marriage_dates}")
+            is_marriage_request = True
             
             # Add marriage dates to chart data
             chart_data["potential_marriage_dates"] = marriage_dates
@@ -373,6 +375,7 @@ async def create_synastry_chart(request: SynastryRequest):
         name_safe = f"{request.name}_{request.name2}".replace(" ", "_")
         final_chart_path = os.path.join('charts', f"{name_safe}_synastry.svg")
         easy_chart_path = os.path.join('charts', f"{name_safe}_synastry_easy.svg")
+        easy_chart_html_path = os.path.join('charts', f"{name_safe}_synastry_easy.html")
         
         logger.info(f"Using final chart path: {os.path.abspath(final_chart_path)}")
         
@@ -382,7 +385,7 @@ async def create_synastry_chart(request: SynastryRequest):
         
         # Create easy visualization
         viz_service = SynastryVisualizationService()
-        viz_chart_path = viz_service.create_visualization(chart_data, easy_chart_path)
+        viz_chart_path, easy_chart_html_path = viz_service.create_visualization(chart_data, easy_chart_path, easy_chart_html_path)
 
         if viz_chart_path:
             logger.info(f"Created easy visualization at {viz_chart_path}")
@@ -393,14 +396,17 @@ async def create_synastry_chart(request: SynastryRequest):
             synastry_data=chart_data,
             chart_path=final_chart_path,
             easy_chart_path=viz_chart_path,
+            easy_chart_html_path=easy_chart_html_path,
             user_id=request.user_id,
-            job_id=request.job_id
+            job_id=request.job_id,
+            is_marriage_request=is_marriage_request
         )
         
         # Return both chart data, visualization path and PocketBase record
         return {
             "chart_data": chart_data,
             "visualization_path": viz_chart_path if viz_chart_path else None,
+            "easy_chart_html_path": easy_chart_html_path if easy_chart_html_path else None,
             # "record": record
         }
         

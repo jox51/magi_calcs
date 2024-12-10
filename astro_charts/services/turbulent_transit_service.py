@@ -23,7 +23,7 @@ class TurbulentTransitService:
         # Define valid turbulent aspects and their orbs
         self.valid_aspects = {
             'square': {'angle': 90, 'orb': 3},
-            'opposition': {'angle': 180, 'orb': 3},
+            # 'opposition': {'angle': 180, 'orb': 3},
             'quincunx': {'angle': 150, 'orb': 3},
             'contraparallel': {'angle': 180, 'orb': 1.5}
         }

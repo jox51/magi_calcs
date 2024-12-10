@@ -55,7 +55,7 @@ class SynastryVisualizationService:
             
         return "\n".join(descriptions)
 
-    def create_visualization(self, synastry_data: Dict[str, Any], output_path: str) -> str:
+    def create_visualization(self, synastry_data: Dict[str, Any], output_path: str, easy_chart_html_path: str) -> str:
         try:
             # Prepare the data for aspects
             df_aspects = self.prepare_data(synastry_data)
@@ -77,10 +77,18 @@ class SynastryVisualizationService:
             aspects_chart = self._create_aspects_chart(df_aspects, person1_name, person2_name)
             scores_chart = self._create_scores_chart(df_scores)
             
+            # Prepare marriage dates data if available
+            marriage_dates = synastry_data.get('potential_marriage_dates', {}).get('matching_dates', [])
+            if marriage_dates:
+                df_marriage = self._prepare_marriage_dates_data(marriage_dates)
+                marriage_chart = self._create_marriage_dates_chart(df_marriage)
+                charts_to_concat = [aspects_chart, scores_chart, marriage_chart]
+            else:
+                charts_to_concat = [aspects_chart, scores_chart]
+            
             # Combine charts with single configuration
             final_chart = alt.vconcat(
-                aspects_chart,
-                scores_chart,
+                *charts_to_concat,
                 title={
                     "text": f"Relationship Analysis: {person1_name} & {person2_name}",
                     "subtitle": "Hover over elements for details",
@@ -99,7 +107,10 @@ class SynastryVisualizationService:
             
             # Save the chart
             final_chart.save(output_path)
-            return output_path
+            final_chart.save(easy_chart_html_path)
+            
+            
+            return output_path, easy_chart_html_path
             
         except Exception as e:
             logger.error(f"Error creating synastry visualization: {str(e)}")
@@ -177,3 +188,136 @@ class SynastryVisualizationService:
             height=200,
             title="Compatibility Scores"
         )
+
+    def _prepare_marriage_dates_data(self, marriage_dates: List[Dict]) -> pd.DataFrame:
+        """Prepare marriage dates data for visualization"""
+        records = []
+        for date_info in marriage_dates:
+            date = date_info['date']
+            
+            # Get person1 and person2 transits
+            p1_cinderella = date_info['person1'].get('cinderella_transits', [])
+            p1_turbulent = date_info['person1'].get('turbulent_transits', [])
+            p2_cinderella = date_info['person2'].get('cinderella_transits', [])
+            p2_turbulent = date_info['person2'].get('turbulent_transits', [])
+            
+            # Format Cinderella transits
+            cinderella_details = []
+            for transit in p1_cinderella:  # Person 1's transits
+                detail = (
+                    f"Transit {transit.get('planet2_name', '').title()} "
+                    f"{transit.get('aspect_name', '').title()} to "
+                    f"{transit.get('person1_name', '')}'s {transit.get('planet1_name', '').title()}"
+                )
+                cinderella_details.append(detail)
+                
+            for transit in p2_cinderella:  # Person 2's transits
+                detail = (
+                    f"Transit {transit.get('planet2_name', '').title()} "
+                    f"{transit.get('aspect_name', '').title()} to "
+                    f"{transit.get('person1_name', '')}'s {transit.get('planet1_name', '').title()}"
+                )
+                cinderella_details.append(detail)
+            
+            # Format turbulent transits
+            turbulent_details = []
+            for transit in p1_turbulent:  # Person 1's turbulent transits
+                person_name = transit.get('person_name', 'Diana Spencer')  # Default or get from transit
+                detail = (
+                    f"Transit {transit.get('transit_planet', '').title()} "
+                    f"{transit.get('aspect_name', '').title()} to "
+                    f"{person_name}'s {transit.get('natal_planet', '').title()} "
+                )
+                turbulent_details.append(detail)
+                
+            for transit in p2_turbulent:  # Person 2's turbulent transits
+                person_name = transit.get('person_name', 'Charles Windsor')  # Default or get from transit
+                detail = (
+                    f"Transit {transit.get('transit_planet', '').title()} "
+                    f"{transit.get('aspect_name', '').title()} to "
+                    f"{person_name}'s {transit.get('natal_planet', '').title()} "
+                )
+                turbulent_details.append(detail)
+            
+            # Join details with commas
+            cinderella_text = ", ".join(cinderella_details) if cinderella_details else "None"
+            turbulent_text = ", ".join(turbulent_details) if turbulent_details else "None"
+            
+            records.append({
+                'date': date,
+                'Cinderella': len(p1_cinderella) + len(p2_cinderella),
+                'Turbulent': len(p1_turbulent) + len(p2_turbulent),
+                'score': (len(p1_cinderella) + len(p2_cinderella)) * 10 - (len(p1_turbulent) + len(p2_turbulent)) * 5,
+                'cinderella_aspects': cinderella_text,
+                'turbulent_aspects': turbulent_text
+            })
+        
+        return pd.DataFrame(records)
+
+    def _create_marriage_dates_chart(self, df: pd.DataFrame) -> alt.Chart:
+        """Create the marriage dates visualization with stacked bars"""
+        
+        # Reshape data for stacked bars
+        df_melted = pd.melt(
+            df,
+            id_vars=['date', 'score', 'cinderella_aspects', 'turbulent_aspects'],
+            value_vars=['Cinderella', 'Turbulent'],
+            var_name='transit_type',
+            value_name='count'
+        )
+        
+        # Create stacked bar chart
+        bars = alt.Chart(df_melted).mark_bar().encode(
+            x=alt.X('date:O', 
+                    title='Date',
+                    axis=alt.Axis(labelAngle=-45)),
+            y=alt.Y('count:Q',
+                    title='Number of Transits',
+                    stack=True),
+            color=alt.Color('transit_type:N',
+                           scale=alt.Scale(
+                               domain=['Cinderella', 'Turbulent'],
+                               range=[self.colors['Cinderella'], self.colors['Saturn Clashes']]
+                           ),
+                           legend=alt.Legend(
+                               title='Transit Type'
+                           )),
+            tooltip=[
+                alt.Tooltip('date:O', title='Date'),
+                alt.Tooltip('count:Q', title='Count'),
+                alt.Tooltip('transit_type:N', title='Type'),
+                alt.Tooltip('cinderella_aspects:N', title='Cinderella Transits'),
+                alt.Tooltip('turbulent_aspects:N', title='Turbulent Transits')
+            ]
+        ).properties(
+            width=600,
+            height=300,
+            title={
+                "text": "Potential Marriage Dates Analysis",
+                "subtitle": "Hover over bars for details"
+            }
+        )
+        
+        # Add score line
+        score_line = alt.Chart(df).mark_line(
+            color='blue',
+            strokeWidth=2
+        ).encode(
+            x='date:O',
+            y=alt.Y('score:Q',
+                    title='Date Score',
+                    axis=alt.Axis(titleColor='blue')),
+            tooltip=[
+                alt.Tooltip('date:O', title='Date'),
+                alt.Tooltip('score:Q', title='Date Score')
+            ]
+        )
+        
+        # Combine the visualizations
+        marriage_chart = alt.layer(
+            bars, score_line
+        ).resolve_scale(
+            y='independent'
+        )
+        
+        return marriage_chart
