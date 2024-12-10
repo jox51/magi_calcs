@@ -376,10 +376,16 @@ class ChartCreator:
             # Calculate Cinderella aspects
             linkage_calc = MagiLinkageCalculator()
             cinderella_aspects = linkage_calc.find_cinderella_linkages(natal_data, transit_data)
+            
+            # Calculate Golden Transits
+            golden_transits = linkage_calc.find_golden_transits(natal_data, transit_data)
 
             # Add aspects to transit data
             transit_data["transit_super_aspects"] = transit_super_aspects
             transit_data["cinderella_aspects"] = cinderella_aspects
+            transit_data["aspects"] = []  # Keep empty array for consistency
+            transit_data["turbulent_transits"] = []  # Will be filled later
+            transit_data["golden_transits"] = golden_transits  # Add golden transits
 
             # Add turbulent transit analysis
             turbulent_transits = self.turbulent_transit_service.analyze_turbulent_transits(
@@ -393,10 +399,12 @@ class ChartCreator:
                 "transit": transit_data,
                 "natal_super_aspects": super_aspects,
                 "chart_path": chart_path,
-                "turbulent_transits": turbulent_transits
+                "turbulent_transits": turbulent_transits,
+                "golden_transits": golden_transits  # Add golden transits here too
             }
 
             logger.info(f"Found {len(turbulent_transits)} turbulent transits")
+            logger.info(f"Found {len(golden_transits)} golden transits")
             return json.dumps(chart_data, indent=2)
 
         except Exception as e:

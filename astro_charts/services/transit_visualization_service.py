@@ -14,9 +14,12 @@ class TransitVisualizationService:
     def __init__(self):
         """Initialize the visualization service with color schemes and settings"""
         self.colors = {
-            'Cinderella': '#00FF00',  # Green
-            'Super': '#0000FF',       # Blue
+            'Cinderella': '#0000FF',  # Blue
+            'Golden': '#FFD700',      # Gold
             'Turbulent': '#000000'    # Black
+            #  'Super': '#0000FF',       # Blue
+
+            # Removed Super aspects
         }
         
         # Configure Altair settings
@@ -42,8 +45,9 @@ class TransitVisualizationService:
                 # Count aspects by type (including empty lists as 0)
                 aspect_counts = {
                     'Cinderella': len(transit.get('cinderella_aspects', [])),
-                    'Super': len(transit.get('transit_super_aspects', [])),
+                    'Golden': len(transit.get('golden_transits', [])),  # Added Golden
                     'Turbulent': len(day_data.get('turbulent_transits', []))
+                    # Removed Super aspects
                 }
                 
                 # Add records for all types, even if count is 0

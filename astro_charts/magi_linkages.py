@@ -27,6 +27,13 @@ class MagiLinkageCalculator:
             ('neptune', 'chiron')
         ]
 
+        # Add Golden Transit pairs
+        self.golden_pairs = [
+            ('jupiter', 'pluto'),
+            ('pluto', 'neptune'),
+            ('pluto', 'venus')
+        ]
+
         # Define valid aspect angles and orbs
         self.valid_aspects = {
             'conjunction': {'angle': 0, 'orb': 3},
@@ -43,6 +50,11 @@ class MagiLinkageCalculator:
         """Check if two planets form a valid Cinderella pair"""
         planet1, planet2 = planet1.lower(), planet2.lower()
         return (planet1, planet2) in self.cinderella_pairs or (planet2, planet1) in self.cinderella_pairs
+
+    def is_golden_pair(self, planet1: str, planet2: str) -> bool:
+        """Check if two planets form a valid Golden Transit pair"""
+        planet1, planet2 = planet1.lower(), planet2.lower()
+        return (planet1, planet2) in self.golden_pairs or (planet2, planet1) in self.golden_pairs
 
     def calculate_angle_distance(self, pos1: float, pos2: float) -> float:
         """Calculate the shortest angular distance between two positions"""
@@ -135,3 +147,83 @@ class MagiLinkageCalculator:
                         })
 
         return linkages
+
+    def find_golden_transits(self, natal_data: Dict, transit_data: Dict) -> List[Dict]:
+        """Find all Golden Transit aspects between natal and transit charts"""
+        golden_transits = []
+        
+        # Get relevant planets for each chart - correcting the data structure access
+        natal_planets = {
+            'jupiter': natal_data['subject']['planets']['jupiter'],
+            'pluto': natal_data['subject']['planets']['pluto'],
+            'neptune': natal_data['subject']['planets']['neptune'],
+            'venus': natal_data['subject']['planets']['venus']
+        }
+        
+        transit_planets = {
+            'jupiter': transit_data['subject']['planets']['jupiter'],
+            'pluto': transit_data['subject']['planets']['pluto'],
+            'neptune': transit_data['subject']['planets']['neptune'],
+            'venus': transit_data['subject']['planets']['venus']
+        }
+
+        # Check each possible combination
+        for natal_planet, natal_data in natal_planets.items():
+            for transit_planet, transit_data in transit_planets.items():
+                # Skip if not a Golden Transit pair
+                if not self.is_golden_pair(natal_planet, transit_planet):
+                    continue
+
+                # Calculate longitude aspects
+                angle = self.calculate_angle_distance(
+                    natal_data['abs_pos'], 
+                    transit_data['abs_pos']
+                )
+
+                # Check each aspect
+                for aspect_name, aspect_data in self.valid_aspects.items():
+                    # Skip declination aspects for longitude calculations
+                    if aspect_name in ['parallel', 'contraparallel']:
+                        continue
+
+                    orb = abs(angle - aspect_data['angle'])
+                    if orb <= aspect_data['orb']:
+                        golden_transits.append({
+                            'natal_planet': natal_planet,
+                            'transit_planet': transit_planet,
+                            'aspect_name': aspect_name,
+                            'aspect_degrees': aspect_data['angle'],
+                            'orbit': round(orb, 4),
+                            'actual_degrees': round(angle, 4)
+                        })
+
+                # Check declination aspects
+                dec1 = natal_data.get('declination')
+                dec2 = transit_data.get('declination')
+                
+                if dec1 is not None and dec2 is not None:
+                    dec_diff = abs(dec1 - dec2)
+                    
+                    # Check parallel
+                    if dec_diff <= self.valid_aspects['parallel']['orb']:
+                        golden_transits.append({
+                            'natal_planet': natal_planet,
+                            'transit_planet': transit_planet,
+                            'aspect_name': 'parallel',
+                            'aspect_degrees': 0,
+                            'orbit': round(dec_diff, 4),
+                            'actual_degrees': round(dec_diff, 4)
+                        })
+                    
+                    # Check contraparallel
+                    elif abs(dec_diff - 180) <= self.valid_aspects['contraparallel']['orb']:
+                        golden_transits.append({
+                            'natal_planet': natal_planet,
+                            'transit_planet': transit_planet,
+                            'aspect_name': 'contraparallel',
+                            'aspect_degrees': 180,
+                            'orbit': round(abs(dec_diff - 180), 4),
+                            'actual_degrees': round(dec_diff, 4)
+                        })
+
+        return golden_transits

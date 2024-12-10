@@ -267,7 +267,7 @@ class SynastryVisualizationService:
         )
         
         # Create stacked bar chart
-        bars = alt.Chart(df_melted).mark_bar().encode(
+        bars = alt.Chart(df_melted).mark_bar(size=20).encode(
             x=alt.X('date:O', 
                     title='Date',
                     axis=alt.Axis(labelAngle=-45)),
