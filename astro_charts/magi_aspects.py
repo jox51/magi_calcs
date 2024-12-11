@@ -13,6 +13,8 @@ class MagiAspect:
     actual_degrees: float
     is_harmonious: bool
     is_cinderella: bool = False
+    is_sexual: bool = False
+    is_romance: bool = False
 
 class MagiAspectCalculator:
     """Calculate aspects according to Magi Astrology rules"""
@@ -35,6 +37,20 @@ class MagiAspectCalculator:
             ('jupiter', 'chiron'),
             ('venus', 'chiron'),
             ('neptune', 'chiron')
+        ]
+
+        # Define Sexual aspect combinations
+        self.sexual_pairs = [
+            ('venus', 'mars'),
+            ('venus', 'pluto'),
+            ('mars', 'pluto')
+        ]
+
+        # Define Romance aspect combinations
+        self.romance_pairs = [
+            ('venus', 'chiron'),
+            ('venus', 'neptune'),
+            ('chiron', 'neptune')
         ]
 
     def calculate_angle_distance(self, pos1: float, pos2: float) -> float:
@@ -63,6 +79,44 @@ class MagiAspectCalculator:
                 return True
         return False
 
+    def is_sexual_aspect(self, p1_name: str, p2_name: str) -> bool:
+        """
+        Determine if an aspect between two planets is a Sexual aspect.
+        Sexual aspects occur between:
+        - Venus and Mars
+        - Venus and Pluto
+        - Mars and Pluto
+        (or vice versa in all cases)
+        """
+        # Convert planet names to lowercase for comparison
+        p1_name = p1_name.lower()
+        p2_name = p2_name.lower()
+        
+        # Check if this pair of planets forms a Sexual aspect
+        for pair in self.sexual_pairs:
+            if (p1_name in pair and p2_name in pair):
+                return True
+        return False
+
+    def is_romance_aspect(self, p1_name: str, p2_name: str) -> bool:
+        """
+        Determine if an aspect between two planets is a Romance aspect.
+        Romance aspects occur between:
+        - Venus and Chiron
+        - Venus and Neptune
+        - Chiron and Neptune
+        (or vice versa in all cases)
+        """
+        # Convert planet names to lowercase for comparison
+        p1_name = p1_name.lower()
+        p2_name = p2_name.lower()
+        
+        # Check if this pair of planets forms a Romance aspect
+        for pair in self.romance_pairs:
+            if (p1_name in pair and p2_name in pair):
+                return True
+        return False
+
     def get_aspect(self, pos1: float, pos2: float, p1_name: str, p2_name: str, orb: float = 3) -> Dict:
         """Determine if two positions form an aspect"""
         angle = self.calculate_angle_distance(pos1, pos2)
@@ -81,7 +135,9 @@ class MagiAspectCalculator:
                     'degrees': aspect_angle,
                     'orbit': abs(angle - aspect_angle),
                     'harmonious': aspect_data['harmonious'],
-                    'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name)
+                    'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name),
+                    'is_sexual': self.is_sexual_aspect(p1_name, p2_name),
+                    'is_romance': self.is_romance_aspect(p1_name, p2_name)
                 }
         return None
 
@@ -95,7 +151,9 @@ class MagiAspectCalculator:
                 'degrees': 0,
                 'orbit': diff,
                 'harmonious': True,
-                'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name)
+                'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name),
+                'is_sexual': self.is_sexual_aspect(p1_name, p2_name),
+                'is_romance': self.is_romance_aspect(p1_name, p2_name)
             }
         elif abs(diff - 180) <= self.magi_aspects['contraparallel']['orb']:
             return {
@@ -103,7 +161,9 @@ class MagiAspectCalculator:
                 'degrees': 180,
                 'orbit': abs(diff - 180),
                 'harmonious': False,
-                'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name)
+                'is_cinderella': self.is_cinderella_aspect(p1_name, p2_name),
+                'is_sexual': self.is_sexual_aspect(p1_name, p2_name),
+                'is_romance': self.is_romance_aspect(p1_name, p2_name)
             }
         return None
 
@@ -139,7 +199,9 @@ class MagiAspectCalculator:
                             p2_data['abs_pos']
                         ),
                         is_harmonious=aspect['harmonious'],
-                        is_cinderella=aspect['is_cinderella']
+                        is_cinderella=aspect['is_cinderella'],
+                        is_sexual=aspect['is_sexual'],
+                        is_romance=aspect['is_romance']
                     ))
                 
                 # Check declination aspects
@@ -160,7 +222,9 @@ class MagiAspectCalculator:
                             orbit=dec_aspect['orbit'],
                             actual_degrees=abs(p1_data['declination'] - p2_data['declination']),
                             is_harmonious=dec_aspect['harmonious'],
-                            is_cinderella=dec_aspect['is_cinderella']
+                            is_cinderella=dec_aspect['is_cinderella'],
+                            is_sexual=dec_aspect['is_sexual'],
+                            is_romance=dec_aspect['is_romance']
                         ))
         
         return aspects

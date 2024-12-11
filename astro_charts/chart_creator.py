@@ -600,7 +600,7 @@ class ChartCreator:
             aspect_calculator = MagiAspectCalculator()
             aspects = aspect_calculator.calculate_all_aspects(chart_data["subject"]["planets"])
 
-            # Add aspects to chart data, including is_cinderella
+            # Add aspects to chart data
             chart_data["subject"]["aspects"] = [
                 {
                     'p1_name': aspect.p1_name,
@@ -610,20 +610,64 @@ class ChartCreator:
                     'orbit': round(aspect.orbit, 4),
                     'actual_degrees': round(aspect.actual_degrees, 4),
                     'is_harmonious': aspect.is_harmonious,
-                    'is_cinderella': aspect.is_cinderella
+                    'is_cinderella': aspect.is_cinderella,
+                    'is_sexual': aspect.is_sexual
                 }
                 for aspect in aspects
             ]
-            
+
+            # Extract Cinderella aspects into separate array
+            cinderella_aspects = [
+                {
+                    'planet1_name': aspect.p1_name,
+                    'planet2_name': aspect.p2_name,
+                    'aspect_name': aspect.aspect_name,
+                    'aspect_degrees': aspect.aspect_degrees,
+                    'orbit': round(aspect.orbit, 4),
+                    'actual_degrees': round(aspect.actual_degrees, 4)
+                }
+                for aspect in aspects if aspect.is_cinderella
+            ]
+
+            # Extract Sexual aspects into separate array
+            sexual_aspects = [
+                {
+                    'planet1_name': aspect.p1_name,
+                    'planet2_name': aspect.p2_name,
+                    'aspect_name': aspect.aspect_name,
+                    'aspect_degrees': aspect.aspect_degrees,
+                    'orbit': round(aspect.orbit, 4),
+                    'actual_degrees': round(aspect.actual_degrees, 4)
+                }
+                for aspect in aspects if aspect.is_sexual
+            ]
+
+            # Extract Romance aspects into separate array
+            romance_aspects = [
+                {
+                    'planet1_name': aspect.p1_name,
+                    'planet2_name': aspect.p2_name,
+                    'aspect_name': aspect.aspect_name,
+                    'aspect_degrees': aspect.aspect_degrees,
+                    'orbit': round(aspect.orbit, 4),
+                    'actual_degrees': round(aspect.actual_degrees, 4)
+                }
+                for aspect in aspects if aspect.is_romance
+            ]
+
             # Calculate Super aspects
             super_calc = SuperAspectCalculator()
             super_aspects = super_calc.find_super_aspects(chart_data)
-            
+
+            # Add all aspect types to the final data
             chart_data["super_aspects"] = super_aspects
-            
+            chart_data["cinderella_aspects"] = cinderella_aspects
+            chart_data["sexual_aspects"] = sexual_aspects
+            chart_data["romance_aspects"] = romance_aspects
+
             logger.info("Chart data successfully converted to JSON")
             return json.dumps(chart_data, indent=2)
-            
+
         except Exception as e:
             logger.error(f"Error converting chart data to JSON: {str(e)}")
             raise

@@ -174,8 +174,10 @@ class PocketbaseService:
                 if files:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
-    def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new natal chart record in PocketBase with chart file"""
+    def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, 
+                          easy_chart: str = None, easy_chart_html: str = None, 
+                          user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create a new natal chart record in PocketBase with chart files"""
         try:
             endpoint = f"{self.base_url}/api/collections/natal_charts/records"
             
@@ -189,20 +191,29 @@ class PocketbaseService:
             if job_id:
                 data['job_id'] = job_id
             
-            # Prepare files if chart exists
-            files = None
+            # Prepare files dictionary
+            files = {}
+            
+            # Add traditional chart if it exists
             if chart_path and os.path.exists(chart_path):
-                files = {
-                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
-                }
-                logger.info(f"Adding chart file from {chart_path}")
-            print("files: ", files)
+                files['chart'] = ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+                logger.info(f"Adding traditional chart file from {chart_path}")
+            
+            # Add easy visualization SVG if it exists
+            if easy_chart and os.path.exists(easy_chart):
+                files['easy_chart'] = ('easy_chart.svg', open(easy_chart, 'rb'), 'image/svg+xml')
+                logger.info(f"Adding easy visualization SVG from {easy_chart}")
+            
+            # Add easy visualization HTML if it exists
+            if easy_chart_html and os.path.exists(easy_chart_html):
+                files['easy_chart_html'] = ('easy_chart.html', open(easy_chart_html, 'rb'), 'text/html')
+                logger.info(f"Adding easy visualization HTML from {easy_chart_html}")
+            
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
             
             # Log request details
             logger.info(f"Sending request to {endpoint}")
-            logger.info(f"Headers: {headers}")
             logger.info(f"Data fields: {list(data.keys())}")
             if files:
                 logger.info(f"File fields: {list(files.keys())}")
@@ -213,11 +224,8 @@ class PocketbaseService:
                     endpoint,
                     headers=headers,
                     data=data,
-                    files=files
+                    files=files if files else None
                 )
-                
-                # Log the actual request payload for debugging
-                # logger.info(f"Request data: {data}")
                 
                 # Check if request was successful
                 response.raise_for_status()
@@ -225,9 +233,9 @@ class PocketbaseService:
                 return response.json()
                 
             finally:
-                # Clean up file handle if it was opened
-                if files and 'chart' in files:
-                    files['chart'][1].close()
+                # Clean up file handles
+                for file_key in files:
+                    files[file_key][1].close()
         
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating natal chart record: {str(e)}")
@@ -238,8 +246,16 @@ class PocketbaseService:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
 
-    def create_single_transit_chart(self, transit_data: Dict[str, Any], chart_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
-        """Create a new single transit chart record in PocketBase with chart file"""
+    def create_single_transit_chart(
+        self, 
+        transit_data: Dict[str, Any], 
+        chart_path: str = None,
+        easy_chart: str = None,
+        easy_chart_html: str = None,
+        user_id: str = None, 
+        job_id: str = None
+    ) -> Dict[str, Any]:
+        """Create a new transit chart record in PocketBase"""
         try:
             endpoint = f"{self.base_url}/api/collections/single_transit_chart/records"
             
@@ -253,13 +269,23 @@ class PocketbaseService:
             if job_id:
                 data['job_id'] = job_id
             
-            # Prepare files if chart exists
-            files = None
+            # Prepare files dictionary
+            files = {}
+            
+            # Add traditional chart if it exists
             if chart_path and os.path.exists(chart_path):
-                files = {
-                    'chart': ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
-                }
-                logger.info(f"Adding transit chart file from {chart_path}")
+                files['chart'] = ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+                logger.info(f"Adding traditional chart file from {chart_path}")
+            
+            # Add easy visualization SVG if it exists
+            if easy_chart and os.path.exists(easy_chart):
+                files['easy_chart'] = ('easy_chart.svg', open(easy_chart, 'rb'), 'image/svg+xml')
+                logger.info(f"Adding easy visualization SVG from {easy_chart}")
+            
+            # Add easy visualization HTML if it exists
+            if easy_chart_html and os.path.exists(easy_chart_html):
+                files['easy_chart_html'] = ('easy_chart_html.html', open(easy_chart_html, 'rb'), 'text/html')
+                logger.info(f"Adding easy visualization HTML from {easy_chart_html}")
             
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
@@ -270,26 +296,19 @@ class PocketbaseService:
                     endpoint,
                     headers=headers,
                     data=data,
-                    files=files
+                    files=files if files else None
                 )
                 
-                # Check if request was successful
                 response.raise_for_status()
-                
                 return response.json()
                 
             finally:
-                # Clean up file handle if it was opened
-                if files and 'chart' in files:
-                    files['chart'][1].close()
-        
-        except requests.exceptions.RequestException as e:
-            logger.error(f"Error creating single transit chart record: {str(e)}")
-            if hasattr(e.response, 'text'):
-                logger.error(f"Response: {e.response.text}")
-                logger.error(f"Request data: {data}")
-                if files:
-                    logger.error(f"Files included: {list(files.keys())}")
+                # Clean up file handles
+                for file_key in files:
+                    files[file_key][1].close()
+                
+        except Exception as e:
+            logger.error(f"Error creating transit chart record: {str(e)}")
             raise
 
     def create_synastry_chart(self, synastry_data: Dict[str, Any], chart_path: str = None, easy_chart_path: str = None, easy_chart_html_path: str = None, user_id: str = None, job_id: str = None, is_marriage_request: bool = False) -> Dict[str, Any]:

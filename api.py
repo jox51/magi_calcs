@@ -12,6 +12,7 @@ import shutil
 from astro_charts.services.transit_visualization_service import TransitVisualizationService
 from astro_charts.services.synastry_visualization_service import SynastryVisualizationService
 from astro_charts.services.alt_marriage_date_finder import AltMarriageDateFinder
+from astro_charts.services.natal_visualization_service import NatalVisualizationService
 
 # Load environment variables at startup
 load_dotenv()
@@ -139,11 +140,29 @@ async def create_natal_chart(data: BaseBirthData):
         
         logger.info(f"Using final chart path: {os.path.abspath(final_chart_path)}")
         
+        # Create visualization
+        viz_path = f"charts/{name_safe}_natal_viz.svg"
+        viz_html_path = f"charts/{name_safe}_natal_viz.html"
+        viz_service = NatalVisualizationService()
+        
+        try:
+            viz_chart_path, viz_html_path = viz_service.create_visualization(
+                chart_data, 
+                viz_path,
+                viz_html_path
+            )
+        except Exception as viz_error:
+            logger.error(f"Visualization error: {str(viz_error)}")
+            viz_chart_path = None
+            viz_html_path = None
+        
         # Save to PocketBase
         pb_service = PocketbaseService()
         record = pb_service.create_natal_chart(
             natal_data=chart_data,
             chart_path=final_chart_path,
+            easy_chart=viz_chart_path,
+            easy_chart_html=viz_html_path,
             user_id=data.user_id,
             job_id=data.job_id
         )
@@ -151,6 +170,8 @@ async def create_natal_chart(data: BaseBirthData):
         # Return the data including the PocketBase record
         return {
             "chart_data": chart_data,
+            "visualization_path": viz_chart_path if viz_chart_path else None,
+            "visualization_html_path": viz_html_path if viz_html_path else None,
             "record": record
         }
         
@@ -184,10 +205,12 @@ async def create_transit_chart(request: TransitChartRequest):
         # Parse chart data
         chart_data = json.loads(chart_data)
         
-        # Construct the file path where the chart was moved
+        # Construct the file paths
         name_safe = request.birth_data.name.replace(" ", "_")
         transit_date = f"{request.transit_data.transit_year}_{request.transit_data.transit_month}_{request.transit_data.transit_day}"
         final_chart_path = os.path.join('charts', f"{name_safe}_transit_chart.svg")
+        viz_path = f"charts/{name_safe}_transit_viz.svg"
+        viz_html_path = f"charts/{name_safe}_transit_viz.html"
         
         logger.info(f"Using final chart path: {os.path.abspath(final_chart_path)}")
         
@@ -195,11 +218,28 @@ async def create_transit_chart(request: TransitChartRequest):
         if not os.path.exists(final_chart_path):
             raise FileNotFoundError(f"Transit chart file not found at {final_chart_path}")
         
-        # Save to PocketBase using the existing single transit chart method
+        # Create visualization
+        viz_service = TransitVisualizationService()
+        try:
+            viz_chart_path, viz_html_path = viz_service.create_visualization(
+                chart_data, 
+                viz_path,
+                viz_html_path
+            )
+            if viz_chart_path:
+                logger.info(f"Created easy visualization at {viz_chart_path}")
+        except Exception as viz_error:
+            logger.error(f"Visualization error: {str(viz_error)}")
+            viz_chart_path = None
+            viz_html_path = None
+        
+        # Save to PocketBase
         pb_service = PocketbaseService()
         record = pb_service.create_single_transit_chart(
             transit_data=chart_data,
-            chart_path=final_chart_path,  # Add chart_path parameter
+            chart_path=final_chart_path,
+            easy_chart=viz_chart_path,
+            easy_chart_html=viz_html_path,
             user_id=request.birth_data.user_id,
             job_id=request.birth_data.job_id
         )
@@ -207,6 +247,8 @@ async def create_transit_chart(request: TransitChartRequest):
         # Return both chart data and PocketBase record
         return {
             "chart_data": chart_data,
+            "visualization_path": viz_chart_path if viz_chart_path else None,
+            "visualization_html_path": viz_html_path if viz_html_path else None,
             "record": record
         }
         
