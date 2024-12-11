@@ -287,12 +287,19 @@ async def create_transit_loop(request: TransitLoopRequest):
         # Create visualization
         name_safe = request.name.replace(" ", "_")
         viz_path = f"charts/{name_safe}_transit_loop_viz.svg"
+        viz_html_path = f"charts/{name_safe}_transit_loop_viz.html"
+
         viz_service = TransitVisualizationService()
         try:
-            viz_chart_path = viz_service.create_visualization(results, viz_path)
+            viz_chart_path, viz_html_path = viz_service.create_visualization(
+                results, 
+                viz_path,
+                viz_html_path
+            )
         except Exception as viz_error:
             logger.error(f"Visualization error: {str(viz_error)}")
-            viz_chart_path = None  # Continue even if visualization fails
+            viz_chart_path = None
+            viz_html_path = None
 
         # Save to PocketBase
         try:
@@ -302,6 +309,7 @@ async def create_transit_loop(request: TransitLoopRequest):
                     "natal": results.get("natal", {}),
                     "transit_data": results,
                     "visualization_path": viz_chart_path,
+                    "visualization_html_path": viz_html_path,
                     "date_range": {
                         "from_date": request.from_date,
                         "to_date": request.to_date
@@ -318,6 +326,7 @@ async def create_transit_loop(request: TransitLoopRequest):
         return {
             "chart_data": results,
             "visualization_path": viz_chart_path if viz_chart_path else None,
+            "visualization_html_path": viz_html_path if viz_html_path else None,
             "daily_aspects": results.get("daily_aspects", {}),
             "turbulent_transits": results.get("turbulent_transits", {})
         }

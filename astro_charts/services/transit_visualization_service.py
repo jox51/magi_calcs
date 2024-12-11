@@ -1,6 +1,6 @@
 import altair as alt
 import pandas as pd
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Tuple
 from datetime import datetime
 import logging
 import tempfile
@@ -127,9 +127,15 @@ class TransitVisualizationService:
             title=f'{subject_name} - Transit Aspects ({month_year})'
         )
 
-    def create_visualization(self, transit_data: Dict[str, Any], output_path: str) -> str:
+    def create_visualization(
+        self, 
+        transit_data: Dict[str, Any], 
+        output_path: str,
+        html_path: str
+    ) -> Tuple[Optional[str], Optional[str]]:
         """
         Create and save visualizations of transit aspects over time
+        Returns tuple of (svg_path, html_path)
         """
         try:
             # Prepare the data
@@ -147,12 +153,13 @@ class TransitVisualizationService:
             # Create the chart (will show empty if no data)
             chart = self.create_monthly_chart(df, subject_name)
             
-            # Save the chart
+            # Save both SVG and HTML versions
             chart.save(output_path)
+            chart.save(html_path)
             
-            return output_path
+            logger.info(f"Successfully saved visualizations to {output_path} and {html_path}")
+            return output_path, html_path
                 
         except Exception as e:
             logger.error(f"Error creating transit visualization: {str(e)}")
-            # Return a default path even if visualization fails
-            return output_path
+            return None, None

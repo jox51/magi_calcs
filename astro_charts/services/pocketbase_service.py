@@ -104,7 +104,7 @@ class PocketbaseService:
     def create_transit_loop_charts(self, transit_loop_data: Dict[str, Any], user_id: str = None, job_id: str = None) -> Dict[str, Any]:
         """Create transit loop record with visualization in PocketBase"""
         try:
-            endpoint = f"{self.base_url}/api/collections/transit_charts/records"  # Changed collection name
+            endpoint = f"{self.base_url}/api/collections/transit_charts/records"
             
             # Prepare the form data
             data = {
@@ -120,16 +120,22 @@ class PocketbaseService:
             if job_id:
                 data['job_id'] = job_id
             
-            # Get the visualization path directly
+            # Get the visualization paths
             viz_path = transit_loop_data.get('visualization_path')
+            viz_html_path = transit_loop_data.get('visualization_html_path')
             
-            # Prepare files if visualization exists
-            files = None
+            # Prepare files dictionary
+            files = {}
+            
+            # Add SVG visualization if it exists
             if viz_path and os.path.exists(viz_path):
-                files = {
-                    'loop_chart': ('visualization.svg', open(viz_path, 'rb'), 'image/svg+xml')
-                }
+                files['loop_chart'] = ('visualization.svg', open(viz_path, 'rb'), 'image/svg+xml')
                 logger.info(f"Adding visualization SVG from {viz_path}")
+            
+            # Add HTML visualization if it exists
+            if viz_html_path and os.path.exists(viz_html_path):
+                files['loop_chart_html'] = ('visualization.html', open(viz_html_path, 'rb'), 'text/html')
+                logger.info(f"Adding visualization HTML from {viz_html_path}")
             
             # Remove Content-Type header for multipart request
             headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
@@ -140,15 +146,13 @@ class PocketbaseService:
             if files:
                 logger.info(f"File fields: {list(files.keys())}")
             
-            logger.info(f"Data: {data}")
-            logger.info(f"Files: {files}")
             try:
                 # Make the request
                 response = requests.post(
                     endpoint,
                     headers=headers,
                     data=data,
-                    files=files
+                    files=files if files else None
                 )
                 
                 # Log response for debugging
@@ -162,9 +166,9 @@ class PocketbaseService:
                 return response.json()
                 
             finally:
-                # Clean up file handle if it was opened
-                if files and 'visualization' in files:
-                    files['visualization'][1].close()
+                # Clean up file handles
+                for file_key in files:
+                    files[file_key][1].close()
             
         except requests.exceptions.RequestException as e:
             logger.error(f"Error creating transit loop record: {str(e)}")
@@ -174,6 +178,7 @@ class PocketbaseService:
                 if files:
                     logger.error(f"Files included: {list(files.keys())}")
             raise
+
     def create_natal_chart(self, natal_data: Dict[str, Any], chart_path: str = None, 
                           easy_chart: str = None, easy_chart_html: str = None, 
                           user_id: str = None, job_id: str = None) -> Dict[str, Any]:
