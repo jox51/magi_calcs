@@ -1,0 +1,13 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./charts:/app/charts
+    environment:
+      - GEONAMES_USERNAME=${GEONAMES_USERNAME}
+      - POCKETBASE_EMAIL=${POCKETBASE_EMAIL}
+      - POCKETBASE_PASSWORD=${POCKETBASE_PASSWORD}
+      - ASTRONOMY_APP_ID=${ASTRONOMY_APP_ID}
+      - ASTRONOMY_APP_SECRET=${ASTRONOMY_APP_SECRET}

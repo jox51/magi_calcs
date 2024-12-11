@@ -14,6 +14,8 @@ from astro_charts.services.synastry_visualization_service import SynastryVisuali
 from astro_charts.services.alt_marriage_date_finder import AltMarriageDateFinder
 from astro_charts.services.natal_visualization_service import NatalVisualizationService
 from astro_charts.services.single_transit_visualization_service import SingleTransitVisualizationService
+import time
+from pathlib import Path
 
 # Load environment variables at startup
 load_dotenv()
@@ -113,9 +115,28 @@ class TransitChartRequest(BaseModel):
     birth_data: BaseBirthData
     transit_data: TransitDateData
 
+def cleanup_old_charts(days=7):
+    """Remove chart files older than specified days"""
+    try:
+        charts_dir = Path('charts')
+        if not charts_dir.exists():
+            return
+        
+        current_time = time.time()
+        max_age = days * 24 * 60 * 60  # Convert days to seconds
+        
+        for chart_file in charts_dir.glob('*'):
+            if chart_file.is_file():
+                file_age = current_time - chart_file.stat().st_mtime
+                if file_age > max_age:
+                    chart_file.unlink()
+                    logger.info(f"Removed old chart file: {chart_file}")
+    except Exception as e:
+        logger.error(f"Error during chart cleanup: {str(e)}")
 
 @app.post("/charts/natal")
 async def create_natal_chart(data: BaseBirthData):
+    cleanup_old_charts()
     try:
         # Create chart
         chart_creator = ChartCreator(
@@ -182,6 +203,7 @@ async def create_natal_chart(data: BaseBirthData):
 
 @app.post("/charts/transit")
 async def create_transit_chart(request: TransitChartRequest):
+    cleanup_old_charts()
     try:
         chart_creator = ChartCreator(
             name=request.birth_data.name,
@@ -259,6 +281,7 @@ async def create_transit_chart(request: TransitChartRequest):
 
 @app.post("/charts/transit-loop")
 async def create_transit_loop(request: TransitLoopRequest):
+    cleanup_old_charts()
     try:
         chart_creator = ChartCreator(
             name=request.name,
@@ -389,6 +412,7 @@ alt_marriage_finder = AltMarriageDateFinder(transit_loop_wrapper)
 
 @app.post("/charts/synastry")
 async def create_synastry_chart(request: SynastryRequest):
+    cleanup_old_charts()
     try:
         chart_creator = ChartCreator(
             name=request.name,
