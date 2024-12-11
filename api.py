@@ -13,6 +13,7 @@ from astro_charts.services.transit_visualization_service import TransitVisualiza
 from astro_charts.services.synastry_visualization_service import SynastryVisualizationService
 from astro_charts.services.alt_marriage_date_finder import AltMarriageDateFinder
 from astro_charts.services.natal_visualization_service import NatalVisualizationService
+from astro_charts.services.single_transit_visualization_service import SingleTransitVisualizationService
 
 # Load environment variables at startup
 load_dotenv()
@@ -219,7 +220,7 @@ async def create_transit_chart(request: TransitChartRequest):
             raise FileNotFoundError(f"Transit chart file not found at {final_chart_path}")
         
         # Create visualization
-        viz_service = TransitVisualizationService()
+        viz_service = SingleTransitVisualizationService()
         try:
             viz_chart_path, viz_html_path = viz_service.create_visualization(
                 chart_data, 
