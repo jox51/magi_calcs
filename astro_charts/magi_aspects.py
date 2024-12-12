@@ -237,7 +237,20 @@ class SuperAspectCalculator:
         self.super_pairs = [
             ('jupiter', 'pluto'),
             ('jupiter', 'uranus'),
-            ('jupiter', 'chiron')
+            ('jupiter', 'chiron'),
+            
+            # ('jupiter', 'sun'),
+            # ('jupiter', 'venus'),
+            # ('jupiter', 'neptune'),
+            # ('venus', 'pluto'),
+            # ('venus', 'chiron'),
+            # ('sun', 'uranus'),
+            # ('sun', 'neptune'),
+            # ('sun', 'pluto'),
+            # ('chiron', 'pluto'),
+            # ('uranus', 'pluto'),
+            # ('venus', 'uranus'),
+            # ('venus', 'neptune')
         ]
 
         # Define valid magical angles and orbs for Super aspects

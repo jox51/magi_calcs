@@ -12,10 +12,12 @@ class NatalVisualizationService:
     def __init__(self):
         """Initialize the visualization service with color schemes and settings"""
         self.colors = {
-            'Super': '#FFD700',      # Gold
-            'Cinderella': '#FF69B4', # Pink
-            'Sexual': '#FF0000',     # Red
-            'Romance': '#9370DB'     # Purple
+            'Super Success': '#32CD32',      # Lime Green
+            'Super Fame': '#FF8C00',         # Dark Orange
+            'Super Success General': '#FF4500', # Orange Red
+            'Cinderella': '#FF69B4',         # Pink
+            'Sexual': '#FF0000',             # Red
+            'Romance': '#9370DB'             # Purple
         }
         
         # Configure Altair settings
@@ -23,19 +25,11 @@ class NatalVisualizationService:
     
     def prepare_data(self, natal_data: Dict[str, Any]) -> pd.DataFrame:
         """Transform natal data into a pandas DataFrame suitable for visualization"""
-        # Get aspects from the nested structure
-        aspects_data = {
-            'Super': natal_data.get('super_aspects', []),
-            'Cinderella': natal_data.get('cinderella_aspects', []),
-            'Sexual': natal_data.get('sexual_aspects', []),
-            'Romance': natal_data.get('romance_aspects', [])
-        }
-        
         records = []
         
-        # Process each aspect type
-        for aspect_type, aspects in aspects_data.items():
-            # Create detail string for all aspects of this type
+        # Process non-Super aspects first
+        for aspect_type in ['Cinderella', 'Sexual', 'Romance']:
+            aspects = natal_data.get(f'{aspect_type.lower()}_aspects', [])
             details = []
             for aspect in aspects:
                 detail = (
@@ -45,19 +39,53 @@ class NatalVisualizationService:
                 )
                 details.append(detail)
             
-            # Create record with count and details
             records.append({
                 'type': aspect_type,
+                'subtype': aspect_type,  # Same as type for non-Super aspects
                 'count': len(aspects),
                 'details': '\n'.join(details) if details else 'None',
             })
         
+        # Process Super aspects separately
+        super_aspects = natal_data.get('super_aspects', [])
+        super_success = []
+        super_fame = []
+        super_success_general = []
+        
+        for aspect in super_aspects:
+            planets = {aspect['planet1_name'].lower(), aspect['planet2_name'].lower()}
+            detail = (
+                f"{aspect['planet1_name'].title()}-{aspect['planet2_name'].title()} "
+                f"({aspect['aspect_name'].title()}, "
+                f"orbit: {round(aspect['orbit'], 4)}°)"
+            )
+            
+            if planets == {'jupiter', 'pluto'}:
+                super_success.append(detail)
+            elif planets == {'jupiter', 'uranus'}:
+                super_fame.append(detail)
+            elif planets == {'jupiter', 'chiron'}:
+                super_success_general.append(detail)
+        
+        # Add Super aspects to records
+        super_categories = [
+            ('Super Success', super_success),
+            ('Super Fame', super_fame),
+            ('Super Success General', super_success_general)
+        ]
+        
+        for category, aspects in super_categories:
+            if aspects:  # Only add categories that have aspects
+                records.append({
+                    'type': 'Super',  # All are type 'Super' for grouping
+                    'subtype': category,  # But different subtypes for coloring
+                    'count': len(aspects),
+                    'details': '\n'.join(aspects),
+                })
+        
         # Create DataFrame
         df = pd.DataFrame(records)
-        
-        # Add debug logging
         logger.info(f"Created DataFrame with aspect counts:\n{df}")
-        
         return df
     
     def create_visualization(self, natal_data: Dict[str, Any], output_path: str, html_path: str) -> tuple[str, str]:
@@ -90,24 +118,25 @@ class NatalVisualizationService:
             ).encode(
                 x=alt.X('type:N',
                        title='Aspect Type',
-                       sort=list(self.colors.keys())),
+                       sort=['Super', 'Cinderella', 'Sexual', 'Romance']),
                 y=alt.Y('count:Q',
                        title='Number of Aspects',
+                       stack=True,
                        scale=alt.Scale(domain=[0, max_count + 1]),
                        axis=alt.Axis(
                            values=tick_values,  # Explicitly set tick values
                            grid=True,
                            gridDash=[2, 2]  # Optional: make grid lines dashed
                        )),
-                color=alt.Color('type:N',
+                color=alt.Color('subtype:N',
                     scale=alt.Scale(
                         domain=list(self.colors.keys()),
                         range=list(self.colors.values())
                     ),
-                    legend=None
+                    legend=alt.Legend(title='Aspect Types')
                 ),
                 tooltip=[
-                    alt.Tooltip('type:N', title='Aspect Type'),
+                    alt.Tooltip('subtype:N', title='Aspect Type'),
                     alt.Tooltip('count:Q', title='Count', format='d'),
                     alt.Tooltip('details:N', title='Aspects')
                 ]
