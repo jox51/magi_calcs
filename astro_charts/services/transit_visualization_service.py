@@ -92,6 +92,22 @@ class TransitVisualizationService:
         first_date = df['date'].min()
         month_year = first_date.strftime('%B %Y')
         
+         # Create watermark
+        watermark = alt.Chart(pd.DataFrame({'text': ['Magi Charts']})).mark_text(
+        align='right',
+        baseline='bottom',
+        fontSize=14,
+            opacity=0.3,
+            color='gray',
+            dx=-10,  # Offset from right
+            dy=-10   # Offset from bottom
+        ).encode(
+            text='text:N'
+        ).properties(
+            width=800,
+            height=400
+        )
+        
         return alt.Chart(df).mark_bar(
             size=20
         ).encode(
@@ -125,7 +141,7 @@ class TransitVisualizationService:
             width=800,
             height=400,
             title=f'{subject_name} - Transit Aspects ({month_year})'
-        )
+        ) + watermark
 
     def create_visualization(
         self, 

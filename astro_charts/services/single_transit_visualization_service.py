@@ -160,9 +160,24 @@ class SingleTransitVisualizationService:
             ).encode(
                 text=alt.Text('count:Q', format='d')  # 'd' format for integers
             )
+                    # Create watermark
+            watermark = alt.Chart(pd.DataFrame({'text': ['Magi Charts']})).mark_text(
+            align='right',
+            baseline='bottom',
+            fontSize=14,
+                opacity=0.3,
+                color='gray',
+                dx=-10,  # Offset from right
+                dy=-10   # Offset from bottom
+            ).encode(
+                text='text:N'
+            ).properties(
+                width=400,
+                height=300
+            )
             
             # Combine chart and labels
-            final_chart = (chart + text).configure_axis(
+            final_chart = (chart + text + watermark).configure_axis(
                 labelFontSize=12,
                 titleFontSize=14,
                 grid=True

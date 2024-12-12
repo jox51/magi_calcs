@@ -611,7 +611,8 @@ class ChartCreator:
                     'actual_degrees': round(aspect.actual_degrees, 4),
                     'is_harmonious': aspect.is_harmonious,
                     'is_cinderella': aspect.is_cinderella,
-                    'is_sexual': aspect.is_sexual
+                    'is_sexual': aspect.is_sexual,
+                    'is_romance': aspect.is_romance
                 }
                 for aspect in aspects
             ]

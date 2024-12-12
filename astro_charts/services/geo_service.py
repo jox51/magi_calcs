@@ -8,18 +8,15 @@ class GeoService:
         if not username:
             raise ValueError("GeoNames username is required")
         self.username = username
-        self.base_url = "http://api.geonames.org/searchJSON"
+        self.base_url = "https://geocoderdocked.commentking.net/geocode"
         logger.info(f"Initialized GeoService with username: {username[:3]}***")
 
     def get_coordinates(self, city, nation):
-        """Get coordinates for a city and nation using GeoNames API directly."""
+        """Get coordinates for a city and nation using custom geocoding API."""
         try:
+            location = f"{city},{nation}"
             params = {
-                'q': city,
-                'country': nation,
-                'maxRows': 1,
-                'username': self.username,
-                'featureClass': 'P'
+                'location': location
             }
             
             response = requests.get(self.base_url, params=params)
@@ -27,10 +24,10 @@ class GeoService:
             
             data = response.json()
             
-            if data.get('geonames') and len(data['geonames']) > 0:
-                location = data['geonames'][0]
-                lat = float(location['lat'])
-                lng = float(location['lng'])
+            if data and len(data) > 0 and len(data[0]) > 0:
+                location = data[0][0]
+                lat = float(location['latitude'])
+                lng = float(location['longitude'])
                 logger.info(f"Found coordinates for {city}, {nation}: ({lat}, {lng})")
                 return lat, lng
             else:

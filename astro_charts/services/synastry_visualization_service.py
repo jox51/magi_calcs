@@ -86,6 +86,36 @@ class SynastryVisualizationService:
             else:
                 charts_to_concat = [aspects_chart, scores_chart]
             
+            # Create watermark
+            watermark = alt.Chart(pd.DataFrame({'text': ['Magi Charts']})).mark_text(
+                align='right',
+                baseline='bottom',
+                fontSize=14,
+                opacity=0.3,
+                color='gray',
+                dx=-10,  # Offset from right
+                dy=-10   # Offset from bottom
+            ).encode(
+                text='text:N'
+            ).properties(
+                width=600,
+                height=200
+            )
+
+            # Add watermark to each chart
+            aspects_chart = self._create_aspects_chart(df_aspects, person1_name, person2_name) + watermark
+            scores_chart = self._create_scores_chart(df_scores) + watermark
+
+            # Handle marriage dates chart if available
+            if marriage_dates:
+                df_marriage = self._prepare_marriage_dates_data(marriage_dates)
+                # Adjust watermark height for marriage chart
+                marriage_watermark = watermark.properties(height=300)
+                marriage_chart = self._create_marriage_dates_chart(df_marriage) + marriage_watermark
+                charts_to_concat = [aspects_chart, scores_chart, marriage_chart]
+            else:
+                charts_to_concat = [aspects_chart, scores_chart]
+
             # Combine charts with single configuration
             final_chart = alt.vconcat(
                 *charts_to_concat,
