@@ -93,7 +93,7 @@ class TransitVisualizationService:
         month_year = first_date.strftime('%B %Y')
         
          # Create watermark
-        watermark = alt.Chart(pd.DataFrame({'text': ['Magi Charts']})).mark_text(
+        watermark = alt.Chart(pd.DataFrame({'text': ['Magi Maps']})).mark_text(
         align='right',
         baseline='bottom',
         fontSize=14,

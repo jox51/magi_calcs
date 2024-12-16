@@ -161,7 +161,7 @@ class SingleTransitVisualizationService:
                 text=alt.Text('count:Q', format='d')  # 'd' format for integers
             )
                     # Create watermark
-            watermark = alt.Chart(pd.DataFrame({'text': ['Magi Charts']})).mark_text(
+            watermark = alt.Chart(pd.DataFrame({'text': ['Magi Maps']})).mark_text(
             align='right',
             baseline='bottom',
             fontSize=14,
