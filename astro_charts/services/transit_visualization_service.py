@@ -138,8 +138,8 @@ class TransitVisualizationService:
                 alt.Tooltip('count:Q', title='Number of Aspects')
             ]
         ).properties(
-            width=800,
-            height=400,
+            width=600,
+            height=200,
             title=f'{subject_name} - Transit Aspects ({month_year})'
         ) + watermark
 
