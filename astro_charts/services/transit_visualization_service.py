@@ -104,8 +104,8 @@ class TransitVisualizationService:
         ).encode(
             text='text:N'
         ).properties(
-            width=800,
-            height=400
+            width=600,
+            height=200
         )
         
         return alt.Chart(df).mark_bar(
