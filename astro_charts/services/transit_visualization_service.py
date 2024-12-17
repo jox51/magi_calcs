@@ -104,8 +104,8 @@ class TransitVisualizationService:
         ).encode(
             text='text:N'
         ).properties(
-            width=600,
-            height=200
+            width=400,
+            height=300
         )
         
         return alt.Chart(df).mark_bar(
@@ -138,8 +138,8 @@ class TransitVisualizationService:
                 alt.Tooltip('count:Q', title='Number of Aspects')
             ]
         ).properties(
-            width=600,
-            height=200,
+            width=400,
+            height=300,
             title=f'{subject_name} - Transit Aspects ({month_year})'
         ) + watermark
 
