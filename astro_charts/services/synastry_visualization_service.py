@@ -72,6 +72,8 @@ class SynastryVisualizationService:
             # Get person names
             person1_name = synastry_data['person1']['subject']['name']
             person2_name = synastry_data['person2']['subject']['name']
+            logger.info(f"Person 1 Name Specifically: {person1_name} ")
+            logger.info(f"Person 2 Name Specifically: {person2_name} ")
 
             # Create charts without individual configurations
             aspects_chart = self._create_aspects_chart(df_aspects, person1_name, person2_name)
@@ -222,6 +224,7 @@ class SynastryVisualizationService:
     def _prepare_marriage_dates_data(self, marriage_dates: List[Dict]) -> pd.DataFrame:
         """Prepare marriage dates data for visualization"""
         records = []
+        logger.info(f"Marriage Dates: {marriage_dates}")
         for date_info in marriage_dates:
             date = date_info['date']
             
@@ -230,10 +233,12 @@ class SynastryVisualizationService:
             p1_turbulent = date_info['person1'].get('turbulent_transits', [])
             p2_cinderella = date_info['person2'].get('cinderella_transits', [])
             p2_turbulent = date_info['person2'].get('turbulent_transits', [])
+
             
             # Format Cinderella transits
             cinderella_details = []
             for transit in p1_cinderella:  # Person 1's transits
+
                 detail = (
                     f"Transit {transit.get('planet2_name', '').title()} "
                     f"{transit.get('aspect_name', '').title()} to "
@@ -242,6 +247,7 @@ class SynastryVisualizationService:
                 cinderella_details.append(detail)
                 
             for transit in p2_cinderella:  # Person 2's transits
+                logger.info(f"P2 Cinderella Transit Details: {transit} ")
                 detail = (
                     f"Transit {transit.get('planet2_name', '').title()} "
                     f"{transit.get('aspect_name', '').title()} to "
@@ -252,21 +258,25 @@ class SynastryVisualizationService:
             # Format turbulent transits
             turbulent_details = []
             for transit in p1_turbulent:  # Person 1's turbulent transits
-                person_name = transit.get('person_name', 'Diana Spencer')  # Default or get from transit
+                logger.info(f"P1 Turbulent Transit Details: {transit} ")
+                person_name = transit.get('natal_subject_name')  # Default or get from transit
                 detail = (
                     f"Transit {transit.get('transit_planet', '').title()} "
                     f"{transit.get('aspect_name', '').title()} to "
                     f"{person_name}'s {transit.get('natal_planet', '').title()} "
                 )
+                # logger.info(f"TT Person 1: {detail} ")
                 turbulent_details.append(detail)
                 
             for transit in p2_turbulent:  # Person 2's turbulent transits
-                person_name = transit.get('person_name', 'Charles Windsor')  # Default or get from transit
+                logger.info(f"P2 Turbulent Transit Details: {transit} ")
+                person_name = transit.get('natal_subject_name')  # Default or get from transit
                 detail = (
                     f"Transit {transit.get('transit_planet', '').title()} "
                     f"{transit.get('aspect_name', '').title()} to "
                     f"{person_name}'s {transit.get('natal_planet', '').title()} "
                 )
+                # logger.info(f"TT Person 2: {detail} ")
                 turbulent_details.append(detail)
             
             # Join details with commas

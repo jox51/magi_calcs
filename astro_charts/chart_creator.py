@@ -751,7 +751,7 @@ class ChartCreator:
                     longitude=longitude,
                     latitude=latitude
                 )
-                logger.info(f"Got declination for {planet_name} on {birth_date}: {declination}")
+                # logger.info(f"Got declination for {planet_name} on {birth_date}: {declination}")
 
                 return {
                     "name": planet_obj.name,

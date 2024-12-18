@@ -80,7 +80,10 @@ class TurbulentTransitService:
         
         try:
             natal_planets = natal_data['subject']['planets']
+            natal_subject_name = natal_data['subject']['name']
+            
             transit_planets = transit_data['planets']
+
 
             # Check each combination for turbulent aspects
             for transit_planet, t_data in transit_planets.items():
@@ -109,6 +112,7 @@ class TurbulentTransitService:
                             impact_score = self.calculate_impact_score(transit_type, aspect_name)
                             
                             turbulent_transits.append({
+                                'natal_subject_name': natal_subject_name,
                                 'natal_planet': natal_planet,
                                 'transit_planet': transit_planet,
                                 'aspect_name': aspect_name,
