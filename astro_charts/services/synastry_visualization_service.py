@@ -149,20 +149,84 @@ class SynastryVisualizationService:
             raise
 
     def _create_aspects_chart(self, df: pd.DataFrame, person1_name: str, person2_name: str) -> alt.Chart:
-        """Create the aspects bar chart without configuration"""
-        return alt.Chart(df).mark_bar(
+        """Create the aspects bar chart with split coloring for critical Saturn Clashes"""
+        # Get the maximum count and create array of tick values
+        max_count = max(df['count'])
+        tick_values = list(range(0, int(max_count) + 2))
+        
+        # Define critical planets for Saturn Clashes
+        critical_planets = ['chiron', 'pluto', 'neptune', 'venus', 'jupiter', 'uranus', 'sun']
+        
+        # Create separate rows for critical and regular Saturn Clashes
+        df = df.copy()
+        new_rows = []
+        
+        for idx, row in df.iterrows():
+            if row['type'] == 'Saturn Clashes':
+                # Count critical clashes
+                critical_count = sum(1 for planet in critical_planets 
+                                   if planet in row['description'].lower())
+                regular_count = row['count'] - critical_count
+                
+                if critical_count > 0:
+                    new_rows.append({
+                        'type': 'Saturn Clashes',
+                        'subtype': 'Critical',
+                        'count': critical_count,
+                        'description': row['description']
+                    })
+                if regular_count > 0:
+                    new_rows.append({
+                        'type': 'Saturn Clashes',
+                        'subtype': 'Regular',
+                        'count': regular_count,
+                        'description': row['description']
+                    })
+            else:
+                # Add subtype for non-Saturn aspects
+                new_rows.append({
+                    'type': row['type'],
+                    'subtype': row['type'],
+                    'count': row['count'],
+                    'description': row['description']
+                })
+        
+        df_new = pd.DataFrame(new_rows)
+        
+        # Define colors including darker shade for critical Saturn Clashes
+        colors = self.colors.copy()
+        colors['Critical Saturn'] = '#B22222'  # Darker red for critical clashes
+        colors['Regular Saturn'] = self.colors['Saturn Clashes']  # Original color
+        
+        return alt.Chart(df_new).mark_bar(
             cornerRadius=5,
             size=40
         ).encode(
-            x=alt.X('count:Q', title='Number of Linkages'),
+            x=alt.X('count:Q', 
+                    title='Number of Linkages',
+                    axis=alt.Axis(
+                        values=tick_values,
+                        grid=True
+                    ),
+                    scale=alt.Scale(domain=[0, max_count + 1])),
             y=alt.Y('type:N', title=None),
-            color=alt.Color('type:N', 
-                scale=alt.Scale(domain=list(self.colors.keys()), 
-                              range=list(self.colors.values())),
+            color=alt.Color('subtype:N',
+                scale=alt.Scale(
+                    domain=[
+                        'Cinderella', 'Romance', 'Sexual', 'Marital',
+                        'Critical', 'Regular'
+                    ],
+                    range=[
+                        colors['Cinderella'], colors['Romance'],
+                        colors['Sexual'], colors['Marital'],
+                        colors['Critical Saturn'], colors['Regular Saturn']
+                    ]
+                ),
                 legend=None),
             tooltip=[
                 alt.Tooltip('type:N', title='Type'),
-                alt.Tooltip('count:Q', title='Count'),
+                alt.Tooltip('subtype:N', title='Subtype'),
+                alt.Tooltip('count:Q', title='Count', format='d'),
                 alt.Tooltip('description:N', title='Details')
             ]
         ).properties(
@@ -306,6 +370,10 @@ class SynastryVisualizationService:
             value_name='count'
         )
         
+        # Calculate max count for y-axis scale
+        max_count = df_melted.groupby('date')['count'].sum().max()
+        tick_values = list(range(0, int(max_count) + 2))  # +2 to include max value and one above
+        
         # Create stacked bar chart
         bars = alt.Chart(df_melted).mark_bar(size=20).encode(
             x=alt.X('date:O', 
@@ -313,7 +381,12 @@ class SynastryVisualizationService:
                     axis=alt.Axis(labelAngle=-45)),
             y=alt.Y('count:Q',
                     title='Number of Transits',
-                    stack=True),
+                    stack=True,
+                    axis=alt.Axis(
+                        values=tick_values,  # Explicitly set tick values
+                        grid=True
+                    ),
+                    scale=alt.Scale(domain=[0, max_count + 1])),
             color=alt.Color('transit_type:N',
                            scale=alt.Scale(
                                domain=['Cinderella', 'Turbulent'],
@@ -324,7 +397,7 @@ class SynastryVisualizationService:
                            )),
             tooltip=[
                 alt.Tooltip('date:O', title='Date'),
-                alt.Tooltip('count:Q', title='Count'),
+                alt.Tooltip('count:Q', title='Count', format='d'),  # 'd' format for integers
                 alt.Tooltip('transit_type:N', title='Type'),
                 alt.Tooltip('cinderella_aspects:N', title='Cinderella Transits'),
                 alt.Tooltip('turbulent_aspects:N', title='Turbulent Transits')
