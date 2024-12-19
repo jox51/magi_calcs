@@ -23,6 +23,7 @@ class SingleTransitVisualizationService:
     def prepare_data(self, transit_data: Dict[str, Any]) -> pd.DataFrame:
         """Transform transit data into a pandas DataFrame suitable for visualization"""
         records = []
+        logger.info(f"Transit data: {transit_data}")
         
         try:
             # Get the transit date from the nested structure
@@ -37,23 +38,24 @@ class SingleTransitVisualizationService:
                 
             date = datetime.strptime(transit_date, '%Y-%m-%d')
             
-            # Count only Cinderella, Golden, and Turbulent aspects
+            # Count aspects - note the different locations in the data structure
             aspect_counts = {
                 'Cinderella': len(transit_data.get('transit', {}).get('cinderella_aspects', [])),
-                'Golden': len(transit_data.get('transit', {}).get('golden_transits', [])),
-                'Turbulent': len(transit_data.get('transit', {}).get('turbulent_transits', []))
+                'Golden': len(transit_data.get('golden_transits', [])),
+                'Turbulent': len(transit_data.get('turbulent_transits', []))  # Changed from nested transit
             }
             
             # Create records for each aspect type
             for aspect_type, count in aspect_counts.items():
-                # Get the details of aspects for this type
-                aspects_key = f"{aspect_type.lower()}_aspects"
-                if aspect_type == 'Golden':
-                    aspects_key = 'golden_transits'
+                # Get the details of aspects based on their location in the data structure
+                if aspect_type == 'Cinderella':
+                    aspects = transit_data.get('transit', {}).get('cinderella_aspects', [])
+                elif aspect_type == 'Golden':
+                    aspects = transit_data.get('golden_transits', [])
                 elif aspect_type == 'Turbulent':
-                    aspects_key = 'turbulent_transits'
+                    aspects = transit_data.get('turbulent_transits', [])  # Changed from nested transit
                     
-                aspects = transit_data.get('transit', {}).get(aspects_key, [])
+                logger.info(f"{aspect_type} aspects: {aspects}")
                 
                 # Create detail string for tooltip
                 details = []
@@ -66,6 +68,8 @@ class SingleTransitVisualizationService:
                                 f"({aspect.get('aspect_name', '').title()}, "
                                 f"orbit: {round(aspect.get('orbit', 0), 4)}°)"
                             )
+                            if aspect_type == 'Turbulent' and 'transit_type' in aspect:
+                                detail += f" [{aspect.get('transit_type', '').title()}]"
                         else:  # Handle regular aspect format
                             detail = (
                                 f"{aspect.get('planet1_name', '').title()}-"
@@ -74,13 +78,14 @@ class SingleTransitVisualizationService:
                                 f"orbit: {round(aspect.get('orbit', 0), 4)}°)"
                             )
                         details.append(detail)
-            
+                
                 records.append({
                     'date': date,
                     'type': aspect_type,
                     'count': count,
                     'details': '\n'.join(details) if details else 'None'
                 })
+                logger.info(f"Records after {aspect_type}: {records}")
                 
         except Exception as e:
             logger.error(f"Error preparing transit data: {str(e)}")
@@ -98,6 +103,7 @@ class SingleTransitVisualizationService:
         try:
             # Prepare the data
             df = self.prepare_data(transit_data)
+            logger.info(f"Transit data DATAFRAME: {df}")
             
             if df.empty:
                 logger.warning("No aspect data found for visualization")
