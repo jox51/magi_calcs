@@ -143,35 +143,96 @@ class TransitVisualizationService:
             title=f'{subject_name} - Transit Aspects ({month_year})'
         ) + watermark
 
+    def create_yearly_chart(self, df: pd.DataFrame, subject_name: str) -> alt.Chart:
+        """Create a chart for the full year overview"""
+        # Get the year range for the title
+        start_date = df['date'].min()
+        end_date = df['date'].max()
+        date_range = f"({start_date.strftime('%B %Y')} - {end_date.strftime('%B %Y')})"
+        
+        watermark = alt.Chart(pd.DataFrame({'text': ['Magi Maps']})).mark_text(
+            align='right',
+            baseline='bottom',
+            fontSize=14,
+            opacity=0.3,
+            color='gray',
+            dx=-10,
+            dy=-10
+        ).encode(
+            text='text:N'
+        )
+        
+        chart = alt.Chart(df).mark_bar(
+            size=20
+        ).encode(
+            x=alt.X('utcyearmonthdate(date):T',
+                   title='Date',
+                   axis=alt.Axis(
+                       format='%b %d',
+                       labelAngle=-45
+                   ),
+                   scale=alt.Scale(
+                       nice=False,
+                       padding=10  # Add padding to prevent bars from extending past limits
+                   )),
+            y=alt.Y('count:Q',
+                   title='Number of Aspects',
+                   scale=alt.Scale(
+                       domain=[0, 10]
+                   )),
+            color=alt.Color('type:N',
+                          scale=alt.Scale(
+                              domain=list(self.colors.keys()),
+                              range=list(self.colors.values())
+                          ),
+                          legend=alt.Legend(title='Aspect Type')),
+            tooltip=[
+                alt.Tooltip('utcyearmonthdate(date):T', title='Date', format='%b %d'),
+                alt.Tooltip('type:N', title='Aspect Type'),
+                alt.Tooltip('count:Q', title='Number of Aspects')
+            ]
+        ).properties(
+            width=800,  # Wider width for yearly overview
+            height=300,
+            title=f'{subject_name} - Transit Aspects {date_range}'
+        ) + watermark
+        
+        return chart
+
     def create_visualization(
         self, 
         transit_data: Dict[str, Any], 
         output_path: str,
         html_path: str
     ) -> Tuple[Optional[str], Optional[str]]:
-        """
-        Create and save visualizations of transit aspects over time
-        Returns tuple of (svg_path, html_path)
-        """
+        """Create and save visualizations of transit aspects over time"""
         try:
             # Prepare the data
             df = self.prepare_data(transit_data)
             
-            # Even if no aspects found, create an empty visualization
             if df.empty:
                 logger.warning("No aspect data found, creating empty visualization")
-                
-            # Get subject name from the first date's natal data
+                return None, None
+            
+            # Get subject name
             daily_aspects = transit_data.get('daily_aspects', {})
             first_date = list(daily_aspects.keys())[0]
             subject_name = daily_aspects[first_date]['natal']['name']
             
-            # Create the chart (will show empty if no data)
-            chart = self.create_monthly_chart(df, subject_name)
+            # Create yearly overview chart
+            yearly_chart = self.create_yearly_chart(df, subject_name)
+            
+            # Split data into monthly chunks and create monthly charts
+            monthly_dfs = self._split_into_monthly_chunks(df)
+            monthly_charts = [self.create_monthly_chart(month_df, subject_name) 
+                            for month_df in monthly_dfs]
+            
+            # Combine all charts vertically
+            all_charts = yearly_chart & alt.vconcat(*monthly_charts)
             
             # Save both SVG and HTML versions
-            chart.save(output_path)
-            chart.save(html_path)
+            all_charts.save(output_path)
+            all_charts.save(html_path)
             
             logger.info(f"Successfully saved visualizations to {output_path} and {html_path}")
             return output_path, html_path
