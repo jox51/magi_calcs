@@ -26,50 +26,62 @@ class TransitVisualizationService:
         alt.data_transformers.disable_max_rows()
     
     def prepare_data(self, transit_data: Dict[str, Any]) -> pd.DataFrame:
-        """
-        Transform transit data into a pandas DataFrame suitable for visualization
-        """
+        """Transform transit data into a pandas DataFrame with detailed transit information"""
         records = []
         
-        # Get daily aspects from the nested structure
+        # Get daily aspects and separate transit collections
         daily_aspects = transit_data.get('daily_aspects', {})
+        cinderella_transits = transit_data.get('cinderella_transits', {})
+        golden_transits = transit_data.get('golden_transits', {})
+        turbulent_transits = transit_data.get('turbulent_transits', {})
         
-        # Iterate through dates in daily_aspects
         for date_str, day_data in daily_aspects.items():
             try:
                 date = datetime.strptime(date_str, '%Y-%m-%d')
                 
-                # Get transit data
-                transit = day_data.get('transit', {})
-                
-                # Count aspects by type (including empty lists as 0)
-                aspect_counts = {
-                    'Cinderella': len(transit.get('cinderella_aspects', [])),
-                    'Golden': len(transit.get('golden_transits', [])),  # Added Golden
-                    'Turbulent': len(day_data.get('turbulent_transits', []))
-                    # Removed Super aspects
+                # Get transit details for tooltips - note the self reference
+                details = {
+                    'Cinderella': self._format_transit_details(cinderella_transits.get(date_str, [])),
+                    'Golden': self._format_transit_details(golden_transits.get(date_str, [])),
+                    'Turbulent': self._format_transit_details(turbulent_transits.get(date_str, []))
                 }
                 
-                # Add records for all types, even if count is 0
+                # Count aspects by type
+                aspect_counts = {
+                    'Cinderella': len(cinderella_transits.get(date_str, [])),
+                    'Golden': len(golden_transits.get(date_str, [])),
+                    'Turbulent': len(turbulent_transits.get(date_str, []))
+                }
+                
+                # Add records with details
                 for aspect_type, count in aspect_counts.items():
                     records.append({
                         'date': date,
                         'type': aspect_type,
-                        'count': count
+                        'count': count,
+                        'details': details[aspect_type]
                     })
                         
             except ValueError as e:
                 logger.error(f"Error parsing date {date_str}: {str(e)}")
                 continue
         
-        # Create DataFrame
-        df = pd.DataFrame(records)
+        return pd.DataFrame(records)
+
+    def _format_transit_details(self, transits: List[Dict]) -> str:
+        """Format transit details for tooltip display"""
+        if not transits:
+            return "None"
         
-        if not df.empty:
-            # Sort by date and type
-            df = df.sort_values(['date', 'type'])
-            
-        return df
+        details = []
+        for transit in transits:
+            if 'person1_name' in transit:  # Cinderella format
+                detail = f"{transit['planet1_name'].title()}-{transit['planet2_name'].title()} ({transit['aspect_name'].title()})"
+            else:  # Golden/Turbulent format
+                detail = f"{transit['natal_planet'].title()}-{transit['transit_planet'].title()} ({transit['aspect_name'].title()})"
+            details.append(detail)
+        
+        return "\n".join(details)
 
     def _split_into_monthly_chunks(self, df: pd.DataFrame) -> List[pd.DataFrame]:
         """Split dataframe into monthly chunks"""
@@ -87,7 +99,7 @@ class TransitVisualizationService:
         return monthly_groups
 
     def create_monthly_chart(self, df: pd.DataFrame, subject_name: str) -> alt.Chart:
-        """Create a chart for a single month of data"""
+        """Create a detailed monthly chart with transit information in tooltips"""
         # Get the month and year for the title
         first_date = df['date'].min()
         month_year = first_date.strftime('%B %Y')
@@ -136,7 +148,8 @@ class TransitVisualizationService:
             tooltip=[
                 alt.Tooltip('utcyearmonthdate(date):T', title='Date', format='%b %d'),
                 alt.Tooltip('type:N', title='Aspect Type'),
-                alt.Tooltip('count:Q', title='Number of Aspects')
+                alt.Tooltip('count:Q', title='Number of Aspects'),
+                alt.Tooltip('details:N', title='Transit Details')  # Added details tooltip
             ]
         ).properties(
             width=400,
@@ -215,23 +228,27 @@ class TransitVisualizationService:
                 logger.warning("No aspect data found, creating empty visualization")
                 return None, None
             
+            # Get date range
+            date_range = (df['date'].max() - df['date'].min()).days
+            
             # Get subject name
             daily_aspects = transit_data.get('daily_aspects', {})
             first_date = list(daily_aspects.keys())[0]
             subject_name = daily_aspects[first_date]['natal']['name']
             
-            # Create yearly overview chart
-            yearly_chart = self.create_yearly_chart(df, subject_name)
-            
-            # Split data into monthly chunks and create monthly charts
+            # Split data into monthly chunks
             monthly_dfs = self._split_into_monthly_chunks(df)
             monthly_charts = [self.create_monthly_chart(month_df, subject_name) 
-                            for month_df in monthly_dfs]
+                             for month_df in monthly_dfs]
             
-            # Combine all charts vertically
-            all_charts = yearly_chart & alt.vconcat(*monthly_charts)
+            # Create final visualization
+            if date_range > 31:  # More than one month
+                yearly_chart = self.create_yearly_chart(df, subject_name)
+                all_charts = yearly_chart & alt.vconcat(*monthly_charts)
+            else:
+                all_charts = alt.vconcat(*monthly_charts)
             
-            # Save both SVG and HTML versions
+            # Save visualizations
             all_charts.save(output_path)
             all_charts.save(html_path)
             
