@@ -91,6 +91,7 @@ class TransitVisualizationService:
         # Get the month and year for the title
         first_date = df['date'].min()
         month_year = first_date.strftime('%B %Y')
+        logger.info(f"Dataframe Monthly Chart: {df}")
         
          # Create watermark
         watermark = alt.Chart(pd.DataFrame({'text': ['Magi Maps']})).mark_text(

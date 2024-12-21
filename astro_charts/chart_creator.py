@@ -271,7 +271,7 @@ class ChartCreator:
                 tz_str=self.timezone_str,
                 online=False
             )
-            logger.info("Transit subject created successfully")
+            logger.info("`Transit subject` created successfully")
 
             # Generate a filename with the subject's name
             name_safe = self.subject.name.replace(" ", "_")
@@ -383,6 +383,7 @@ class ChartCreator:
             # Add aspects to transit data
             transit_data["transit_super_aspects"] = transit_super_aspects
             transit_data["cinderella_aspects"] = cinderella_aspects
+            transit_data["cinderella_transits"] = cinderella_aspects
             transit_data["aspects"] = []  # Keep empty array for consistency
             transit_data["turbulent_transits"] = []  # Will be filled later
             transit_data["golden_transits"] = golden_transits  # Add golden transits
@@ -400,11 +401,13 @@ class ChartCreator:
                 "natal_super_aspects": super_aspects,
                 "chart_path": chart_path,
                 "turbulent_transits": turbulent_transits,
-                "golden_transits": golden_transits  # Add golden transits here too
+                "golden_transits": golden_transits,  # Add golden transits here too
+                "cinderella_transits": cinderella_aspects
             }
 
             logger.info(f"Found {len(turbulent_transits)} turbulent transits")
             logger.info(f"Found {len(golden_transits)} golden transits")
+            logger.info(f"Found {len(cinderella_aspects)} cinderella transits")
             return json.dumps(chart_data, indent=2)
 
         except Exception as e:
@@ -878,9 +881,12 @@ class ChartCreator:
             # Convert string dates to datetime objects
             start_date = datetime.strptime(from_date, "%Y-%m-%d")
             end_date = datetime.strptime(to_date, "%Y-%m-%d")
+            logger.info(f"Creating transit loop from {start_date} to {end_date}")
             
             daily_aspects = {}
             turbulent_transits = {}
+            cinderella_transits = {}
+            golden_transits = {}
             
             current_date = start_date
             while current_date <= end_date:
@@ -900,16 +906,35 @@ class ChartCreator:
                     
                 daily_aspects[date_str] = transit_data
                 
-                # Extract turbulent transits if they exist
+                # Extract and add transit_date to each transit
                 if "turbulent_transits" in transit_data:
-                    turbulent_transits[date_str] = transit_data["turbulent_transits"]
+                    turbulent_list = transit_data["turbulent_transits"]
+                    for transit in turbulent_list:
+                        transit['transit_date'] = date_str
+                    turbulent_transits[date_str] = turbulent_list
+
+                if "cinderella_transits" in transit_data:
+                    cinderella_list = transit_data["cinderella_transits"]
+                    for transit in cinderella_list:
+                        transit['transit_date'] = date_str
+                    cinderella_transits[date_str] = cinderella_list
+
+                if "golden_transits" in transit_data:
+                    golden_list = transit_data["golden_transits"]
+                    for transit in golden_list:
+                        transit['transit_date'] = date_str
+                    golden_transits[date_str] = golden_list
                 
+                
+                    
                 # Move to next day
                 current_date += timedelta(days=1)
             
             return {
                 "daily_aspects": daily_aspects,
-                "turbulent_transits": turbulent_transits
+                "turbulent_transits": turbulent_transits,
+                "cinderella_transits": cinderella_transits,
+                "golden_transits": golden_transits
             }
             
         except Exception as e:
