@@ -364,3 +364,98 @@ class PocketbaseService:
             logger.error(f"Error creating synastry chart record: {str(e)}")
             raise
 
+    def create_cosmo_chart(self, transit_data: Dict[str, Any], chart_path: str = None, chart_html_path: str = None, user_id: str = None, job_id: str = None) -> Dict[str, Any]:
+        """Create a new cosmobiology chart record in PocketBase"""
+        try:
+            endpoint = f"{self.base_url}/api/collections/cosmo_charts/records"
+            
+            # Prepare the data
+            data = {
+                'transit_data': json.dumps(transit_data)
+            }
+            
+            # Add optional fields if provided
+            if user_id:
+                data['user_id'] = user_id
+            if job_id:
+                data['job_id'] = job_id
+            
+            # Prepare files
+            files = {}
+            if chart_path and os.path.exists(chart_path):
+                files['cosmo_chart'] = ('chart.svg', open(chart_path, 'rb'), 'image/svg+xml')
+            if chart_html_path and os.path.exists(chart_html_path):
+                files['cosmo_chart_html'] = ('chart.html', open(chart_html_path, 'rb'), 'text/html')
+            
+            # Remove Content-Type header for multipart request
+            headers = {k: v for k, v in self.headers.items() if k != 'Content-Type'}
+            
+            try:
+                # Make the request
+                response = requests.post(
+                    endpoint,
+                    headers=headers,
+                    data=data,
+                    files=files if files else None
+                )
+                
+                response.raise_for_status()
+                return response.json()
+                
+            finally:
+                # Clean up file handles
+                for file_key in files:
+                    files[file_key][1].close()
+                
+        except Exception as e:
+            logger.error(f"Error creating cosmobiology chart record: {str(e)}")
+            raise
+
+
+    def create_vedic_lucky_times_record(
+        self,
+        natal_data: Dict[str, Any],
+        yogi_point_data: Dict[str, Any],
+        user_id: str = None,
+        job_id: str = None
+    ) -> Dict[str, Any]:
+        """Create a new Vedic lucky times record in PocketBase"""
+        try:
+            endpoint = f"{self.base_url}/api/collections/lucky_times_vedic/records"
+            
+            # Add person's name to the lucky times data
+            yogi_point_data["person_name"] = natal_data.get("subject", {}).get("name", "Unknown")
+            
+            # Prepare the data
+            payload = {
+                "lucky_times_data": json.dumps({
+                    # "natal_data": natal_data,
+                    "yogi_point_data": yogi_point_data
+                }),
+                "lucky_dates_summary": json.dumps({
+                    "dates_summary": yogi_point_data["dates_summary"]
+                })
+            }
+            
+            if user_id:
+                payload["user_id"] = user_id
+            if job_id:
+                payload["job_id"] = job_id
+            
+            # Make the request
+            response = requests.post(
+                endpoint,
+                headers=self.headers,
+                json=payload
+            )
+            
+            # Check if request was successful
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error creating Vedic lucky times record: {str(e)}")
+            if hasattr(e.response, 'text'):
+                logger.error(f"Response: {e.response.text}")
+            raise

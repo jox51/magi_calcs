@@ -22,6 +22,7 @@ from .marital_linkages import MaritalLinkageCalculator
 from .transit_calculator import calculate_transit_data
 from .services.synastry_score_calculator import SynastryScoreCalculator
 from typing import Dict, List, Optional
+from .cosmobiology_calculator import CosmobiologyCalculator
 
 
 
@@ -101,7 +102,7 @@ class ChartCreator:
         'KE': 'Africa/Nairobi'
     }
 
-    def __init__(self, name, year, month, day, hour, minute, city, nation):
+    def __init__(self, name, year, month, day, hour, minute, city, nation, zodiac_type=None, sidereal_mode=None):
         # Initialize GeoService and get coordinates
         geonames_username = os.getenv('GEONAMES_USERNAME')
         self.geo_service = GeoService(geonames_username)
@@ -124,20 +125,34 @@ class ChartCreator:
 
         # Initialize natal subject with all required data
         logger.info(f"Creating natal subject with lat={self.latitude}, lng={self.longitude}, tz={self.timezone_str}")
-        self.subject = AstrologicalSubject(
-            name=name,
-            year=year,
-            month=month,
-            day=day,
-            hour=hour,
-            minute=minute,
-            city=city,
-            nation=nation,
-            lat=self.latitude,
-            lng=self.longitude,
-            tz_str=self.timezone_str,
-            online=False  # Prevent online lookups
-        )
+        
+        # Set up parameters for AstrologicalSubject
+        subject_params = {
+            "name": name,
+            "year": year,
+            "month": month,
+            "day": day,
+            "hour": hour,
+            "minute": minute,
+            "city": city,
+            "nation": nation,
+            "lat": self.latitude,
+            "lng": self.longitude,
+            "tz_str": self.timezone_str,
+            "online": False  # Prevent online lookups
+        }
+        
+        # Add optional zodiac_type and sidereal_mode if provided
+        if zodiac_type:
+            subject_params["zodiac_type"] = zodiac_type
+            logger.info(f"Using zodiac_type: {zodiac_type}")
+            
+            # If sidereal zodiac is specified, add sidereal_mode if provided
+            if zodiac_type == "Sidereal" and sidereal_mode:
+                subject_params["sidereal_mode"] = sidereal_mode
+                logger.info(f"Using sidereal_mode: {sidereal_mode}")
+                
+        self.subject = AstrologicalSubject(**subject_params)
         logger.info("Natal subject created successfully")
 
         self.horizons_url = "https://ssd.jpl.nasa.gov/api/horizons.api"
@@ -239,7 +254,8 @@ class ChartCreator:
             raise
 
     async def create_transit_chart(self, transit_year=None, transit_month=None, 
-                             transit_day=None, transit_hour=None, transit_minute=None):
+                             transit_day=None, transit_hour=None, transit_minute=None,
+                             zodiac_type=None, sidereal_mode=None):
         """Create a transit chart for a specific date (or current date if not specified)"""
         try:
             # Use provided transit date or current date
@@ -257,20 +273,41 @@ class ChartCreator:
             logger.info(f"Creating transit chart for date: {transit_time}")
             
             # Create transit subject with explicit coordinates and timezone
-            self.transit_subject = AstrologicalSubject(
-                name="Transit",
-                year=transit_time.year,
-                month=transit_time.month,
-                day=transit_time.day,
-                hour=transit_time.hour,
-                minute=transit_time.minute,
-                city=self.subject.city,
-                nation=self.subject.nation,
-                lat=self.latitude,
-                lng=self.longitude,
-                tz_str=self.timezone_str,
-                online=False
-            )
+            transit_params = {
+                "name": "Transit",
+                "year": transit_time.year,
+                "month": transit_time.month,
+                "day": transit_time.day,
+                "hour": transit_time.hour,
+                "minute": transit_time.minute,
+                "city": self.subject.city,
+                "nation": self.subject.nation,
+                "lat": self.latitude,
+                "lng": self.longitude,
+                "tz_str": self.timezone_str,
+                "online": False
+            }
+            
+            # Use provided zodiac settings if specified, otherwise use the natal chart settings
+            if zodiac_type:
+                transit_params["zodiac_type"] = zodiac_type
+                logger.info(f"Using provided zodiac_type for transit: {zodiac_type}")
+                
+                # If sidereal zodiac is specified, also use the provided sidereal_mode
+                if zodiac_type == "Sidereal" and sidereal_mode:
+                    transit_params["sidereal_mode"] = sidereal_mode
+                    logger.info(f"Using provided sidereal_mode for transit: {sidereal_mode}")
+            # Fall back to natal chart settings if available
+            elif hasattr(self.subject, 'zodiac_type'):
+                transit_params["zodiac_type"] = self.subject.zodiac_type
+                logger.info(f"Using zodiac_type from natal chart for transit: {self.subject.zodiac_type}")
+                
+                # If sidereal zodiac is specified, also use the same sidereal_mode
+                if self.subject.zodiac_type == "Sidereal" and hasattr(self.subject, 'sidereal_mode'):
+                    transit_params["sidereal_mode"] = self.subject.sidereal_mode
+                    logger.info(f"Using sidereal_mode from natal chart for transit: {self.subject.sidereal_mode}")
+            
+            self.transit_subject = AstrologicalSubject(**transit_params)
             logger.info("`Transit subject` created successfully")
 
             # Generate a filename with the subject's name
@@ -304,6 +341,7 @@ class ChartCreator:
         """Get transit chart data as JSON"""
         try:
             def get_planet_details(planet_obj):
+            
                 # Get planet name and position
                 planet_name = planet_obj.name.lower()
                 abs_pos = planet_obj.abs_pos
@@ -334,7 +372,7 @@ class ChartCreator:
                     "name": self.subject.name,
                     "birth_data": {
                         "date": f"{self.subject.year}-{self.subject.month}-{self.subject.day}",
-                        "time": f"{self.subject.hour}:{self.subject.minute:02d}",
+                        "time": f"{self.subject.hour}:{self.subject.minute}",
                         "location": f"{self.subject.city}, {self.subject.nation}",
                         "longitude": round(self.longitude, 4),
                         "latitude": round(self.latitude, 4)
@@ -364,6 +402,21 @@ class ChartCreator:
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                     "jupiter", "saturn", "uranus", "neptune", 
                                     "pluto", "chiron"]
+                    },
+                    # Add house information to transit data 
+                    "houses": {
+                        "ascendant": {
+                            "sign": self.transit_subject.first_house["sign"],
+                            "position": self.transit_subject.first_house["position"],
+                            "abs_pos": self.transit_subject.first_house["abs_pos"],
+                            "house_num": 1
+                        },
+                        "midheaven": {
+                            "sign": self.transit_subject.tenth_house["sign"],
+                            "position": self.transit_subject.tenth_house["position"],
+                            "abs_pos": self.transit_subject.tenth_house["abs_pos"],
+                            "house_num": 10
+                        }
                     }
                 }
             }
@@ -694,20 +747,34 @@ class ChartCreator:
 
             # Create second subject
             logger.info(f"Creating second subject with lat={lat2}, lng={lng2}, tz={tz_str2}")
-            self.subject2 = AstrologicalSubject(
-                name=name2,
-                year=year2,
-                month=month2,
-                day=day2,
-                hour=hour2,
-                minute=minute2,
-                city=city2,
-                nation=nation2,
-                lat=lat2,
-                lng=lng2,
-                tz_str=tz_str2,
-                online=False
-            )
+            
+            # Set up parameters for second subject
+            subject2_params = {
+                "name": name2,
+                "year": year2,
+                "month": month2,
+                "day": day2,
+                "hour": hour2,
+                "minute": minute2,
+                "city": city2,
+                "nation": nation2,
+                "lat": lat2,
+                "lng": lng2,
+                "tz_str": tz_str2,
+                "online": False
+            }
+            
+            # Use the same zodiac settings as the natal chart if they were specified
+            if hasattr(self.subject, 'zodiac_type'):
+                subject2_params["zodiac_type"] = self.subject.zodiac_type
+                logger.info(f"Using zodiac_type for second subject: {self.subject.zodiac_type}")
+                
+                # If sidereal zodiac is specified, also use the same sidereal_mode
+                if self.subject.zodiac_type == "Sidereal" and hasattr(self.subject, 'sidereal_mode'):
+                    subject2_params["sidereal_mode"] = self.subject.sidereal_mode
+                    logger.info(f"Using sidereal_mode for second subject: {self.subject.sidereal_mode}")
+            
+            self.subject2 = AstrologicalSubject(**subject2_params)
             logger.info("Second subject created successfully")
 
             # Generate custom filename from both names
@@ -870,6 +937,7 @@ class ChartCreator:
         self,
         from_date: str,
         to_date: str,
+        midpoints: Optional[Dict] = None,  # Add midpoints parameter
         generate_chart: bool = False,
         aspects_only: bool = False,
         filter_orb: Optional[float] = None,
@@ -878,6 +946,9 @@ class ChartCreator:
     ) -> Dict:
         """Create transit loop charts for a date range"""
         try:
+            # Initialize cosmobiology calculator only if midpoints are provided
+            cosmo_calc = CosmobiologyCalculator() if midpoints else None
+            
             # Convert string dates to datetime objects
             start_date = datetime.strptime(from_date, "%Y-%m-%d")
             end_date = datetime.strptime(to_date, "%Y-%m-%d")
@@ -887,6 +958,7 @@ class ChartCreator:
             turbulent_transits = {}
             cinderella_transits = {}
             golden_transits = {}
+            cosmobiology_activations = {} if midpoints else None
             
             current_date = start_date
             while current_date <= end_date:
@@ -925,17 +997,50 @@ class ChartCreator:
                         transit['transit_date'] = date_str
                     golden_transits[date_str] = golden_list
                 
-                
+                # Only process cosmobiology if midpoints were provided
+                if midpoints and cosmo_calc:
+                    daily_cosmo_activations = []
+                    transit_planets = transit_data['transit']['subject']['planets']
                     
+                    # Convert midpoints data to format needed by CosmobiologyCalculator
+                    for mp_name, mp_data in midpoints.items():
+                        # Split the midpoint name (format is "planet1-planet2")
+                        p1, p2 = mp_name.split('-')
+                        midpoint_planets = (p1, p2)
+                        midpoint_pos = mp_data['midpoint']
+                        
+                        for transit_planet_name, transit_planet_data in transit_planets.items():
+                            transit_pos = transit_planet_data['abs_pos']
+                            
+                            activation = cosmo_calc.analyze_transit_to_midpoint(
+                                midpoint_pos=midpoint_pos,
+                                transit_planet=transit_planet_name,
+                                transit_pos=transit_pos,
+                                midpoint_planets=midpoint_planets
+                            )
+                            
+                            if activation:
+                                activation['date'] = date_str
+                                daily_cosmo_activations.append(activation)
+                    
+                    if daily_cosmo_activations:
+                        cosmobiology_activations[date_str] = daily_cosmo_activations
+                
                 # Move to next day
                 current_date += timedelta(days=1)
             
-            return {
+            result = {
                 "daily_aspects": daily_aspects,
                 "turbulent_transits": turbulent_transits,
                 "cinderella_transits": cinderella_transits,
-                "golden_transits": golden_transits
+                "golden_transits": golden_transits,
             }
+            
+            # Only include cosmobiology data if it was calculated
+            if cosmobiology_activations is not None:
+                result["cosmobiology_activations"] = cosmobiology_activations
+            
+            return result
             
         except Exception as e:
             logger.error(f"Error in create_transit_loop: {str(e)}")
@@ -1130,3 +1235,199 @@ class ChartCreator:
         except Exception as e:
             logger.error(f"Error in create_marriage_transit_loop: {str(e)}")
             raise
+
+    def calculate_natal_midpoints(self, natal_data):
+        planets_data = natal_data['natal']['planets']
+        midpoints = {}
+        
+        # List of planets we want to calculate midpoints for
+        planet_list = ['sun', 'moon', 'mercury', 'venus', 'mars', 'jupiter', 
+                       'saturn', 'uranus', 'neptune', 'pluto']
+        
+        # Calculate midpoints for each planet pair
+        for i, p1 in enumerate(planet_list):
+            for p2 in planet_list[i+1:]:  # Start from next planet to avoid duplicates
+                if p1 in planets_data and p2 in planets_data:
+                    pos1 = planets_data[p1]['abs_pos']
+                    pos2 = planets_data[p2]['abs_pos']
+                    
+                    # Calculate midpoint
+                    midpoint = (pos1 + pos2) / 2
+                    if midpoint >= 360:
+                        midpoint -= 360
+                    
+                    # Store the result
+                    pair_name = f"{p1}-{p2}"
+                    midpoints[pair_name] = {
+                        'midpoint': midpoint,
+                        'planet1': {
+                            'name': p1,
+                            'position': pos1
+                        },
+                        'planet2': {
+                            'name': p2,
+                            'position': pos2
+                        }
+                    }
+        
+        return midpoints
+
+    async def find_degree_rising_time(self, date: str, degree: float, sign: str) -> Dict:
+        """Find when a specific degree of a zodiac sign rises as the Ascendant.
+        
+        Uses a two-pass algorithm for better precision:
+        1. First pass: Check every 4 minutes to find approximate time
+        2. Second pass: Fine-tune around found time checking every minute
+        
+        Args:
+            date (str): Date to check in YYYY-MM-DD format
+            degree (float): Degree within sign (0-29.99)
+            sign (str): Three-letter zodiac sign code
+            
+        Returns:
+            Dict: Time details when the degree rises, or best approximation
+        """
+        # Convert date string to datetime
+        date_obj = datetime.strptime(date, "%Y-%m-%d")
+        
+        # Get sign number (0-11)
+        signs = ["Ari", "Tau", "Gem", "Can", "Leo", "Vir", "Lib", "Sco", "Sag", "Cap", "Aqu", "Pis"]
+        sign_num = signs.index(sign)
+        
+        # Calculate absolute position (0-360)
+        target_pos = (sign_num * 30) + degree
+        
+        # Initialize results list
+        results = []
+        best_match = None
+        smallest_diff = float('inf')
+        
+        # First pass: Check every 4 minutes
+        for hour in range(24):
+            for minute in range(0, 60, 4):
+                current_time = date_obj.replace(hour=hour, minute=minute)
+                
+                # Create base parameters for transit subject
+                transit_params = {
+                    "name": "Transit",
+                    "year": current_time.year,
+                    "month": current_time.month,
+                    "day": current_time.day,
+                    "hour": current_time.hour,
+                    "minute": current_time.minute,
+                    "city": self.subject.city,
+                    "nation": self.subject.nation,
+                    "lat": self.latitude,
+                    "lng": self.longitude,
+                    "tz_str": self.timezone_str,
+                    "online": False
+                }
+                
+                # Use the same zodiac settings as the natal chart if they were specified
+                if hasattr(self.subject, 'zodiac_type'):
+                    transit_params["zodiac_type"] = self.subject.zodiac_type
+                    
+                    # If sidereal zodiac is specified, also use the same sidereal_mode
+                    if self.subject.zodiac_type == "Sidereal" and hasattr(self.subject, 'sidereal_mode'):
+                        transit_params["sidereal_mode"] = self.subject.sidereal_mode
+                
+                # Create transit subject with the parameters
+                transit_subject = AstrologicalSubject(**transit_params)
+                
+                # Get the Ascendant position
+                asc_pos = transit_subject.first_house["abs_pos"]
+                
+                # Calculate difference, handling 360° wrap
+                diff = min(
+                    abs(asc_pos - target_pos),
+                    abs(asc_pos - target_pos - 360),
+                    abs(asc_pos - target_pos + 360)
+                )
+                
+                # Keep track of best match
+                if diff < smallest_diff:
+                    smallest_diff = diff
+                    best_match = (hour, minute, asc_pos)
+                
+                # If within initial orb, add to results
+                if diff < 0.5:
+                    results.append((hour, minute, asc_pos))
+        
+        # If we found any matches in first pass
+        if results:
+            # Second pass: Fine-tune each potential match
+            refined_results = []
+            for hour, minute, _ in results:
+                # Check 5 minutes before and after in 1-minute increments
+                for fine_minute in range(max(0, minute - 5), min(60, minute + 6)):
+                    current_time = date_obj.replace(hour=hour, minute=fine_minute)
+                    
+                    # Create base parameters for transit subject
+                    transit_params = {
+                        "name": "Transit",
+                        "year": current_time.year,
+                        "month": current_time.month,
+                        "day": current_time.day,
+                        "hour": current_time.hour,
+                        "minute": fine_minute,
+                        "city": self.subject.city,
+                        "nation": self.subject.nation,
+                        "lat": self.latitude,
+                        "lng": self.longitude,
+                        "tz_str": self.timezone_str,
+                        "online": False
+                    }
+                    
+                    # Use the same zodiac settings as the natal chart if they were specified
+                    if hasattr(self.subject, 'zodiac_type'):
+                        transit_params["zodiac_type"] = self.subject.zodiac_type
+                        
+                        # If sidereal zodiac is specified, also use the same sidereal_mode
+                        if self.subject.zodiac_type == "Sidereal" and hasattr(self.subject, 'sidereal_mode'):
+                            transit_params["sidereal_mode"] = self.subject.sidereal_mode
+                    
+                    # Create transit subject with the parameters
+                    transit_subject = AstrologicalSubject(**transit_params)
+                    
+                    asc_pos = transit_subject.first_house["abs_pos"]
+                    diff = min(
+                        abs(asc_pos - target_pos),
+                        abs(asc_pos - target_pos - 360),
+                        abs(asc_pos - target_pos + 360)
+                    )
+                    
+                    if diff < 0.1:  # Tighter orb for refined results
+                        # Convert to local time
+                        local_tz = pytz.timezone(self.timezone_str)
+                        local_time = current_time.replace(tzinfo=pytz.UTC).astimezone(local_tz)
+                        
+                        refined_results.append({
+                            "time": local_time.strftime("%H:%M"),
+                            "date": local_time.strftime("%Y-%m-%d"),
+                            "timezone": str(local_time.tzinfo),
+                            "ascendant_pos": asc_pos,
+                            "difference": round(diff, 6)
+                        })
+            
+            # Sort by smallest difference and return best match
+            if refined_results:
+                return min(refined_results, key=lambda x: x['difference'])
+        
+        # If no precise match found, use best approximation
+        if best_match:
+            hour, minute, asc_pos = best_match
+            current_time = date_obj.replace(hour=hour, minute=minute)
+            local_tz = pytz.timezone(self.timezone_str)
+            local_time = current_time.replace(tzinfo=pytz.UTC).astimezone(local_tz)
+            
+            return {
+                "time": local_time.strftime("%H:%M"),
+                "date": local_time.strftime("%Y-%m-%d"),
+                "timezone": str(local_time.tzinfo),
+                "ascendant_pos": asc_pos,
+                "difference": round(smallest_diff, 6),
+                "is_approximate": True
+            }
+        
+        # If all else fails
+        raise ValueError(f"Could not find time when {degree}° {sign} rises on {date}")
