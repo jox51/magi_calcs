@@ -32,8 +32,9 @@ def calculate_jupiter_pof_last_conjunction(natal_data: Dict[str, Any], transit_d
         # Calculate Part of Fortune position
         if is_day_chart:
             pof_pos = (natal_asc_pos + natal_moon_pos - natal_sun_pos) % 360
-        else:
+ 
             pof_pos = (natal_asc_pos - natal_moon_pos + natal_sun_pos) % 360
+       
         
         # Get current Jupiter position
         current_jupiter_pos = transit_data["transit"]["subject"]["planets"]["jupiter"]["abs_pos"]

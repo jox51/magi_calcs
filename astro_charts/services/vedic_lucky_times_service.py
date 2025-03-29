@@ -2567,6 +2567,9 @@ class VedicLuckyTimesService:
             else:
                 natal_pof = (natal_asc_pos + natal_moon_pos - natal_sun_pos) % 360
                 
+            ayanamsha_offset = 24
+            natal_pof = (natal_pof + ayanamsha_offset) % 360
+            print(f"NATAL POF: {natal_pof}")
             # Get current ascendant position
             current_asc_pos = None
             estimation_method = "unknown"
@@ -2583,6 +2586,7 @@ class VedicLuckyTimesService:
                 "ascendant" in transit_data["transit"]["subject"]["houses"]):
                 
                 current_asc_pos = transit_data["transit"]["subject"]["houses"]["ascendant"]["abs_pos"]
+                current_asc_pos = (current_asc_pos + ayanamsha_offset) % 360
                 estimation_method = "transit_ascendant"
                 print(f"SUCCESS: Found exact transit ascendant position: {round(current_asc_pos, 2)}°")
             
