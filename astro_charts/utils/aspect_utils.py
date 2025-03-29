@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from datetime import datetime, timedelta
 
 # Planet daily motions with retrograde adjustments
@@ -12,7 +12,7 @@ PLANET_DAILY_MOTION = {
     'saturn': 0.034
 }
 
-def find_closest_aspect(current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0) -> Dict[str, Any]:
+def find_closest_aspect(current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0, reference_time: Optional[datetime] = None) -> Dict[str, Any]:
     """Find the closest aspect (conjunction, opposition, trine, sextile, square) to the Yogi Point"""
     if daily_motion == 0:
         # Cannot predict aspects if there's no motion
@@ -45,7 +45,7 @@ def find_closest_aspect(current_pos: float, daily_motion: float, yogi_point: flo
     
     closest_aspect = None
     shortest_distance = float('inf')
-    today = datetime.now()
+    today = reference_time if reference_time is not None else datetime.now()
     
     # Define absolute maximum days - 3 years (1095 days)
     MAX_DAYS_FUTURE = 1095
@@ -145,7 +145,7 @@ def find_closest_aspect(current_pos: float, daily_motion: float, yogi_point: flo
         }
     }
 
-def find_last_aspect(current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0) -> Dict[str, Any]:
+def find_last_aspect(current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0, reference_time: Optional[datetime] = None) -> Dict[str, Any]:
     """Find the most recent aspect (conjunction, opposition) to the Yogi Point"""
     if daily_motion == 0:
         # Cannot predict aspects if there's no motion
@@ -177,7 +177,7 @@ def find_last_aspect(current_pos: float, daily_motion: float, yogi_point: float,
     
     closest_aspect = None
     shortest_distance = float('inf')
-    today = datetime.now()
+    today = reference_time if reference_time is not None else datetime.now()
     
     # Define absolute maximum days - 3 years (1095 days)
     MAX_DAYS_PAST = 1095

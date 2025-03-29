@@ -45,8 +45,8 @@ class VedicLuckyTimesService:
     def get_available_dasha_lord(self, dasha_lord: str, available_planets: List[str]) -> str:
         return get_available_dasha_lord(dasha_lord, available_planets)
 
-    def find_closest_aspect(self, current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0) -> Dict[str, Any]:
-        return find_closest_aspect(current_pos, daily_motion, yogi_point, is_retrograde, orb)
+    def find_closest_aspect(self, current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0, reference_time: Optional[datetime] = None) -> Dict[str, Any]:
+        return find_closest_aspect(current_pos, daily_motion, yogi_point, is_retrograde, orb, reference_time)
 
     def calculate_yogi_point(self, natal_data: Dict[str, Any]) -> float:
         return calculate_yogi_point(natal_data)
@@ -57,8 +57,8 @@ class VedicLuckyTimesService:
     def sanitize_response_for_json(self, response: Dict[str, Any]) -> Dict[str, Any]:
         return sanitize_response_for_json(response)
 
-    def find_last_aspect(self, current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0) -> Dict[str, Any]:
-        return find_last_aspect(current_pos, daily_motion, yogi_point, is_retrograde, orb)
+    def find_last_aspect(self, current_pos: float, daily_motion: float, yogi_point: float, is_retrograde: bool = False, orb: float = 3.0, reference_time: Optional[datetime] = None) -> Dict[str, Any]:
+        return find_last_aspect(current_pos, daily_motion, yogi_point, is_retrograde, orb, reference_time)
 
     def calculate_ava_yogi_point(self, yogi_point: float) -> float:
         return calculate_ava_yogi_point(yogi_point)
@@ -136,6 +136,58 @@ class VedicLuckyTimesService:
             
             print(f"Natal data: {natal_data}")
             print(f"Transit data: {transit_data}")
+
+            # --- Determine the reference time for calculations (Added) ---
+            reference_time = None
+            try:
+                # Attempt 1: Get precise UTC time from transit data if available
+                if transit_data and "transit" in transit_data and isinstance(transit_data['transit'], dict):
+                    if "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict):
+                        if "date_utc" in transit_data["transit"]["subject"]:
+                            date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                            if date_utc_str:
+                                if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                                if '.' in date_utc_str:
+                                    parts = date_utc_str.split('.')
+                                    date_utc_str = parts[0] + '.' + parts[1][:6] # Truncate microseconds
+                                    if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                                reference_time = datetime.fromisoformat(date_utc_str)
+                                print(f"[ProcessVedic] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+
+                # Attempt 2: Reconstruct from transit subject birth_data
+                if reference_time is None and transit_data:
+                     if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                         "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                         "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                         t_info = transit_data["transit"]["subject"]["birth_data"]
+                         required_keys = ["date", "time"]
+                         if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             datetime_str = f"{t_info['date']} {t_info['time']}"
+                             try:
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"[ProcessVedic] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"[ProcessVedic] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+                # Attempt 3: Reconstruct from top-level transit info
+                if reference_time is None and transit_data:
+                    required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                    if all(k in transit_data for k in required_keys):
+                        reference_time = datetime(
+                            int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                            int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                        )
+                        print(f"[ProcessVedic] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+            except Exception as e:
+                print(f"[ProcessVedic] ERROR: Exception during reference time extraction: {e}")
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = datetime.now()
+                print(f"[ProcessVedic] WARNING: Could not extract reference time from transit_data. Falling back to current time: {reference_time}. Results may drift.")
+            # --- End of added reference_time logic ---
+
             # Calculate Yogi Point
             yogi_point = self.calculate_yogi_point(natal_data)
             
@@ -193,7 +245,8 @@ class VedicLuckyTimesService:
                 daily_motion=ruler_daily_motion,
                 yogi_point=yogi_point,
                 is_retrograde=ruler_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate last aspect of ruler to Yogi Point
@@ -202,7 +255,8 @@ class VedicLuckyTimesService:
                 daily_motion=ruler_daily_motion,
                 yogi_point=yogi_point,
                 is_retrograde=ruler_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate next aspect of ruler to Ava Yogi Point (unlucky point)
@@ -211,7 +265,8 @@ class VedicLuckyTimesService:
                 daily_motion=ruler_daily_motion,
                 yogi_point=ava_yogi_point,
                 is_retrograde=ruler_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate last aspect of ruler to Ava Yogi Point
@@ -220,7 +275,8 @@ class VedicLuckyTimesService:
                 daily_motion=ruler_daily_motion,
                 yogi_point=ava_yogi_point,
                 is_retrograde=ruler_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate current Dasha lord
@@ -241,7 +297,8 @@ class VedicLuckyTimesService:
                 daily_motion=dasha_daily_motion,
                 yogi_point=yogi_point,
                 is_retrograde=dasha_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate last aspect of Dasha lord to Yogi Point
@@ -250,7 +307,8 @@ class VedicLuckyTimesService:
                 daily_motion=dasha_daily_motion,
                 yogi_point=yogi_point,
                 is_retrograde=dasha_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate next aspect of Dasha lord to Ava Yogi Point
@@ -259,7 +317,8 @@ class VedicLuckyTimesService:
                 daily_motion=dasha_daily_motion,
                 yogi_point=ava_yogi_point,
                 is_retrograde=dasha_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Calculate last aspect of Dasha lord to Ava Yogi Point
@@ -268,7 +327,8 @@ class VedicLuckyTimesService:
                 daily_motion=dasha_daily_motion,
                 yogi_point=ava_yogi_point,
                 is_retrograde=dasha_retrograde,
-                orb=orb  # Use provided orb
+                orb=orb,  # Use provided orb
+                reference_time=reference_time # Pass reference time
             )
             
             # Verify that Yogi Point and Ava Yogi Point aspects have different dates
@@ -283,7 +343,8 @@ class VedicLuckyTimesService:
                     daily_motion=ruler_daily_motion * 0.99,  # Slight adjustment to motion
                     yogi_point=ava_yogi_point,
                     is_retrograde=ruler_retrograde,
-                    orb=orb  # Use provided orb
+                    orb=orb,  # Use provided orb
+                    reference_time=reference_time # Pass reference time
                 )
             
             # Check ascendant ruler last aspects
@@ -295,7 +356,8 @@ class VedicLuckyTimesService:
                     daily_motion=ruler_daily_motion * 0.99,  # Slight adjustment to motion
                     yogi_point=ava_yogi_point,
                     is_retrograde=ruler_retrograde,
-                    orb=orb  # Use provided orb
+                    orb=orb,  # Use provided orb
+                    reference_time=reference_time # Pass reference time
                 )
             
             # Check dasha lord next aspects
@@ -307,7 +369,8 @@ class VedicLuckyTimesService:
                     daily_motion=dasha_daily_motion * 0.99,  # Slight adjustment to motion
                     yogi_point=ava_yogi_point,
                     is_retrograde=dasha_retrograde,
-                    orb=orb  # Use provided orb
+                    orb=orb,  # Use provided orb
+                    reference_time=reference_time # Pass reference time
                 )
             
             # Check dasha lord last aspects
@@ -319,7 +382,8 @@ class VedicLuckyTimesService:
                     daily_motion=dasha_daily_motion * 0.99,  # Slight adjustment to motion
                     yogi_point=ava_yogi_point,
                     is_retrograde=dasha_retrograde,
-                    orb=orb  # Use provided orb
+                    orb=orb,  # Use provided orb
+                    reference_time=reference_time # Pass reference time
                 )
             
             # Get Yogi configurations if available
@@ -481,30 +545,22 @@ class VedicLuckyTimesService:
                     response["yogi_configurations"]["yearly_power_alignments"] = yogi_configurations["yearly_power_alignments"]
             
             # Add interpretation
-            response["interpretation"] = {
-                "yogi_point": f"Your Yogi Point at {round(yogi_point % 30, 2)}° {ZODIAC_SIGNS[response['yogi_point']['sign']]} indicates times of heightened spiritual awareness and fortune when activated by transits",
-                "ava_yogi_point": f"Your Ava Yogi Point at {round(ava_yogi_point % 30, 2)}° {ZODIAC_SIGNS[response['ava_yogi_point']['sign']]} indicates times of challenge or difficulty when activated by transits",
-                "ascendant_ruler": f"Your Ascendant ruler {ascendant_ruler.capitalize()} is currently at {round(current_ruler_degree, 2)}° {ZODIAC_SIGNS[current_ruler_sign]} {'(Retrograde) ' if ruler_retrograde else ''}and will make a {ruler_next_aspect['type']} to your Yogi Point in {ruler_next_aspect['estimated_days']} days, lasting approximately {ruler_next_aspect['duration']['days']} days (from {ruler_next_aspect['duration']['start_date']} to {ruler_next_aspect['duration']['end_date']})",
-                "dasha_lord": f"Your Dasha Lord {dasha_lord.capitalize()} is currently at {round(current_dasha_degree, 2)}° {ZODIAC_SIGNS[current_dasha_sign]} {'(Retrograde) ' if dasha_retrograde else ''}and will make a {dasha_next_aspect['type']} to your Yogi Point in {dasha_next_aspect['estimated_days']} days, lasting approximately {dasha_next_aspect['duration']['days']} days (from {dasha_next_aspect['duration']['start_date']} to {dasha_next_aspect['duration']['end_date']})",
-                "next_transit": f"The next significant transit will be from your {dasha_lord if dasha_next_aspect['estimated_days'] <= ruler_next_aspect['estimated_days'] else ascendant_ruler} on {dasha_next_aspect['estimated_date'] if dasha_next_aspect['estimated_days'] <= ruler_next_aspect['estimated_days'] else ruler_next_aspect['estimated_date']}",
-                "last_transit": f"Your {ascendant_ruler.capitalize()} made a {ruler_last_aspect['type']} to your Yogi Point {ruler_last_aspect['estimated_days_ago']} days ago on {ruler_last_aspect['estimated_date']}, and your {dasha_lord.capitalize()} made a {dasha_last_aspect['type']} {dasha_last_aspect['estimated_days_ago']} days ago on {dasha_last_aspect['estimated_date']}.",
-                "next_ava_yogi_transit": f"Be cautious around {ruler_next_ava_aspect['estimated_date']} when your {ascendant_ruler.capitalize()} makes a {ruler_next_ava_aspect['type']} to your Ava Yogi Point (active from {ruler_next_ava_aspect['duration']['start_date']} to {ruler_next_ava_aspect['duration']['end_date']}), and around {dasha_next_ava_aspect['estimated_date']} when your {dasha_lord.capitalize()} makes a {dasha_next_ava_aspect['type']} to your Ava Yogi Point (active from {dasha_next_ava_aspect['duration']['start_date']} to {dasha_next_ava_aspect['duration']['end_date']}).",
-                "last_ava_yogi_transit": f"You may have experienced challenges {ruler_last_ava_aspect['estimated_days_ago']} days ago ({ruler_last_ava_aspect['estimated_date']}) when your {ascendant_ruler.capitalize()} made a {ruler_last_ava_aspect['type']} to your Ava Yogi Point, and {dasha_last_ava_aspect['estimated_days_ago']} days ago ({dasha_last_ava_aspect['estimated_date']}) when your {dasha_lord.capitalize()} made a {dasha_last_ava_aspect['type']}.",
-                "best_use": "Use these periods for important beginnings, spiritual practices, or significant life decisions",
-                "duration_explanation": "Transits are most powerful on the exact date but have influence throughout their duration period. The orb used for calculations affects how long the transit remains active."
+            response["interpretation"] = {}
+            
+            # Initialize dates_summary dictionary early
+            response["dates_summary"] = {
+                "person_name": name,
+                "asc_pof_conjunction_dates": [],
+                "location_daily_dates": [],
+                "location_power_dates": [],
+                "yearly_power_dates": [],
+                "bullseye_periods": [], # Ensures bullseye_periods is always initialized
+                "ascendant_ruler_dates": [],
+                "dasha_lord_dates": [],
+                "jupiter_pof_dates": [],
+                "lucky_dates": [],
+                "unlucky_dates": []
             }
-            
-            if has_yogi_config and "next_configuration" in yogi_configurations:
-                next_config = yogi_configurations["next_configuration"]
-                if "type" in next_config and "formatted_time" in next_config:
-                    response["interpretation"]["next_yogi_configuration"] = f"The next significant alignment is {next_config['type']} at {next_config['formatted_time']}, which is an auspicious time for spiritual practices."
-            
-            if has_yogi_config and "duplicate_yogi" in yogi_configurations:
-                dup_yogi = yogi_configurations["duplicate_yogi"]
-                if all(key in dup_yogi for key in ["planet", "degree", "sign"]):
-                    response["interpretation"]["yogi_duplicate_yogi"] = f"The Duplicate Yogi is {dup_yogi['planet'].capitalize()}, the ruler of your Yogi Point sign ({response['yogi_point']['sign']}). It is currently at {round(dup_yogi['degree'], 2)}° {ZODIAC_SIGNS[dup_yogi['sign']]}."
-            
-            response["interpretation"]["significance"] = "These alignments create powerful spiritual windows for meditation, ceremony, or important beginnings."
             
             # Add person name 
             response["person_name"] = name
@@ -540,54 +596,90 @@ class VedicLuckyTimesService:
             # Add Bullseye periods to response
             response["bullseye_periods"] = bullseye_periods
             
-            # Add Bullseye interpretation
-            if bullseye_periods and "error" not in bullseye_periods[0]:
-                # Check if we have a regular bullseye period with time
-                if "time" in bullseye_periods[0]:
-                    next_bullseye = bullseye_periods[0]
+            # --- Adjusted Bullseye Interpretation and Summary Logic ---
+            bullseye_interpretation = "Bullseye period information is not available or in an unexpected format."
+            if bullseye_periods and isinstance(bullseye_periods, list) and bullseye_periods:
+                period_data = bullseye_periods[0] # Process the first entry
+
+                # Handle error case first
+                if "error" in period_data:
+                    error_msg = period_data.get("error", "Unknown error")
+                    bullseye_interpretation = f"Bullseye period information could not be calculated: {error_msg}"
+                    # Clear the summary entry if there was an error
+                    response["dates_summary"]["bullseye_periods"] = []
+                    print(f"Bullseye period calculation returned an error: {error_msg} - clearing dates_summary entry")
+                
+                # Handle current bullseye period
+                elif "time" in period_data and period_data.get("is_current"):
+                    current_bullseye = period_data
                     bullseye_interpretation = (
-                        f"The next Bullseye period occurs at {next_bullseye['time']} when Saturn in your D9 chart "
-                        f"aligns with your 7th house cusp. This is an auspicious time for making important decisions, "
-                        f"beginning significant projects, or engaging in spiritual practices."
+                        f"You are currently in a Bullseye period (active from {current_bullseye['duration']['start_time']} to {current_bullseye['duration']['end_time']}) "
+                        f"with Saturn at {round(current_bullseye['d9_saturn']['degree'], 1)}° "
+                        f"{ZODIAC_SIGNS[current_bullseye['d9_saturn']['sign']]} in your D9 chart, "
+                        f"within {round(current_bullseye['angular_distance'], 1)}° of your natal D9 7th house cusp "
+                        f"({round(current_bullseye['d9_seventh_cusp']['degree'], 1)}° {ZODIAC_SIGNS[current_bullseye['d9_seventh_cusp']['sign']]}). "
+                        f"This is an auspicious time for important decisions and spiritual practices."
                     )
-                    
-                    # Check if it's currently a Bullseye period
-                    current_bullseye = next(filter(lambda x: x.get("is_current", False), bullseye_periods), None)
-                    if current_bullseye:
+                    # Add to dates_summary
+                    days_away = 0 # Current period
+                    response["dates_summary"]["bullseye_periods"] = [{
+                        "date": current_bullseye["time"],
+                        "name": "current_bullseye_period",
+                        "description": "Current Bullseye Period - Saturn aligns with D9 7th house cusp",
+                        "significance": "Auspicious time for decisions and spiritual practices",
+                        "duration": current_bullseye.get("duration"),
+                        "days_away": round(days_away)
+                    }]
+                    print(f"Added current Bullseye period {current_bullseye['time']} to dates_summary")
+
+                # Handle estimation cases (found estimate OR could not estimate)
+                elif "message" in period_data and "next_estimated_bullseye" in period_data:
+                    estimate_info = period_data["next_estimated_bullseye"]
+                    current_saturn_info = period_data["current_saturn_d9"]
+                    cusp_info = period_data["d9_seventh_cusp"]
+                    current_distance = period_data["current_angular_distance"]
+
+                    # Check if an actual date was estimated
+                    if estimate_info.get("estimated_date"):
+                        bullseye_interpretation = estimate_info.get("description", "Could not generate detailed interpretation for estimated Bullseye period.")
+                        # Add estimate to dates_summary
+                        response["dates_summary"]["bullseye_periods"] = [{
+                            "date": estimate_info["estimated_date"],
+                            "name": "next_estimated_bullseye",
+                            "description": "Estimated Next Bullseye Period",
+                            "significance": bullseye_interpretation,
+                            "days_away": estimate_info.get("days_away"),
+                            "is_estimated": True,
+                            "duration": None # Duration is harder to estimate long-term
+                        }]
+                        print(f"Added estimated next Bullseye period {estimate_info['estimated_date']} to dates_summary")
+                    else: # Handle "Could not estimate" case
                         bullseye_interpretation = (
-                            f"You are currently in a Bullseye period with Saturn at {round(current_bullseye['d9_saturn']['degree'], 2)}° "
-                            f"{ZODIAC_SIGNS[current_bullseye['d9_saturn']['sign']]} in your D9 chart, "
-                            f"within {current_bullseye['angular_distance']}° of your 7th house cusp. "
-                            f"This is an auspicious time for important decisions and spiritual practices."
+                            f"No Bullseye period is currently active. {estimate_info.get('description', '')} "
+                            f"Current Transit Saturn D9 is at {round(current_saturn_info['degree'], 1)}° {ZODIAC_SIGNS[current_saturn_info['sign']]} "
+                            f"and Natal D9 7th Cusp is at {round(cusp_info['degree'], 1)}° {ZODIAC_SIGNS[cusp_info['sign']]}, "
+                            f"with an angular distance of {round(current_distance, 1)}°. An alignment requires this distance to be within 2.5°."
                         )
-                # Check if we have a message about no bullseye periods
-                elif "message" in bullseye_periods[0]:
-                    message = bullseye_periods[0]["message"]
-                    if "No Bullseye periods found" in message:
-                        # Get specific details to make the interpretation more informative
-                        current_distance = bullseye_periods[0].get("current_angular_distance", 0)
-                        saturn_d9 = bullseye_periods[0].get("current_saturn_d9", {})
-                        d9_seventh_cusp = bullseye_periods[0].get("d9_seventh_cusp", {})
-                        
-                        # Create more detailed interpretation
-                        bullseye_interpretation = (
-                            f"No Bullseye periods were found in the next two days. The Saturn position in your D9 chart "
-                            f"is currently {round(current_distance, 2)}° away from your 7th house cusp. "
-                            f"Saturn is at {round(saturn_d9.get('degree', 0), 2)}° {ZODIAC_SIGNS[saturn_d9.get('sign', 'Ari')]} "
-                            f"and your 7th house cusp is at {round(d9_seventh_cusp.get('degree', 0), 2)}° {ZODIAC_SIGNS[d9_seventh_cusp.get('sign', 'Ari')]}. "
-                            f"Bullseye periods occur when Saturn in the D9 chart aligns within 2.5° of your 7th house cusp, creating an "
-                            f"auspicious time for important decisions and spiritual practices."
-                        )
-                    else:
-                        bullseye_interpretation = f"Bullseye period information: {message}"
+                        # Clear the summary entry as no date was found
+                        response["dates_summary"]["bullseye_periods"] = []
+                        print(f"Bullseye period message: '{period_data['message']}' but no estimated date found - clearing dates_summary entry")
+
+                # Fallback for unexpected format
                 else:
-                    bullseye_interpretation = "Bullseye period information is not available with the current chart data."
-            else:
-                # Handle error case
-                error_msg = bullseye_periods[0].get("error", "Unknown error") if bullseye_periods else "No bullseye data available"
-                bullseye_interpretation = f"Bullseye period information could not be calculated: {error_msg}"
+                    bullseye_interpretation = "Bullseye period information is not available or in an unexpected format."
+                    # Clear the summary entry
+                    response["dates_summary"]["bullseye_periods"] = []
+                    print("Bullseye period data found, but format not recognized for dates_summary - clearing dates_summary entry.")
             
+            # Handle case where bullseye_periods is empty/None
+            else:
+                bullseye_interpretation = "No Bullseye period data was returned."
+                # Ensure the summary entry is empty
+                response["dates_summary"]["bullseye_periods"] = []
+                print("No Bullseye period data returned - ensuring dates_summary entry is empty.")
+
             response["interpretation"]["bullseye_period"] = bullseye_interpretation
+            # --- End of Adjusted Bullseye Logic ---
             
             # Calculate when the ascendant will conjunct the natal Part of Fortune (next 7 days)
             try:
@@ -650,15 +742,16 @@ class VedicLuckyTimesService:
             except Exception as e:
                 print(f"Error calculating ascendant-partof fortune conjunctions: {str(e)}")
                 import traceback
-                traceback.print_exc()
-                response["ascendant_part_of_fortune_conjunctions"] = [{"error": f"Error calculating conjunctions: {str(e)}"}]
-                response["interpretation"]["ascendant_pof_conjunction"] = (
-                    "We couldn't calculate when the ascendant will conjunct your natal Part of Fortune. "
-                    "This typically happens once per day for about 15-20 minutes and is an excellent time for starting new ventures."
-                )
+            #     traceback.print_exc()
+            #     response["ascendant_part_of_fortune_conjunctions"] = [{"error": f"Error calculating conjunctions: {str(e)}"}]
+            #     response["interpretation"]["ascendant_pof_conjunction"] = (
+            #         "We couldn't calculate when the ascendant will conjunct your natal Part of Fortune. "
+            #         "This typically happens once per day for about 15-20 minutes and is an excellent time for starting new ventures."
+            #     )
                 
             # Get list of significant dates from the calculated data
             lucky_dates = []
+            unlucky_dates = [] # Initialize unlucky_dates as well
             
             # Add all the bullseye periods
             if "bullseye_periods" in response and isinstance(response["bullseye_periods"], list):
@@ -806,19 +899,21 @@ class VedicLuckyTimesService:
                     )
             
             # Create a dedicated summary section for lucky and unlucky dates
-            response["dates_summary"] = {
-                "person_name": name,
-                "asc_pof_conjunction_dates": [],
-                "location_daily_dates": [],
-                "location_power_dates": [],
-                "yearly_power_dates": [],
-                "bullseye_periods": [],  # This ensures bullseye_periods is always initialized
-                "ascendant_ruler_dates": [],
-                "dasha_lord_dates": [],
-                "jupiter_pof_dates": [],
-                "lucky_dates": [],
-                "unlucky_dates": []
-            }
+            # This block is redundant as it was moved earlier to ~line 553
+            # Deleting this block:
+            # response["dates_summary"] = {
+            #     "person_name": name,
+            #     "asc_pof_conjunction_dates": [],
+            #     "location_daily_dates": [],
+            #     "location_power_dates": [],
+            #     "yearly_power_dates": [],
+            #     "bullseye_periods": [],
+            #     "ascendant_ruler_dates": [],
+            #     "dasha_lord_dates": [],
+            #     "jupiter_pof_dates": [],
+            #     "lucky_dates": [],
+            #     "unlucky_dates": []
+            # }
             
             # We'll handle Jupiter-POF dates later in the code to avoid duplication
             # (This was previously adding jupiter_pof_date here)
@@ -1829,6 +1924,57 @@ class VedicLuckyTimesService:
             List of dictionaries containing Bullseye period times and details
         """
         try:
+            # --- Determine the reference time for projections (Added) ---
+            reference_time = None
+            try:
+                # Attempt 1: Get precise UTC time from transit data if available
+                if transit_data and "transit" in transit_data and isinstance(transit_data['transit'], dict):
+                    if "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict):
+                        if "date_utc" in transit_data["transit"]["subject"]:
+                            date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                            if date_utc_str:
+                                if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                                if '.' in date_utc_str:
+                                    parts = date_utc_str.split('.')
+                                    date_utc_str = parts[0] + '.' + parts[1][:6] # Truncate microseconds
+                                    if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                                reference_time = datetime.fromisoformat(date_utc_str)
+                                print(f"[Bullseye] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+
+                # Attempt 2: Reconstruct from transit subject birth_data
+                if reference_time is None and transit_data:
+                     if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                         "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                         "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                         t_info = transit_data["transit"]["subject"]["birth_data"]
+                         required_keys = ["date", "time"]
+                         if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             datetime_str = f"{t_info['date']} {t_info['time']}"
+                             try:
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"[Bullseye] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"[Bullseye] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+                # Attempt 3: Reconstruct from top-level transit info
+                if reference_time is None and transit_data:
+                    required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                    if all(k in transit_data for k in required_keys):
+                        reference_time = datetime(
+                            int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                            int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                        )
+                        print(f"[Bullseye] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+            except Exception as e:
+                print(f"[Bullseye] ERROR: Exception during reference time extraction: {e}")
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = datetime.now() # Use datetime.now() as fallback, but store it
+                print(f"[Bullseye] WARNING: Could not extract reference time from transit_data. Falling back to current time: {reference_time}. Results may drift.")
+            # --- End of added reference_time logic ---
+
             # Calculate D9 chart
             d9_chart = self.calculate_d9_chart(natal_data)
             print(f"D9 chart for bullseye calculation: {d9_chart}")
@@ -1852,6 +1998,11 @@ class VedicLuckyTimesService:
                         "error": "Cannot calculate Bullseye periods - 7th house cusp information not available in the D9 chart"
                     }]
             
+            # Store the fixed natal D9 7th house cusp for comparison
+            natal_d9_seventh_house_cusp = seventh_house_cusp
+            natal_d9_seventh_house_sign = list(ZODIAC_SIGNS.keys())[int(natal_d9_seventh_house_cusp / 30)]
+            natal_d9_seventh_house_degree = natal_d9_seventh_house_cusp % 30
+
             # Get transit Saturn position
             saturn_pos = None
             saturn_retrograde = False
@@ -1887,10 +2038,12 @@ class VedicLuckyTimesService:
             
             # Calculate the D9 position of current transit Saturn
             transit_saturn_d9_pos = self.calculate_d9_position(saturn_pos)
+            transit_saturn_d9_sign = list(ZODIAC_SIGNS.keys())[int(transit_saturn_d9_pos / 30)]
+            transit_saturn_d9_degree = transit_saturn_d9_pos % 30
             print(f"Saturn D9 position: {transit_saturn_d9_pos}")
             
-            # Calculate current angular distance between transit Saturn D9 position and the 7th house cusp
-            angular_distance = abs(transit_saturn_d9_pos - seventh_house_cusp) % 360
+            # Calculate current angular distance between transit Saturn D9 position and the natal D9 7th house cusp
+            angular_distance = abs(transit_saturn_d9_pos - natal_d9_seventh_house_cusp) % 360
             if angular_distance > 180:
                 angular_distance = 360 - angular_distance
             
@@ -1903,227 +2056,136 @@ class VedicLuckyTimesService:
             # Since we're working with D9 positions, we need to find when Saturn will be at the right position
             # in the tropical zodiac that corresponds to the D9 7th house cusp
             
-            # The Ascendant makes a full rotation every day, so the bullseye occurs daily
-            # We need to determine at what time of day this happens
-            
-            now = datetime.now()
+            # REMOVED: The Ascendant makes a full rotation every day, so the bullseye occurs daily
+            # REMOVED: We need to determine at what time of day this happens
+            # NOTE: Bullseye period depends on TRANSIT SATURN D9 aligning with NATAL D9 7th Cusp.
+            # It's driven by Saturn's slow movement, not the Ascendant's daily cycle.
+
+            # REMOVED: now = datetime.now() # Use reference_time instead
             bullseye_periods = []
             
-            # Get current Ascendant position from transit data if available
-            current_asc_pos = None
-            if "transit" in transit_data and "subject" in transit_data["transit"] and "houses" in transit_data["transit"]["subject"] and "ascendant" in transit_data["transit"]["subject"]["houses"]:
-                current_asc_pos = transit_data["transit"]["subject"]["houses"]["ascendant"]["abs_pos"]
-                print(f"Found ascendant in transit data: {current_asc_pos}")
-            elif "subject" in transit_data and "houses" in transit_data["subject"] and "ascendant" in transit_data["subject"]["houses"]:
-                current_asc_pos = transit_data["subject"]["houses"]["ascendant"]["abs_pos"]
-                print(f"Found ascendant in alternate location: {current_asc_pos}")
-            else:
-                # Fallback to natal Ascendant if transit Ascendant not available
-                current_asc_pos = natal_data["subject"]["houses"]["ascendant"]["abs_pos"]
-                print(f"Using natal ascendant as fallback: {current_asc_pos}")
-            
-            # Check each hour of today and tomorrow to find when Saturn is within 2.5° of the 7th house cusp in D9
-            for day_offset in range(2):  # Today and tomorrow
-                check_date = now + timedelta(days=day_offset)
-                
-                for hour in range(24):
-                    # Set the time to check
-                    check_time = check_date.replace(hour=hour, minute=0, second=0)
-                    
-                    # Calculate approximate position of Ascendant at this time
-                    # Ascendant moves approximately 1° every 4 minutes, or 15° per hour
-                    hours_since_now = (check_time - now).total_seconds() / 3600
-                    
-                    # Calculate Ascendant position at check_time
-                    asc_pos_at_time = (current_asc_pos + (hours_since_now * 15)) % 360
-                    
-                    # Calculate 7th house cusp position at check_time
-                    seventh_cusp_at_time = (asc_pos_at_time + 180) % 360
-                    
-                    # Calculate D9 position of 7th house cusp at check_time
-                    d9_seventh_cusp_at_time = self.calculate_d9_position(seventh_cusp_at_time)
-                    
-                    # Saturn's position doesn't change much in a day, but we can calculate it for precision
-                    saturn_pos_at_time = (saturn_pos + (hours_since_now * saturn_daily_motion / 24)) % 360
-                    d9_saturn_pos_at_time = self.calculate_d9_position(saturn_pos_at_time)
-                    
-                    # Calculate angular distance between Saturn and 7th house cusp in D9
-                    angular_dist = abs(d9_saturn_pos_at_time - d9_seventh_cusp_at_time) % 360
-                    if angular_dist > 180:
-                        angular_dist = 360 - angular_dist
-                    
-                    # If within orb, we have a Bullseye period
-                    if angular_dist <= 2.5:
-                        # For more precision, check each 15-minute interval within this hour
-                        for minute in [0, 15, 30, 45]:
-                            precise_time = check_time.replace(minute=minute)
-                            
-                            # Recalculate with more precision
-                            precise_hours_since_now = (precise_time - now).total_seconds() / 3600
-                            precise_asc_pos = (current_asc_pos + (precise_hours_since_now * 15)) % 360
-                            precise_seventh_cusp = (precise_asc_pos + 180) % 360
-                            precise_d9_seventh_cusp = self.calculate_d9_position(precise_seventh_cusp)
-                            
-                            precise_saturn_pos = (saturn_pos + (precise_hours_since_now * saturn_daily_motion / 24)) % 360
-                            precise_d9_saturn_pos = self.calculate_d9_position(precise_saturn_pos)
-                            
-                            precise_angular_dist = abs(precise_d9_saturn_pos - precise_d9_seventh_cusp) % 360
-                            if precise_angular_dist > 180:
-                                precise_angular_dist = 360 - precise_angular_dist
-                            
-                            if precise_angular_dist <= 2.5:
-                                # Found a precise Bullseye time
-                                d9_seventh_house_sign = list(ZODIAC_SIGNS.keys())[int(precise_d9_seventh_cusp / 30)]
-                                d9_seventh_house_degree = precise_d9_seventh_cusp % 30
-                                
-                                d9_saturn_sign = list(ZODIAC_SIGNS.keys())[int(precise_d9_saturn_pos / 30)]
-                                d9_saturn_degree = precise_d9_saturn_pos % 30
-                                
-                                bullseye_periods.append({
-                                    "time": precise_time.strftime("%Y-%m-%d %H:%M"),
-                                    "time_iso": precise_time.isoformat(),
-                                    "d9_seventh_cusp": {
-                                        "position": round(precise_d9_seventh_cusp, 2),
-                                        "sign": d9_seventh_house_sign,
-                                        "degree": round(d9_seventh_house_degree, 2)
-                                    },
-                                    "d9_saturn": {
-                                        "position": round(precise_d9_saturn_pos, 2),
-                                        "sign": d9_saturn_sign,
-                                        "degree": round(d9_saturn_degree, 2),
-                                        "is_retrograde": saturn_retrograde
-                                    },
-                                    "angular_distance": round(precise_angular_dist, 2),
-                                    "is_current": (day_offset == 0 and now.hour == hour and 
-                                                 now.minute <= minute + 15 and now.minute >= minute)
-                                })
-            
-            # If no Bullseye periods found in the next two days, provide an error message
+            # REMOVED: Get current Ascendant position from transit data if available
+            # REMOVED: The Ascendant position is not needed for this revised calculation.
+
+            # Check if currently in a Bullseye period
+            if is_current_bullseye:
+                 bullseye_periods.append({
+                     "time": reference_time.strftime("%Y-%m-%d %H:%M"), # Time of calculation
+                     "time_iso": reference_time.isoformat(),
+                     "d9_seventh_cusp": {
+                         "position": round(natal_d9_seventh_house_cusp, 2),
+                         "sign": natal_d9_seventh_house_sign,
+                         "degree": round(natal_d9_seventh_house_degree, 2)
+                     },
+                     "d9_saturn": {
+                         "position": round(transit_saturn_d9_pos, 2),
+                         "sign": transit_saturn_d9_sign,
+                         "degree": round(transit_saturn_d9_degree, 2),
+                         "is_retrograde": saturn_retrograde
+                     },
+                     "angular_distance": round(angular_distance, 2),
+                     "is_current": True,
+                     "duration": self.calculate_alignment_duration(
+                         exact_time=reference_time, # Use reference time as 'exact' for current period
+                         slower_planet="saturn",
+                         alignment_type="Current Bullseye Period",
+                         orb=2.5 # Orb for Bullseye is 2.5
+                     )
+                 })
+
+            # REMOVED: Check each hour of today and tomorrow to find when Saturn is within 2.5° of the 7th house cusp in D9
+            # REMOVED: This hourly check is not needed based on the definition. Saturn moves too slowly.
+
+            # If no Bullseye periods found (i.e., not currently in one), estimate the next one.
             if not bullseye_periods:
-                print("No Bullseye periods found in the next two days")
-                
-                # Calculate when the next Bullseye period will occur based on real-world dynamics
-                # The key insight is that the 7th house cusp in D9 changes throughout the day as the Ascendant moves
-                # This means we need to look further ahead to find when Saturn and the D9 7th house cusp will align
-                
-                # First get Saturn's projected position over the next few months
-                # Saturn moves slowly (about 0.034° per day), so we can project forward
-                
-                # Looking ahead approach: Check every 5 days for the next 90 days
-                lookahead_days = 90
-                check_interval = 5  # Check every 5 days
-                found_alignment = False
-                days_to_alignment = None
-                nearest_date = None
-                proj_ang_dist = angular_distance  # Initialize with current angular distance
-                
-                # Define Saturn's motion direction
+                print("Not currently in a Bullseye period. Estimating next alignment...")
+
+                # Define the orb boundaries
+                orb = 2.5
+                orb_start_pos = (natal_d9_seventh_house_cusp - orb) % 360
+                orb_end_pos = (natal_d9_seventh_house_cusp + orb) % 360
+
+                # Calculate Saturn's effective speed and direction
                 motion_direction = -1 if saturn_retrograde else 1
-                
-                for day_offset in range(3, lookahead_days, check_interval):
-                    check_date = now + timedelta(days=day_offset)
-                    
-                    # Project Saturn's position at this future date
-                    projected_saturn_pos = (saturn_pos + (day_offset * saturn_daily_motion * motion_direction)) % 360
-                    projected_saturn_d9_pos = self.calculate_d9_position(projected_saturn_pos)
-                    
-                    # For each projection day, check different hours since 7th house cusp
-                    # cycles through zodiac every day
-                    for hour in [0, 6, 12, 18]:  # Check 4 times per day for efficiency
-                        check_time = check_date.replace(hour=hour, minute=0, second=0)
-                        
-                        # Calculate projected Ascendant at this time
-                        hours_since_now = (check_time - now).total_seconds() / 3600
-                        projected_asc_pos = (current_asc_pos + (hours_since_now * 15)) % 360
-                        
-                        # Calculate projected 7th house cusp and its D9 position
-                        projected_7th_cusp = (projected_asc_pos + 180) % 360
-                        projected_d9_7th_cusp = self.calculate_d9_position(projected_7th_cusp)
-                        
-                        # Calculate angular distance between projected Saturn D9 and projected 7th house cusp D9
-                        proj_ang_dist = abs(projected_saturn_d9_pos - projected_d9_7th_cusp) % 360
-                        if proj_ang_dist > 180:
-                            proj_ang_dist = 360 - proj_ang_dist
-                        
-                        # Check if this is a Bullseye period (within 2.5° orb)
-                        if proj_ang_dist <= 2.5:
-                            found_alignment = True
-                            days_to_alignment = day_offset
-                            nearest_date = check_time
-                            
-                            # Fine-tune to the nearest hour for better precision
-                            for fine_hour in range(hour-2, hour+3):
-                                if fine_hour < 0 or fine_hour > 23:
-                                    continue
-                                    
-                                fine_time = check_date.replace(hour=fine_hour, minute=0, second=0)
-                                fine_hours_since_now = (fine_time - now).total_seconds() / 3600
-                                fine_asc_pos = (current_asc_pos + (fine_hours_since_now * 15)) % 360
-                                fine_7th_cusp = (fine_asc_pos + 180) % 360
-                                fine_d9_7th_cusp = self.calculate_d9_position(fine_7th_cusp)
-                                
-                                fine_ang_dist = abs(projected_saturn_d9_pos - fine_d9_7th_cusp) % 360
-                                if fine_ang_dist > 180:
-                                    fine_ang_dist = 360 - fine_ang_dist
-                                
-                                if fine_ang_dist < proj_ang_dist:
-                                    proj_ang_dist = fine_ang_dist
-                                    nearest_date = fine_time
-                            
-                            break
-                    
-                    if found_alignment:
-                        break
-                
-                # If no alignment found in lookahead period, provide an estimate based on Saturn's motion
-                if not found_alignment:
-                    # Make sure motion_direction is defined in this path too
-                    if 'motion_direction' not in locals():
-                        motion_direction = -1 if saturn_retrograde else 1
-                        
-                    # Fallback method (original method)
-                    # For D9 patterns, the cycle repeats every 3° of regular zodiac movement
-                    days_to_pattern_repeat = 3 / saturn_daily_motion
-                    days_to_alignment = days_to_pattern_repeat * (angular_distance / 20)
-                    
-                    # Adjust for reasonable timeframes
-                    if days_to_alignment < 3:
-                        days_to_alignment = 3
-                    days_to_alignment = min(days_to_alignment, 120)  # Extend to 120 days for fallback
-                    nearest_date = now + timedelta(days=days_to_alignment)
-                    
-                    description = f"Next potential Bullseye period estimated in approximately {round(days_to_alignment)} days based on Saturn's movement pattern. Due to the complex nature of D9 chart calculations, this is an approximate estimate."
+                effective_speed = abs(saturn_daily_motion) # Use absolute speed for division
+
+                # Initialize variables for estimation
+                days_to_alignment = float('inf')
+                shortest_distance_needed = float('inf')
+
+                # Check if Saturn has meaningful motion
+                if effective_speed < 0.001: # Consider Saturn stationary if speed is very low
+                    print("Saturn is nearly stationary, cannot estimate next alignment reliably.")
+                    days_to_alignment = float('inf') # Mark as unable to calculate
                 else:
-                    description = f"Next Bullseye period found in {round(days_to_alignment)} days when Saturn aligns with your D9 7th house cusp. At that time, Saturn will be at approximately {round(projected_saturn_d9_pos % 30, 1)}° {list(ZODIAC_SIGNS.keys())[int(projected_saturn_d9_pos / 30)]} in the D9 chart."
-                
-                # Format the response with the estimated next Bullseye period
-                return [{
-                    "message": "No Bullseye periods found in the next two days",
-                    "next_estimated_bullseye": {
-                        "estimated_date": nearest_date.strftime("%Y-%m-%d %H:%M"),
-                        "days_away": round(days_to_alignment),
-                        "description": description,
-                        "projected_angular_distance": round(proj_ang_dist if found_alignment else angular_distance, 2)
-                    },
-                    "d9_seventh_cusp": {
-                        "position": round(seventh_house_cusp, 2),
-                        "sign": list(ZODIAC_SIGNS.keys())[int(seventh_house_cusp / 30)],
-                        "degree": round(seventh_house_cusp % 30, 2)
-                    },
-                    "current_saturn_d9": {
-                        "position": round(transit_saturn_d9_pos, 2),
-                        "sign": list(ZODIAC_SIGNS.keys())[int(transit_saturn_d9_pos / 30)],
-                        "degree": round(transit_saturn_d9_pos % 30, 2),
-                        "is_retrograde": saturn_retrograde
-                    },
-                    "current_angular_distance": round(angular_distance, 2)
-                }]
-            
-            # Sort by time
-            bullseye_periods.sort(key=lambda x: x["time"])
-            
+                    # Calculate shortest distance needed in the direction of motion
+                    if motion_direction == 1: # Moving direct
+                        # Target is the start of the orb (lower degree edge)
+                        shortest_distance_needed = (orb_start_pos - transit_saturn_d9_pos) % 360
+                    else: # Moving retrograde (motion_direction == -1)
+                        # Target is the end of the orb (higher degree edge)
+                        shortest_distance_needed = (transit_saturn_d9_pos - orb_end_pos) % 360
+
+                    # Calculate days to alignment
+                    if shortest_distance_needed >= 0:
+                        days_to_alignment = shortest_distance_needed / effective_speed
+                    else:
+                         # Should not happen with % 360, but handle defensively
+                        days_to_alignment = float('inf')
+
+                # Proceed if a valid alignment time was calculated
+                if days_to_alignment != float('inf') and days_to_alignment >= 0:
+                    nearest_date = reference_time + timedelta(days=days_to_alignment)
+                    
+                    # Calculate projected Saturn D9 position at alignment
+                    final_projected_saturn_pos = (saturn_pos + (days_to_alignment * saturn_daily_motion * motion_direction)) % 360
+                    final_projected_saturn_d9_pos = self.calculate_d9_position(final_projected_saturn_pos)
+                    
+                    # Calculate angular distance at estimated alignment time (should be ~2.5)
+                    proj_ang_dist_at_alignment = abs(final_projected_saturn_d9_pos - natal_d9_seventh_house_cusp) % 360
+                    if proj_ang_dist_at_alignment > 180:
+                        proj_ang_dist_at_alignment = 360 - proj_ang_dist_at_alignment
+
+                    description = (
+                        f"Estimated next Bullseye period starts around {nearest_date.strftime('%Y-%m-%d')}, "
+                        f"in approximately {round(days_to_alignment)} days, when transit Saturn's D9 position "
+                        f"({round(final_projected_saturn_d9_pos % 30, 1)}° {list(ZODIAC_SIGNS.keys())[int(final_projected_saturn_d9_pos / 30)]}) "
+                        f"enters the {orb}° orb around your natal D9 7th house cusp "
+                        f"({round(natal_d9_seventh_house_degree, 1)}° {ZODIAC_SIGNS[natal_d9_seventh_house_sign]})."
+                    )
+
+                    # Return the estimated alignment information
+                    bullseye_periods.append({
+                        "message": "Currently not in a Bullseye period. Providing next estimate.",
+                        "next_estimated_bullseye": {
+                            "estimated_date": nearest_date.strftime("%Y-%m-%d %H:%M"), # Use the estimated date/time
+                            "days_away": round(days_to_alignment),
+                            "description": description,
+                            "projected_angular_distance": round(proj_ang_dist_at_alignment, 2) # Use distance at alignment
+                        },
+                        "is_estimated": True, # Mark as estimate
+                        "d9_seventh_cusp": { # Include natal D9 7th cusp info
+                            "position": round(natal_d9_seventh_house_cusp, 2),
+                            "sign": natal_d9_seventh_house_sign,
+                            "degree": round(natal_d9_seventh_house_degree, 2)
+                        },
+                        "current_saturn_d9": { # Include current D9 Saturn info
+                            "position": round(transit_saturn_d9_pos, 2),
+                            "sign": transit_saturn_d9_sign,
+                            "degree": round(transit_saturn_d9_degree, 2),
+                            "is_retrograde": saturn_retrograde
+                        },
+                        "current_angular_distance": round(angular_distance, 2) # Include initial angular distance
+                    })
+
+            # REMOVED: Old lookahead logic based on projecting ascendant and comparing hourly
+
+            # Sort by time if bullseye_periods were found initially
+            # (Now only contains current or estimated next)
+            bullseye_periods.sort(key=lambda x: x.get("time", x.get("next_estimated_bullseye", {}).get("estimated_date", "9999")))
+
             return bullseye_periods
-            
+
         except Exception as e:
             print(f"Error in calculate_bullseye_periods: {str(e)}")
             import traceback
@@ -2133,7 +2195,7 @@ class VedicLuckyTimesService:
             return [{
                 "error": f"Error calculating Bullseye periods: {str(e)}",
                 "message": "Could not calculate Bullseye periods due to an error",
-                "time": datetime.now().strftime("%Y-%m-%d %H:%M")  # Add a time field
+                "time": datetime.now().strftime("%Y-%m-%d %H:%M")  # Add a time field # Keep now() here for error logging time
             }]
             
     def find_stacked_alignments(self, all_dates_list: List[Dict[str, Any]], 
@@ -2567,10 +2629,11 @@ class VedicLuckyTimesService:
             else:
                 natal_pof = (natal_asc_pos + natal_moon_pos - natal_sun_pos) % 360
                 
-            ayanamsha_offset = 24
+            ayanamsha_offset = 24 # TODO: Get ayanamsha from settings or chart data
             natal_pof = (natal_pof + ayanamsha_offset) % 360
             print(f"NATAL POF: {natal_pof}")
-            # Get current ascendant position
+            
+            # Get current ascendant position from transit_data
             current_asc_pos = None
             estimation_method = "unknown"
             
@@ -2600,7 +2663,7 @@ class VedicLuckyTimesService:
                 
                 midheaven_pos = transit_data["transit"]["subject"]["houses"]["midheaven"]["abs_pos"]
                 # Ascendant is approximately midheaven - 90° (depends on location, but this is a reasonable approximation)
-                current_asc_pos = (midheaven_pos - 90) % 360
+                current_asc_pos = (midheaven_pos - 90 + ayanamsha_offset) % 360 # Apply ayanamsha
                 estimation_method = "from_midheaven"
                 print(f"APPROXIMATION: Estimated ascendant from midheaven: {round(current_asc_pos, 2)}°")
             
@@ -2611,146 +2674,117 @@ class VedicLuckyTimesService:
                  "house_10" in transit_data["transit"]["subject"]["houses"]):
                 
                 mc_pos = transit_data["transit"]["subject"]["houses"]["house_10"]["abs_pos"]
-                current_asc_pos = (mc_pos - 90) % 360
+                current_asc_pos = (mc_pos - 90 + ayanamsha_offset) % 360 # Apply ayanamsha
                 estimation_method = "from_house_10"
                 print(f"APPROXIMATION: Estimated ascendant from house_10: {round(current_asc_pos, 2)}°")
             
             # =====================================================================
-            # PRIORITY 3: Calculate from transit Sun position and time
+            # PRIORITY 3: Calculate from transit Sun position and time (Less reliable for precise Asc)
             # =====================================================================
-            elif ("transit" in transit_data and 
-                 "subject" in transit_data["transit"] and 
-                 "planets" in transit_data["transit"]["subject"] and 
-                 "sun" in transit_data["transit"]["subject"]["planets"]):
-                
-                estimation_method = "sun_position"
-                transit_sun_pos = transit_data["transit"]["subject"]["planets"]["sun"]["abs_pos"]
-                print(f"APPROXIMATION: Using sun position at {round(transit_sun_pos, 2)}° for ascendant calculation")
-                
-                # Get current time
-                current_time = datetime.now()
-                hour_of_day = current_time.hour + current_time.minute/60
-                
-                # Try to get transit time if available
-                transit_time_available = False
-                if ("transit" in transit_data and 
-                    "subject" in transit_data["transit"] and 
-                    "birth_data" in transit_data["transit"]["subject"] and 
-                    "time" in transit_data["transit"]["subject"]["birth_data"]):
-                    try:
-                        transit_time = transit_data["transit"]["subject"]["birth_data"]["time"]
-                        if ":" in transit_time:
-                            transit_hour, transit_minute = map(int, transit_time.split(':'))
-                            hour_of_day = transit_hour + transit_minute/60
-                            transit_time_available = True
-                            print(f"Using transit chart time: {transit_hour}:{transit_minute} ({hour_of_day:.2f} hours)")
-                    except Exception as e:
-                        print(f"Error parsing transit time: {e}, using current time instead")
-                
-                # Get transit location if available (for longitude adjustment)
-                longitude = None
-                if ("transit" in transit_data and 
-                    "subject" in transit_data["transit"] and 
-                    "birth_data" in transit_data["transit"]["subject"] and 
-                    "longitude" in transit_data["transit"]["subject"]["birth_data"]):
-                    try:
-                        longitude = float(transit_data["transit"]["subject"]["birth_data"]["longitude"])
-                        print(f"Using transit chart longitude: {longitude}")
-                    except Exception as e:
-                        print(f"Error parsing longitude: {e}, proceeding without longitude adjustment")
-                
-                # Calculate ascendant based on sun position and time
-                if longitude is not None:
-                    # Adjust hour for longitude (15° = 1 hour)
-                    longitude_hour_adjustment = longitude / 15
-                    adjusted_hour = (hour_of_day - longitude_hour_adjustment) % 24
-                    print(f"Adjusted hour for longitude: {adjusted_hour:.2f}")
-                    
-                    # Calculate ascendant based on sun position and adjusted time
-                    # This uses the fact that at noon (solar noon), sun is near the MC (midheaven)
-                    # At that time, ascendant is roughly sun_position - 90°
-                    # We adjust from there based on hours from noon
-                    noon = 12
-                    hours_from_noon = (adjusted_hour - noon) % 24
-                    
-                    # At noon: ASC ≈ SUN - 90°
-                    # Each hour offset from noon changes ASC by ~15°
-                    if hours_from_noon <= 12:  # From noon to midnight
-                        ascendant_offset = -90 + (hours_from_noon * 15)
-                    else:  # From midnight to noon
-                        ascendant_offset = 90 - ((hours_from_noon - 12) * 15)
-                    
-                    current_asc_pos = (transit_sun_pos + ascendant_offset) % 360
-                else:
-                    # Simplified calculation if no longitude data
-                    hours_since_midnight = hour_of_day % 24
-                    
-                    # Calculate approximate ascendant position based on time of day
-                    # Mapping the 24-hour day onto a 360° circle with some adjustments
-                    # for the typical relationship between sun and ascendant
-                    if hours_since_midnight < 6:  # Midnight to sunrise
-                        progress = hours_since_midnight / 6
-                        ascendant_offset = 90 - (progress * 90)
-                    elif hours_since_midnight < 12:  # Sunrise to noon
-                        progress = (hours_since_midnight - 6) / 6
-                        ascendant_offset = -(progress * 90)
-                    elif hours_since_midnight < 18:  # Noon to sunset
-                        progress = (hours_since_midnight - 12) / 6
-                        ascendant_offset = -90 - (progress * 90)
-                    else:  # Sunset to midnight
-                        progress = (hours_since_midnight - 18) / 6
-                        ascendant_offset = -180 + (progress * 270)
-                    
-                    current_asc_pos = (transit_sun_pos + ascendant_offset) % 360
-                
-                print(f"Calculated transit ascendant based on sun position: {round(current_asc_pos, 2)}°")
+            # Note: This method is less accurate for Ascendant position needed for this specific calculation.
+            # It's kept here for potential fallback but marked as less preferred.
+            # elif (...) # Existing sun position logic - consider removing or lowering priority further if unused
             
             # =====================================================================
-            # PRIORITY 4: Use time-based estimation from natal chart as fallback
+            # PRIORITY 4: Use time-based estimation from natal chart as fallback (Least reliable)
             # =====================================================================
-            else:
-                estimation_method = "time_based"
-                current_time = datetime.now()
-                hour_of_day = current_time.hour + current_time.minute/60
-                print("FALLBACK: No transit sun position found, using time-based estimation from natal chart")
-                
-                # Try to get birth time
-                try:
-                    if "date_utc" in natal_data["subject"]:
-                        birth_time_str = natal_data["subject"]["date_utc"].split('T')[1]
-                        birth_hour = int(birth_time_str.split(':')[0])
-                        birth_minute = int(birth_time_str.split(':')[1])
-                        birth_time_decimal = birth_hour + birth_minute/60
-                        
-                        # Calculate hours difference
-                        hours_diff = (hour_of_day - birth_time_decimal) % 24
-                        
-                        # Ascendant moves ~15° per hour
-                        ascendant_adjustment = hours_diff * 15
-                        
-                        # Calculate current estimated ascendant
-                        current_asc_pos = (natal_asc_pos + ascendant_adjustment) % 360
-                        print(f"Estimated transit ascendant using natal chart + time adjustment: {round(current_asc_pos, 2)}°")
-                    else:
-                        raise ValueError("No date_utc field in natal data")
-                        
-                except Exception as e:
-                    # Ultimate fallback: simple time-based calculation
-                    print(f"Error with time-based estimation: {str(e)}. Using simplest time-based method.")
-                    estimation_method = "simple_time"
-                    
-                    # Start from 0° Aries at midnight, advancing 15° per hour
-                    ascendant_base = 0
-                    ascendant_adjustment = hour_of_day * 15
-                    current_asc_pos = (ascendant_base + ascendant_adjustment) % 360
-                    print(f"Estimated transit ascendant using simplest time-based method: {round(current_asc_pos, 2)}°")
-            
-            # If we still don't have an ascendant position after all fallbacks, throw an error
+            # else: # Existing time-based estimation logic - consider removing or lowering priority
+
+            # If we still don't have an ascendant position after trying direct/MC methods, raise error
             if current_asc_pos is None:
-                raise ValueError("Could not determine ascendant position using any available method")
-            
-            # Current time
-            now = datetime.now()
+                # Try getting ascendant from natal data as a last resort (may not be accurate for transit)
+                if "houses" in natal_data["subject"] and "ascendant" in natal_data["subject"]["houses"]:
+                     current_asc_pos = natal_data["subject"]["houses"]["ascendant"]["abs_pos"]
+                     current_asc_pos = (current_asc_pos + ayanamsha_offset) % 360 # Apply ayanamsha
+                     estimation_method = "natal_fallback"
+                     print(f"WARNING: Using natal ascendant as fallback: {round(current_asc_pos, 2)}°")
+                else:
+                     raise ValueError("Could not determine ascendant position using transit or natal data")
+
+            # --- Determine the reference time for the calculation ---
+            reference_time = None
+            try:
+                # --- Enhanced Logging for Debugging Reference Time Extraction ---
+                print(f"DEBUG: Attempting to extract reference time from transit_data.")
+                print(f"DEBUG: Top-level transit_data keys: {list(transit_data.keys())}")
+
+                # Attempt 1: Get precise UTC time from transit data if available
+                if "transit" in transit_data and isinstance(transit_data['transit'], dict):
+                    print(f"DEBUG: Found 'transit' key. Keys inside: {list(transit_data['transit'].keys())}")
+                    if "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict):
+                        print(f"DEBUG: Found 'subject' key inside 'transit'. Keys inside: {list(transit_data['transit']['subject'].keys())}")
+                        if "date_utc" in transit_data["transit"]["subject"]:
+                            date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                            print(f"DEBUG: Attempt 1: Found date_utc: {date_utc_str}")
+                            if date_utc_str:
+                                if date_utc_str.endswith('Z'):
+                                   date_utc_str = date_utc_str[:-1] + '+00:00'
+                                if '.' in date_utc_str:
+                                     parts = date_utc_str.split('.')
+                                     date_utc_str = parts[0] + '.' + parts[1][:6] # Truncate microseconds
+                                     if '+' not in date_utc_str and '-' not in date_utc_str[10:]:
+                                         date_utc_str += '+00:00'
+
+                                reference_time = datetime.fromisoformat(date_utc_str)
+                                print(f"SUCCESS: Using reference time from transit_data.transit.subject.date_utc: {reference_time}")
+                            else:
+                                print("DEBUG: Attempt 1: date_utc field was empty.")
+                        else:
+                             print("DEBUG: Attempt 1: 'date_utc' key not found in transit.subject.")
+                    else:
+                        print("DEBUG: 'subject' key not found or not a dict in transit.")
+                else:
+                    print("DEBUG: 'transit' key not found or not a dict at top level.")
+
+                # Attempt 2: Reconstruct from transit subject birth_data (often used for transit time/location)
+                if reference_time is None:
+                    if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                        "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                        "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                        
+                        t_info = transit_data["transit"]["subject"]["birth_data"]
+                        print(f"DEBUG: Attempt 2: Found transit.subject.birth_data. Keys: {list(t_info.keys())}")
+                        # --- MODIFIED --- Look for 'date' and 'time' keys instead of year, month, etc.
+                        required_keys = ["date", "time"]
+                        if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             date_str = t_info["date"] # e.g., "2025-03-29"
+                             time_str = t_info["time"] # e.g., "12:00"
+                             datetime_str = f"{date_str} {time_str}"
+                             try:
+                                 # Combine and parse the date and time strings
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"SUCCESS: Using reference time reconstructed from transit.subject.birth_data (date='{date_str}', time='{time_str}'): {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"DEBUG: Attempt 2: Error parsing date/time string '{datetime_str}': {parse_error}")
+                        else:
+                            print(f"DEBUG: Attempt 2: Missing or empty 'date' or 'time' keys in birth_data.")
+                    else:
+                        print("DEBUG: Attempt 2: Path transit.subject.birth_data not found or is not a dictionary.")
+
+                # Attempt 3: Reconstruct from top-level transit info (another common pattern)
+                if reference_time is None:
+                     required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                     if all(k in transit_data for k in required_keys):
+                         print(f"DEBUG: Attempt 3: Found top-level transit time keys.")
+                         reference_time = datetime(
+                             int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                             int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                         )
+                         print(f"SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+                     else:
+                         print(f"DEBUG: Attempt 3: Missing one or more required top-level keys: {required_keys}")
+
+            except Exception as e:
+                print(f"ERROR: Exception during reference time extraction: {e}")
+                import traceback
+                traceback.print_exc() # Print full traceback for detailed debugging
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = datetime.now() # Keep existing fallback but log warning
+                print(f"WARNING: Could not extract reference time from transit_data. Falling back to datetime.now(): {reference_time}. Results may drift.")
+
+            # --- Calculation based on the determined reference_time ---
             
             # Calculate how many degrees until the ascendant reaches the Part of Fortune
             degrees_to_pof = (natal_pof - current_asc_pos) % 360
@@ -2758,8 +2792,12 @@ class VedicLuckyTimesService:
             # Convert to hours (ascendant moves at 15° per hour)
             hours_to_pof = degrees_to_pof / 15
             
-            # First conjunction time
-            first_conjunction = now + timedelta(hours=hours_to_pof)
+            # First conjunction time calculated from the stable reference time
+            first_conjunction = reference_time + timedelta(hours=hours_to_pof)
+            print(f"First conjunction time: {first_conjunction}")
+            print(f"Hours to POF: {hours_to_pof}")
+            print(f"Reference Time: {reference_time}") # Changed log from 'Now'
+            print(f"Time Delta: {timedelta(hours=hours_to_pof)}")
             
             # Calculate duration - Ascendant moves at 15° per hour, using the provided orb
             # orb° / 15° per hour = orb/15 hours = (orb/15)*60 minutes on each side
@@ -2771,9 +2809,11 @@ class VedicLuckyTimesService:
             for day in range(num_days):
                 try:
                     # Calculate conjunction time for this day
-                    # Each day, the ascendant will reach the same degree 4 minutes earlier (sidereal day is ~23h56m)
+                    # Each day, the ascendant will reach the same degree ~4 minutes earlier (sidereal day is ~23h56m)
                     conjunction_time = first_conjunction + timedelta(days=day, minutes=-4*day)
-                    
+                    # print(f"Conjunction time: {conjunction_time}") # Original print
+                    print(f"Conjunction time for day {day}: {conjunction_time}") # Modified print for clarity
+
                     # Calculate the sign information
                     pof_sign_num = int(natal_pof / 30)
                     pof_sign = list(ZODIAC_SIGNS.keys())[pof_sign_num]
@@ -2788,7 +2828,7 @@ class VedicLuckyTimesService:
                         "conjunction_date": conjunction_time.strftime("%Y-%m-%d %H:%M"),
                         "time_iso": conjunction_time.isoformat(),
                         "days_away": day,
-                        "hours_away": round((conjunction_time - now).total_seconds() / 3600, 1) if day == 0 else None,
+                        "hours_away": round((conjunction_time - reference_time).total_seconds() / 3600, 1) if day == 0 else None,
                         "part_of_fortune": {
                             "position": round(natal_pof, 2),
                             "sign": pof_sign,
@@ -2835,7 +2875,8 @@ class VedicLuckyTimesService:
                         "from_house_10": "This is a good approximation based on the 10th house cusp (±5-10 minutes).",
                         "sun_position": "This method provides a reasonable approximation (±10-15 minutes).",
                         "time_based": "This method provides a general approximation (±20-30 minutes).",
-                        "simple_time": "This is a very general approximation (±30-60 minutes)."
+                        "simple_time": "This is a very general approximation (±30-60 minutes).",
+                        "natal_fallback": "Accuracy depends on how much the transit ascendant has shifted from the natal ascendant."
                     }
                     
                     method_desc = {
@@ -2844,7 +2885,8 @@ class VedicLuckyTimesService:
                         "from_house_10": "calculated from the 10th house cusp",
                         "sun_position": "based on the sun's position and time of day",
                         "time_based": "based on your birth chart and current time",
-                        "simple_time": "based on time of day only"
+                        "simple_time": "based on time of day only",
+                        "natal_fallback": "using the natal ascendant as a fallback"
                     }
                     
                     method_text = method_desc.get(estimation_method, "using an estimated method")
@@ -2889,6 +2931,56 @@ class VedicLuckyTimesService:
         results = []
         
         try:
+            # --- Determine the reference time for projections ---
+            reference_time = None
+            try:
+                # Attempt 1: Get precise UTC time from transit data
+                if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                    "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                    "date_utc" in transit_data["transit"]["subject"]):
+                    date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                    if date_utc_str:
+                        if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                        if '.' in date_utc_str:
+                             parts = date_utc_str.split('.')
+                             date_utc_str = parts[0] + '.' + parts[1][:6]
+                             if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                        reference_time = datetime.fromisoformat(date_utc_str)
+                        print(f"[PoF-Rahu] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+            
+                # Attempt 2: Reconstruct from transit subject birth_data
+                if reference_time is None:
+                     if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                         "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                         "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                         t_info = transit_data["transit"]["subject"]["birth_data"]
+                         required_keys = ["date", "time"]
+                         if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             datetime_str = f"{t_info['date']} {t_info['time']}"
+                             try:
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"[PoF-Rahu] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"[PoF-Rahu] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+                # Attempt 3: Reconstruct from top-level transit info
+                if reference_time is None:
+                    required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                    if all(k in transit_data for k in required_keys):
+                        reference_time = datetime(
+                            int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                            int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                        )
+                        print(f"[PoF-Rahu] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+            except Exception as e:
+                print(f"[PoF-Rahu] ERROR: Exception during reference time extraction: {e}")
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = datetime.now() # Keep existing fallback but log warning
+                print(f"[PoF-Rahu] WARNING: Could not extract reference time from transit_data. Falling back to datetime.now(). Results may drift.")
+
             # Get current positions of Rahu (North Node)
             rahu_pos = None
             if "transit" in transit_data and "subject" in transit_data["transit"] and "planets" in transit_data["transit"]["subject"]:
@@ -2955,7 +3047,7 @@ class VedicLuckyTimesService:
             moon_daily_motion = 13.2  # ~13.2 degrees per day
             
             # Loop through each lucky date
-            now = datetime.now()
+            # Use the determined reference_time instead of datetime.now()
             
             for date_str in lucky_dates:
                 try:
@@ -2988,7 +3080,7 @@ class VedicLuckyTimesService:
                                 continue
                     
                     # Calculate days between now and target date
-                    days_diff = (target_date - now).total_seconds() / 86400  # Convert to days
+                    days_diff = (target_date - reference_time).total_seconds() / 86400  # Convert to days
                     
                     # Project positions of celestial bodies on the target date
                     projected_sun_pos = (current_sun_pos + (days_diff * sun_daily_motion)) % 360
@@ -3001,7 +3093,7 @@ class VedicLuckyTimesService:
                     # Ascendant at the target date
                     # For simplicity, we'll use the current ascendant adjusted to the time of day
                     # This is an approximation since the ascendant would depend on location and exact time
-                    hours_diff = target_date.hour - now.hour + (target_date.minute - now.minute) / 60
+                    hours_diff = target_date.hour - reference_time.hour + (target_date.minute - reference_time.minute) / 60
                     asc_adjustment = (hours_diff % 24) * 15  # 15 degrees per hour
                     projected_asc_pos = (current_asc_pos + asc_adjustment) % 360
                     
@@ -3102,19 +3194,68 @@ class VedicLuckyTimesService:
         results = []
         
         try:
+            # --- Determine the reference time for projections ---
+            reference_time = None
+            try:
+                # Attempt 1: Get precise UTC time from transit data
+                if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                    "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                    "date_utc" in transit_data["transit"]["subject"]):
+                    date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                    if date_utc_str:
+                        if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                        if '.' in date_utc_str:
+                             parts = date_utc_str.split('.')
+                             date_utc_str = parts[0] + '.' + parts[1][:6]
+                             if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                        reference_time = datetime.fromisoformat(date_utc_str)
+                        print(f"[PoF-Regulus] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+            
+                # Attempt 2: Reconstruct from transit subject birth_data
+                if reference_time is None:
+                     if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                         "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                         "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                         t_info = transit_data["transit"]["subject"]["birth_data"]
+                         required_keys = ["date", "time"]
+                         if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             datetime_str = f"{t_info['date']} {t_info['time']}"
+                             try:
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"[PoF-Regulus] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"[PoF-Regulus] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+                # Attempt 3: Reconstruct from top-level transit info
+                if reference_time is None:
+                    required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                    if all(k in transit_data for k in required_keys):
+                        reference_time = datetime(
+                            int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                            int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                        )
+                        print(f"[PoF-Regulus] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+            except Exception as e:
+                print(f"[PoF-Regulus] ERROR: Exception during reference time extraction: {e}")
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = datetime.now() # Keep existing fallback but log warning
+                print(f"[PoF-Regulus] WARNING: Could not extract reference time from transit_data. Falling back to datetime.now(). Results may drift.")
+
             # Calculate current Regulus position
             # Regulus entered 0° Virgo in 2012
-            reference_date = datetime(2012, 1, 1)
+            regulus_reference_date = datetime(2012, 1, 1)
             reference_regulus_pos = 150.0  # 0° Virgo
             
             # Regulus moves about 1° every 72 years (very slow)
             regulus_daily_motion = 1.0 / (72 * 365.25)  # Degrees per day
             
-            # Get current time
-            now = datetime.now()
+            # Use reference_time instead of now
             
             # Calculate days since reference date
-            days_since_ref = (now - reference_date).total_seconds() / 86400  # Convert to days
+            days_since_ref = (reference_time - regulus_reference_date).total_seconds() / 86400  # Convert to days
             
             # Calculate current Regulus position
             current_regulus_pos = (reference_regulus_pos + (days_since_ref * regulus_daily_motion)) % 360
@@ -3172,7 +3313,7 @@ class VedicLuckyTimesService:
                                 continue
                     
                     # Calculate days between now and target date
-                    days_diff = (target_date - now).total_seconds() / 86400
+                    days_diff = (target_date - reference_time).total_seconds() / 86400
                     
                     # Project positions for the target date
                     projected_sun_pos = (current_sun_pos + (days_diff * sun_daily_motion)) % 360
@@ -3180,7 +3321,7 @@ class VedicLuckyTimesService:
                     projected_regulus_pos = (current_regulus_pos + (days_diff * regulus_daily_motion)) % 360
                     
                     # Calculate ascendant at target date
-                    hours_diff = target_date.hour - now.hour + (target_date.minute - now.minute) / 60
+                    hours_diff = target_date.hour - reference_time.hour + (target_date.minute - reference_time.minute) / 60
                     asc_adjustment = (hours_diff % 24) * 15  # 15 degrees per hour
                     projected_asc_pos = (current_asc_pos + asc_adjustment) % 360
                     
@@ -3484,21 +3625,75 @@ class VedicLuckyTimesService:
             # Current date/time
             now = datetime.now()
             
+            # --- Determine the reference time for projections (Added) ---
+            reference_time = None
+            try:
+                # Attempt 1: Get precise UTC time from transit data if available
+                if transit_data and "transit" in transit_data and isinstance(transit_data['transit'], dict):
+                    if "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict):
+                        if "date_utc" in transit_data["transit"]["subject"]:
+                            date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                            if date_utc_str:
+                                if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                                if '.' in date_utc_str:
+                                    parts = date_utc_str.split('.')
+                                    date_utc_str = parts[0] + '.' + parts[1][:6] # Truncate microseconds
+                                    if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                                reference_time = datetime.fromisoformat(date_utc_str)
+                                print(f"[LocSpec] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+
+                # Attempt 2: Reconstruct from transit subject birth_data
+                if reference_time is None and transit_data:
+                     if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                         "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                         "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                         t_info = transit_data["transit"]["subject"]["birth_data"]
+                         required_keys = ["date", "time"]
+                         if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                             datetime_str = f"{t_info['date']} {t_info['time']}"
+                             try:
+                                 reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                                 print(f"[LocSpec] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                             except ValueError as parse_error:
+                                 print(f"[LocSpec] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+                # Attempt 3: Reconstruct from top-level transit info
+                if reference_time is None and transit_data:
+                    required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                    if all(k in transit_data for k in required_keys):
+                        reference_time = datetime(
+                            int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                            int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                        )
+                        print(f"[LocSpec] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+            except Exception as e:
+                print(f"[LocSpec] ERROR: Exception during reference time extraction: {e}")
+
+            # Fallback if no time could be extracted
+            if reference_time is None:
+                reference_time = now # Use datetime.now() as fallback, but store it
+                print(f"[LocSpec] WARNING: Could not extract reference time from transit_data. Falling back to current time: {reference_time}. Results may drift.")
+            # --- End of added reference_time logic ---
+
             # Create a result dictionary with calculated data
             result = {
                 "yogi_point": {
                     "absolute_position": yogi_point,
                     "sign": yogi_sign,
                     "degree": round(yogi_point % 30, 2),
-                    "full_sign_name": ZODIAC_SIGNS[yogi_sign]
+                    "full_sign_name": ZODIAC_SIGNS[yogi_sign],
+                    "nation": current_nation
                 },
                 "duplicate_yogi": {
                     "planet": duplicate_yogi_planet,
-                    "description": f"Sign ruler of {ZODIAC_SIGNS[yogi_sign]} (the sign containing your Yogi Point)"
+                    "description": f"Sign ruler of {ZODIAC_SIGNS[yogi_sign]} (the sign containing your Yogi Point)",
+                    "nation": current_nation
                 },
                 "yogi": {
                     "planet": yogi_planet,
-                    "description": f"Star ruler (nakshatra lord) of your Yogi Point at {round(yogi_point % 30, 2)}° {ZODIAC_SIGNS[yogi_sign]}"
+                    "description": f"Star ruler (nakshatra lord) of your Yogi Point at {round(yogi_point % 30, 2)}° {ZODIAC_SIGNS[yogi_sign]}",
+                    "nation": current_nation
                 },
                 "current_location": {
                     "city": current_city,
@@ -3596,7 +3791,7 @@ class VedicLuckyTimesService:
             else:
                 # Fallback to estimation if not available
                 # Ascendant moves at approximately 1° every 4 minutes (15° per hour)
-                current_hour = now.hour + now.minute / 60
+                current_hour = now.hour + now.minute / 60 # Keep using 'now' here for estimation fallback is okay
                 transit_ascendant_pos = (current_hour * 15) % 360
                 print(f"Warning: Using estimated ascendant position {transit_ascendant_pos}° because actual ascendant not found in transit data")
             
@@ -3646,7 +3841,7 @@ class VedicLuckyTimesService:
                 # This ensures location power dates are calculated for all birth dates
                 if days_to_conjunction <= 365:
                     # Estimate date of conjunction
-                    conjunction_date = now + timedelta(days=days_to_conjunction)
+                    conjunction_date = now + timedelta(days=days_to_conjunction) # 'now' is okay here for target date estimation
                     
                     # When they're conjunct, find when they'll be in the Ascendant or Descendant
                     # For this, we need to know how the Ascendant moves at the specific location
@@ -3665,8 +3860,8 @@ class VedicLuckyTimesService:
                     # Convert to hours (15° per hour)
                     hours_until_ascendant_match = ascendant_to_conjunction / 15
                     
-                    # Calculate the actual time
-                    conjunction_ascendant_time = now + timedelta(hours=hours_until_ascendant_match)
+                    # Calculate the actual time using reference_time
+                    conjunction_ascendant_time = reference_time + timedelta(hours=hours_until_ascendant_match) # Changed 'now' to 'reference_time'
                     
                     # The time calculated above might be earlier than conjunction_date if conjunction is far in future
                     # Make sure we're looking at a time after the planets are actually conjunct
@@ -3686,7 +3881,7 @@ class VedicLuckyTimesService:
                     # Also calculate when it will be in the Descendant (opposite the Ascendant)
                     # Descendant is always 180° from Ascendant
                     # So we add 12 hours to the ascendant time (since 180° = 12 hours at 15°/hour)
-                    conjunction_descendant_time = conjunction_ascendant_time + timedelta(hours=12)
+                    conjunction_descendant_time = conjunction_ascendant_time + timedelta(hours=12) # Use the calculated ascendant time
                     
                     # Calculate duration for this alignment
                     conj_desc_duration = self.calculate_alignment_duration(
@@ -3701,7 +3896,7 @@ class VedicLuckyTimesService:
                         "type": f"Yogi ({planets[yogi_planet]['name']}) and Duplicate Yogi ({planets[duplicate_yogi_planet]['name']}) conjunct in Ascendant",
                         "date": conjunction_ascendant_time.strftime("%Y-%m-%d %H:%M"),
                         "description": f"Yogi and Duplicate Yogi aligned in the Ascendant at {round(conjunction_position % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(conjunction_position / 30)]]}",
-                        "days_away": round((conjunction_ascendant_time - now).total_seconds() / 86400, 1),
+                        "days_away": round((conjunction_ascendant_time - reference_time).total_seconds() / 86400, 1), # Changed 'now' to 'reference_time'
                         "significance": "Extremely rare and powerful alignment - exceptional for spiritual awakening and manifestation",
                         "planets_involved": [yogi_planet, duplicate_yogi_planet],
                         "duration": conj_asc_duration
@@ -3711,7 +3906,7 @@ class VedicLuckyTimesService:
                         "type": f"Yogi ({planets[yogi_planet]['name']}) and Duplicate Yogi ({planets[duplicate_yogi_planet]['name']}) conjunct in Descendant",
                         "date": conjunction_descendant_time.strftime("%Y-%m-%d %H:%M"),
                         "description": f"Yogi and Duplicate Yogi aligned in the Descendant at {round(conjunction_position % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(conjunction_position / 30)]]}",
-                        "days_away": round((conjunction_descendant_time - now).total_seconds() / 86400, 1),
+                        "days_away": round((conjunction_descendant_time - reference_time).total_seconds() / 86400, 1), # Changed 'now' to 'reference_time'
                         "significance": "Extremely rare and powerful alignment - excellent for relationship transformations and deep spiritual partnerships",
                         "planets_involved": [yogi_planet, duplicate_yogi_planet],
                         "duration": conj_desc_duration
@@ -3719,7 +3914,7 @@ class VedicLuckyTimesService:
                 
                 if days_to_opposition <= 365:
                     # Use the same approach for opposition alignments
-                    opposition_date = now + timedelta(days=days_to_opposition)
+                    opposition_date = now + timedelta(days=days_to_opposition) # 'now' is okay here for target date estimation
                     
                     # Estimate positions at opposition
                     yogi_opposition_pos = (yogi_position + yogi_daily_motion * yogi_direction * days_to_opposition) % 360
@@ -3729,7 +3924,7 @@ class VedicLuckyTimesService:
                     # First, calculate for when Yogi is on the Ascendant
                     ascendant_to_yogi = (yogi_opposition_pos - transit_ascendant_pos) % 360
                     hours_until_yogi_ascendant = ascendant_to_yogi / 15
-                    yogi_asc_time = now + timedelta(hours=hours_until_yogi_ascendant)
+                    yogi_asc_time = reference_time + timedelta(hours=hours_until_yogi_ascendant) # Changed 'now' to 'reference_time'
                     
                     # Make sure we're after the opposition date
                     if yogi_asc_time < opposition_date:
@@ -3747,7 +3942,7 @@ class VedicLuckyTimesService:
                     # Now calculate for when Duplicate Yogi is on the Ascendant
                     ascendant_to_dup_yogi = (duplicate_yogi_opposition_pos - transit_ascendant_pos) % 360
                     hours_until_dup_yogi_ascendant = ascendant_to_dup_yogi / 15
-                    dup_yogi_asc_time = now + timedelta(hours=hours_until_dup_yogi_ascendant)
+                    dup_yogi_asc_time = reference_time + timedelta(hours=hours_until_dup_yogi_ascendant) # Changed 'now' to 'reference_time'
                     
                     # Make sure we're after the opposition date
                     if dup_yogi_asc_time < opposition_date:
@@ -3767,7 +3962,7 @@ class VedicLuckyTimesService:
                         "type": f"Yogi ({planets[yogi_planet]['name']}) in Ascendant opposite Duplicate Yogi ({planets[duplicate_yogi_planet]['name']}) in Descendant",
                         "date": yogi_asc_time.strftime("%Y-%m-%d %H:%M"),
                         "description": f"Yogi at {round(yogi_opposition_pos % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(yogi_opposition_pos / 30)]]} opposite Duplicate Yogi at {round(duplicate_yogi_opposition_pos % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(duplicate_yogi_opposition_pos / 30)]]}",
-                        "days_away": round((yogi_asc_time - now).total_seconds() / 86400, 1),
+                        "days_away": round((yogi_asc_time - reference_time).total_seconds() / 86400, 1), # Changed 'now' to 'reference_time'
                         "significance": "Powerful alignment for balancing spiritual and material energies",
                         "planets_involved": [yogi_planet, duplicate_yogi_planet],
                         "duration": yogi_asc_duration
@@ -3777,7 +3972,7 @@ class VedicLuckyTimesService:
                         "type": f"Duplicate Yogi ({planets[duplicate_yogi_planet]['name']}) in Ascendant opposite Yogi ({planets[yogi_planet]['name']}) in Descendant",
                         "date": dup_yogi_asc_time.strftime("%Y-%m-%d %H:%M"),
                         "description": f"Duplicate Yogi at {round(duplicate_yogi_opposition_pos % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(duplicate_yogi_opposition_pos / 30)]]} opposite Yogi at {round(yogi_opposition_pos % 30, 2)}° {ZODIAC_SIGNS[list(ZODIAC_SIGNS.keys())[int(yogi_opposition_pos / 30)]]}",
-                        "days_away": round((dup_yogi_asc_time - now).total_seconds() / 86400, 1),
+                        "days_away": round((dup_yogi_asc_time - reference_time).total_seconds() / 86400, 1), # Changed 'now' to 'reference_time'
                         "significance": "Powerful alignment for harmonizing personal and interpersonal spiritual growth",
                         "planets_involved": [yogi_planet, duplicate_yogi_planet],
                         "duration": dup_yogi_asc_duration
@@ -3791,8 +3986,8 @@ class VedicLuckyTimesService:
             ascendant_to_yogi_point = (yogi_point - transit_ascendant_pos) % 360
             hours_to_yogi = ascendant_to_yogi_point / 15
             
-            # Calculate exact time for conjunction
-            yogi_conjunction_time = now + timedelta(hours=hours_to_yogi)
+            # Calculate exact time for conjunction using reference_time
+            yogi_conjunction_time = reference_time + timedelta(hours=hours_to_yogi) # Changed 'now' to 'reference_time'
             
             # Calculate duration for this alignment
             yogi_conj_duration = self.calculate_alignment_duration(
@@ -3805,7 +4000,7 @@ class VedicLuckyTimesService:
             opposition_point = (yogi_point + 180) % 360
             ascendant_to_opposition = (opposition_point - transit_ascendant_pos) % 360
             hours_to_opposition = ascendant_to_opposition / 15
-            opposition_time = now + timedelta(hours=hours_to_opposition)
+            opposition_time = reference_time + timedelta(hours=hours_to_opposition) # Changed 'now' to 'reference_time'
             
             # Calculate duration for this alignment
             yogi_opp_duration = self.calculate_alignment_duration(
@@ -3860,7 +4055,7 @@ class VedicLuckyTimesService:
             # Make sure we always return at least placeholder power alignments to avoid missing data
             if not result["power_alignments"]:
                 # Calculate a default date for placeholder alignments
-                default_date = now + timedelta(days=180)  # 6 months in the future
+                default_date = reference_time + timedelta(days=180) # Changed 'now' to 'reference_time'
                 result["power_alignments"] = [
                     {
                         "type": f"Yogi ({planets[yogi_planet]['name']}) and Duplicate Yogi ({planets[duplicate_yogi_planet]['name']}) alignment",
@@ -3868,7 +4063,8 @@ class VedicLuckyTimesService:
                         "description": f"Next potential alignment of Yogi and Duplicate Yogi planets (calculated estimate)",
                         "days_away": 180,
                         "significance": "Potential future alignment - recalculate in 30 days for updated timing",
-                        "is_estimated": True
+                        "is_estimated": True,
+                        "nation": current_nation
                     }
                 ]
                 

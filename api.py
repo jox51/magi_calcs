@@ -1309,6 +1309,9 @@ async def get_lucky_times(data: LuckyTimesRequest):
 @app.post("/charts/vedic-lucky-times")
 async def get_vedic_lucky_times(data: VedicLuckyTimesRequest):
     try:
+        print("get_vedic_lucky_times")
+        print("Data Received:")
+        print(data)
         # Create chart creator
         chart_creator = ChartCreator(
             name=data.name,

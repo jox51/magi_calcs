@@ -20,6 +20,56 @@ def calculate_jupiter_pof_last_conjunction(natal_data: Dict[str, Any], transit_d
         Dictionary containing Jupiter-POF conjunction data
     """
     try:
+        # --- Determine the reference time for calculations ---
+        reference_time = None
+        try:
+            # Attempt 1: Get precise UTC time from transit data
+            if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                "date_utc" in transit_data["transit"]["subject"]):
+                date_utc_str = transit_data["transit"]["subject"]["date_utc"]
+                if date_utc_str:
+                    if date_utc_str.endswith('Z'): date_utc_str = date_utc_str[:-1] + '+00:00'
+                    if '.' in date_utc_str:
+                        parts = date_utc_str.split('.')
+                        date_utc_str = parts[0] + '.' + parts[1][:6]
+                        if '+' not in date_utc_str and '-' not in date_utc_str[10:]: date_utc_str += '+00:00'
+                    reference_time = datetime.fromisoformat(date_utc_str)
+                    print(f"[Jupiter-PoF] SUCCESS: Using reference time from transit.subject.date_utc: {reference_time}")
+
+            # Attempt 2: Reconstruct from transit subject birth_data
+            if reference_time is None:
+                 if ("transit" in transit_data and isinstance(transit_data['transit'], dict) and
+                     "subject" in transit_data['transit'] and isinstance(transit_data['transit']['subject'], dict) and
+                     "birth_data" in transit_data["transit"]["subject"] and isinstance(transit_data['transit']['subject']['birth_data'], dict)):
+                     t_info = transit_data["transit"]["subject"]["birth_data"]
+                     required_keys = ["date", "time"]
+                     if all(k in t_info for k in required_keys) and t_info["date"] and t_info["time"]:
+                         datetime_str = f"{t_info['date']} {t_info['time']}"
+                         try:
+                             reference_time = datetime.strptime(datetime_str, "%Y-%m-%d %H:%M")
+                             print(f"[Jupiter-PoF] SUCCESS: Using reference time reconstructed from transit.subject.birth_data: {reference_time} (Assumed Local)")
+                         except ValueError as parse_error:
+                             print(f"[Jupiter-PoF] DEBUG: Attempt 2 Error parsing date/time string '{datetime_str}': {parse_error}")
+
+            # Attempt 3: Reconstruct from top-level transit info
+            if reference_time is None:
+                required_keys = ["transit_year", "transit_month", "transit_day", "transit_hour", "transit_minute"]
+                if all(k in transit_data for k in required_keys):
+                    reference_time = datetime(
+                        int(transit_data["transit_year"]), int(transit_data["transit_month"]), int(transit_data["transit_day"]),
+                        int(transit_data["transit_hour"]), int(transit_data["transit_minute"])
+                    )
+                    print(f"[Jupiter-PoF] SUCCESS: Using reference time reconstructed from top-level transit_data keys: {reference_time} (Assumed Local)")
+
+        except Exception as e:
+            print(f"[Jupiter-PoF] ERROR: Exception during reference time extraction: {e}")
+
+        # Fallback if no time could be extracted
+        if reference_time is None:
+            reference_time = datetime.now() # Keep existing fallback but log warning
+            print(f"[Jupiter-PoF] WARNING: Could not extract reference time from transit_data. Falling back to datetime.now(). Results may drift.")
+
         # Calculate the natal Part of Fortune position
         natal_asc_pos = natal_data["subject"]["houses"]["ascendant"]["abs_pos"]
         natal_moon_pos = natal_data["subject"]["planets"]["moon"]["abs_pos"]
@@ -32,9 +82,8 @@ def calculate_jupiter_pof_last_conjunction(natal_data: Dict[str, Any], transit_d
         # Calculate Part of Fortune position
         if is_day_chart:
             pof_pos = (natal_asc_pos + natal_moon_pos - natal_sun_pos) % 360
- 
+        else: # Night chart
             pof_pos = (natal_asc_pos - natal_moon_pos + natal_sun_pos) % 360
-       
         
         # Get current Jupiter position
         current_jupiter_pos = transit_data["transit"]["subject"]["planets"]["jupiter"]["abs_pos"]
@@ -61,12 +110,11 @@ def calculate_jupiter_pof_last_conjunction(natal_data: Dict[str, Any], transit_d
             days_since_conjunction = int((360 - angle_diff) / jupiter_daily_motion)
         
         # Calculate the estimated date
-        today = datetime.now()
-        last_conjunction_date = today - timedelta(days=days_since_conjunction)
+        last_conjunction_date = reference_time - timedelta(days=days_since_conjunction)
         
         # Calculate days until next conjunction (Jupiter's full cycle is about 12 years)
         days_until_next = int((360 - angle_diff) / jupiter_daily_motion) if jupiter_past_pof else int(angle_diff / jupiter_daily_motion)
-        next_conjunction_date = today + timedelta(days=days_until_next)
+        next_conjunction_date = reference_time + timedelta(days=days_until_next)
         
         # Calculate duration of the conjunction
         # Jupiter moves at approximately 0.083 degrees per day
