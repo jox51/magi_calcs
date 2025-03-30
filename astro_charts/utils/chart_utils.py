@@ -2,6 +2,9 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 import json
 
+from datetime import timedelta
+from .yogi_point_utils import ZODIAC_SIGNS
+
 def sanitize_response_for_json(response: Dict[str, Any]) -> Dict[str, Any]:
     """Convert any datetime objects to strings and ensure the response is JSON serializable
     
@@ -104,21 +107,6 @@ def calculate_d9_position(zodiac_position: float) -> float:
     return d9_sign * 30 + (degree_in_sign % 3.33333) * 9
 
 # Zodiac signs mapping - needed for D9 calculations
-ZODIAC_SIGNS = {
-    "Ari": "Aries",
-    "Tau": "Taurus",
-    "Gem": "Gemini",
-    "Can": "Cancer",
-    "Leo": "Leo",
-    "Vir": "Virgo",
-    "Lib": "Libra",
-    "Sco": "Scorpio",
-    "Sag": "Sagittarius",
-    "Cap": "Capricorn",
-    "Aqu": "Aquarius",
-    "Pis": "Pisces"
-}
-
 def find_stacked_alignments(all_dates_list: List[Dict[str, Any]], 
                      pof_rahu_data: List[Dict[str, Any]] = None,
                      pof_regulus_data: List[Dict[str, Any]] = None,
@@ -325,7 +313,6 @@ def find_internally_stacked_dates(all_dates_list: List[Dict[str, Any]],
     
     return stacked_dates
 
-from datetime import timedelta
 
 def get_nearest_future_date(dates_array: List[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
     """
@@ -362,3 +349,74 @@ def get_nearest_future_date(dates_array: List[Dict[str, Any]]) -> Optional[Dict[
     future_dates.sort(key=lambda x: x["date_obj"])
     
     return future_dates[0]["entry"] 
+
+
+def determine_day_night_chart(self, sun_pos: float, asc_pos: float, natal_data: Dict[str, Any] = None, 
+                            label: str = "") -> bool:
+        """
+        Determine if a chart is a day chart (Sun above horizon) or night chart (Sun below horizon).
+        
+        Args:
+            sun_pos: The Sun's absolute position in degrees (0-360)
+            asc_pos: The Ascendant's absolute position in degrees (0-360)
+            natal_data: Optional natal chart data with additional information
+            label: Optional label for logging (useful when determining day/night for multiple charts)
+        
+        Returns:
+            is_night_chart: True if it's a night chart, False if it's a day chart
+        """
+        prefix = f"[{label}] " if label else ""
+        is_night_chart = False
+        sun_house_determined = False
+        
+        # Method 1: Try to get Sun's house directly from the data if available
+        if natal_data is not None and "subject" in natal_data and "planets" in natal_data["subject"] and "sun" in natal_data["subject"]["planets"]:
+            sun_data = natal_data["subject"]["planets"]["sun"]
+            if "house" in sun_data:
+                try:
+                    sun_house = sun_data["house"]
+                    sun_house_num = int(sun_house.replace("house_", ""))
+                    # Houses 1-6 are below horizon (night), 7-12 are above horizon (day)
+                    is_night_chart = 1 <= sun_house_num <= 6
+                    sun_house_determined = True
+                    print(f"{prefix}Determined day/night status directly from Sun's house: {sun_house} (Night: {is_night_chart})")
+                except (ValueError, AttributeError):
+                    # If house isn't in expected format, fall through to method 2
+                    pass
+        
+        # Method 2: Calculate Sun's house from scratch if Method 1 failed
+        if not sun_house_determined:
+            # Normalize positions to 0-360°
+            sun_pos_norm = sun_pos % 360
+            asc_pos_norm = asc_pos % 360
+            
+            # Calculate the angle from Ascendant to Sun (counterclockwise)
+            angle_from_asc = (sun_pos_norm - asc_pos_norm) % 360
+            
+            # Determine the house (each house spans 30° in equal house system)
+            sun_house_num = int(angle_from_asc / 30) + 1  # +1 because houses are 1-indexed
+            
+            # Houses 1-6 are below horizon (night), 7-12 are above horizon (day)
+            is_night_chart = 1 <= sun_house_num <= 6
+            print(f"{prefix}Calculated Sun's house position: {sun_house_num} (Night: {is_night_chart})")
+            
+            # Method 3: Validate with birth time if available (sanity check)
+            if natal_data is not None and "subject" in natal_data and "date_utc" in natal_data["subject"]:
+                try:
+                    birth_time_str = natal_data["subject"]["date_utc"].split('T')[1]
+                    birth_hour = int(birth_time_str.split(':')[0])
+                    
+                    # Basic sanity check: if birth hour is between 6 AM and 6 PM, it's likely a day chart
+                    is_likely_day = 6 <= birth_hour < 18
+                    
+                    if is_likely_day == is_night_chart:
+                        print(f"{prefix}WARNING: Calculated day/night status conflicts with birth hour {birth_hour}. " +
+                            f"Birth hour suggests {'day' if is_likely_day else 'night'} but calculation shows {'night' if is_night_chart else 'day'}")
+                except Exception as e:
+                    print(f"{prefix}Could not validate day/night status against birth time: {str(e)}")
+        
+        # Log the final determination
+        print(f"{prefix}Chart determined to be a {'night' if is_night_chart else 'day'} chart. " +
+            f"Part of Fortune formula: {'Asc - Moon + Sun' if is_night_chart else 'Asc + Moon - Sun'}")
+        
+        return is_night_chart
