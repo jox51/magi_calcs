@@ -1725,6 +1725,8 @@ class VedicLuckyTimesService:
             Dictionary containing location-specific Yogi and duplicate Yogi alignment details
         """
         return calculate_location_specific_yogi_alignments(self, natal_data, current_city, current_nation, orb, transit_data)
+    
+    
     def calculate_alignment_duration(self, exact_time: datetime, slower_planet: str = None, alignment_type: str = "conjunction", orb: float = 3.0) -> Dict[str, Any]:
         """
         Calculate the duration of an alignment involving the Ascendant and optionally a slower-moving planet.

@@ -18,7 +18,7 @@ import time
 from pathlib import Path
 from astro_charts.services.transit_loop_midpoint_visualization_service import TransitLoopMidpointVisualizationService
 from astro_charts.services.vedic_lucky_times_service import VedicLuckyTimesService
-
+from astro_charts.services.sports_prediction_service import SportsPredictionService
 # Load environment variables at startup
 load_dotenv()
 
@@ -199,6 +199,33 @@ class VedicLuckyTimesRequest(BaseModel):
     # Current location for location-specific Yogi point calculations
     current_city: Optional[str] = None
     current_nation: Optional[str] = None
+
+class SportsPredictionRequest(BaseModel):
+    # Event data
+    event_name: str
+    event_date: str  # Format: "YYYY-MM-DD"
+    event_time: str  # Format: "HH:MM"
+    event_city: str
+    event_nation: str
+    
+    # Team/competitor data
+    favorite_name: str
+    underdog_name: str
+    
+    # Job identifiers
+    user_id: str
+    job_id: str
+    
+    # Optional parameters
+    transit_hour: Optional[int] = None
+    transit_minute: Optional[int] = None
+    zodiac_type: str = "Sidereal"  # Default to sidereal for sports predictions
+    sidereal_mode: str = "LAHIRI"  # Default to Lahiri ayanamsa
+    
+    # Advanced prediction options
+    include_sky_pky: bool = True  # Include Shubha and Papa Kartari Yoga analysis
+    include_planetary_strength: bool = True  # Include planetary strength calculations
+    include_sun_as_malefic: bool = True  # Whether to include Sun as a malefic
 
 # Add this sign mapping at the top of the file with other imports
 ZODIAC_SIGNS = {
@@ -1478,6 +1505,112 @@ async def get_vedic_lucky_times(data: VedicLuckyTimesRequest):
     except Exception as e:
         # Log detailed error with traceback
         logger.error(f"Error calculating Vedic lucky times: {str(e)}")
+        logger.exception("Full traceback:")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/charts/sports-prediction")
+async def get_sports_prediction(data: SportsPredictionRequest):
+    try:
+        # Parse event date and time
+        event_date_parts = data.event_date.split("-")
+        event_time_parts = data.event_time.split(":")
+        
+        event_year = int(event_date_parts[0])
+        event_month = int(event_date_parts[1])
+        event_day = int(event_date_parts[2])
+        event_hour = data.transit_hour if data.transit_hour is not None else int(event_time_parts[0])
+        event_minute = data.transit_minute if data.transit_minute is not None else int(event_time_parts[1])
+        
+        # Create chart for the event time and location
+        chart_creator = ChartCreator(
+            name=data.event_name,
+            year=event_year,
+            month=event_month,
+            day=event_day,
+            hour=event_hour,
+            minute=event_minute,
+            city=data.event_city,
+            nation=data.event_nation,
+            zodiac_type=data.zodiac_type,
+            sidereal_mode=data.sidereal_mode
+        )
+        
+        # Get chart data
+        chart_data = json.loads(chart_creator.get_chart_data_as_json())
+        
+        # Create service to process sports prediction
+        # This will be implemented in a separate file
+        try:
+         
+            
+            service = SportsPredictionService()
+            
+            # Configure service based on request options
+            if not data.include_sun_as_malefic and "sun" in service.malefic_planets:
+                service.malefic_planets.remove("sun")
+            
+            prediction_results = service.analyze_chart(
+                chart_data=chart_data,
+                favorite_name=data.favorite_name,
+                underdog_name=data.underdog_name,
+                event_name=data.event_name,
+                event_date=data.event_date
+            )
+            
+            # Filter out SKY/PKY analysis if not requested
+            if not data.include_sky_pky:
+                if "analysis_details" in prediction_results:
+                    # Remove SKY/PKY specific fields
+                    keys_to_remove = ["favorite_sky", "underdog_sky", "favorite_pky", "underdog_pky"]
+                    for key in keys_to_remove:
+                        if key in prediction_results["analysis_details"]:
+                            del prediction_results["analysis_details"][key]
+                    
+                    # Filter out SKY/PKY scores
+                    if "favorite_scores" in prediction_results["analysis_details"]:
+                        prediction_results["analysis_details"]["favorite_scores"] = [
+                            score for score in prediction_results["analysis_details"]["favorite_scores"] 
+                            if score.get("type") not in ["sky", "pky"]
+                        ]
+                    
+                    if "underdog_scores" in prediction_results["analysis_details"]:
+                        prediction_results["analysis_details"]["underdog_scores"] = [
+                            score for score in prediction_results["analysis_details"]["underdog_scores"] 
+                            if score.get("type") not in ["sky", "pky"]
+                        ]
+            
+        except ImportError:
+            logger.error("SportsPredictionService not implemented yet")
+            # Return basic chart data with a note
+            return {
+                "chart_data": chart_data,
+                "error": "Sports prediction service not implemented yet",
+                "event_name": data.event_name,
+                "favorite_name": data.favorite_name,
+                "underdog_name": data.underdog_name
+            }
+        
+        # Save to PocketBase
+        try:
+            pb_service = PocketbaseService()
+            record = pb_service.create_sports_prediction_record(
+                chart_data=chart_data,
+                prediction_results=prediction_results,
+                event_name=data.event_name,
+                favorite_name=data.favorite_name,
+                underdog_name=data.underdog_name,
+                user_id=data.user_id,
+                job_id=data.job_id
+            )
+            prediction_results["record"] = record
+        except Exception as pb_error:
+            logger.error(f"PocketBase error: {str(pb_error)}")
+            prediction_results["pocketbase_error"] = str(pb_error)
+        
+        return prediction_results
+        
+    except Exception as e:
+        logger.error(f"Error creating sports prediction: {str(e)}")
         logger.exception("Full traceback:")
         raise HTTPException(status_code=500, detail=str(e))
 

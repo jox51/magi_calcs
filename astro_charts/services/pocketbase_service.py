@@ -459,3 +459,67 @@ class PocketbaseService:
             if hasattr(e.response, 'text'):
                 logger.error(f"Response: {e.response.text}")
             raise
+
+    def create_sports_prediction_record(
+        self,
+        chart_data: Dict[str, Any],
+        prediction_results: Dict[str, Any],
+        event_name: str,
+        favorite_name: str,
+        underdog_name: str,
+        user_id: str = None,
+        job_id: str = None
+    ) -> Dict[str, Any]:
+        """Create a new sports prediction record in PocketBase"""
+        try:
+            endpoint = f"{self.base_url}/api/collections/sports_predictions/records"
+            
+            # Prepare the data - structure for efficient retrieval
+            payload = {
+                "event_name": event_name,
+                "favorite_name": favorite_name,
+                "underdog_name": underdog_name,
+                "prediction_data": json.dumps(prediction_results),
+                "prediction_summary": json.dumps({
+                    "predicted_winner": prediction_results.get("prediction", {}).get("predicted_winner", "Unknown"),
+                    "confidence_level": prediction_results.get("prediction", {}).get("confidence_level", "Unknown"),
+                    "is_tie": prediction_results.get("prediction", {}).get("is_tie", False),
+                    "favorite_malefic_count": prediction_results.get("prediction", {}).get("favorite_malefic_count", 0),
+                    "underdog_malefic_count": prediction_results.get("prediction", {}).get("underdog_malefic_count", 0),
+                    "favorite_total_score": prediction_results.get("prediction", {}).get("favorite_total_score", 0),
+                    "underdog_total_score": prediction_results.get("prediction", {}).get("underdog_total_score", 0),
+                    "favorite_sky": prediction_results.get("prediction", {}).get("has_favorite_sky", False),
+                    "underdog_sky": prediction_results.get("prediction", {}).get("has_underdog_sky", False),
+                    "favorite_pky": prediction_results.get("prediction", {}).get("has_favorite_pky", False),
+                    "underdog_pky": prediction_results.get("prediction", {}).get("has_underdog_pky", False),
+                    "favorite_sky_count": prediction_results.get("prediction", {}).get("favorite_sky_count", 0),
+                    "underdog_sky_count": prediction_results.get("prediction", {}).get("underdog_sky_count", 0),
+                    "favorite_pky_count": prediction_results.get("prediction", {}).get("favorite_pky_count", 0),
+                    "underdog_pky_count": prediction_results.get("prediction", {}).get("underdog_pky_count", 0),
+                    "event_date": prediction_results.get("event_details", {}).get("event_date", "Unknown")
+                })
+            }
+            
+            # Add optional fields if provided
+            if user_id:
+                payload["user_id"] = user_id
+            if job_id:
+                payload["job_id"] = job_id
+            
+            # Make the request
+            response = requests.post(
+                endpoint,
+                headers=self.headers,
+                json=payload
+            )
+            
+            # Check if request was successful
+            response.raise_for_status()
+            
+            return response.json()
+            
+        except requests.exceptions.RequestException as e:
+            logger.error(f"Error creating sports prediction record: {str(e)}")
+            if hasattr(e.response, 'text'):
+                logger.error(f"Response: {e.response.text}")
+            raise

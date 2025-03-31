@@ -341,7 +341,7 @@ class ChartCreator:
         """Get transit chart data as JSON"""
         try:
             def get_planet_details(planet_obj):
-            
+                print(f"Processing planet Object: {planet_obj}")
                 # Get planet name and position
                 planet_name = planet_obj.name.lower()
                 abs_pos = planet_obj.abs_pos
@@ -382,6 +382,92 @@ class ChartCreator:
                         for planet in ["sun", "moon", "mercury", "venus", "mars", 
                                     "jupiter", "saturn", "uranus", "neptune", 
                                     "pluto", "chiron"]
+                    },
+                    "houses": {
+                        "ascendant": {
+                            "sign": self.subject.first_house["sign"],
+                            "position": self.subject.first_house["position"],
+                            "abs_pos": self.subject.first_house["abs_pos"],
+                            "house_num": 1
+                        },
+                        "house_1": {
+                            "sign": self.subject.first_house["sign"],
+                            "position": self.subject.first_house["position"],
+                            "abs_pos": self.subject.first_house["abs_pos"],
+                            "house_num": 1
+                        },
+                        "house_2": {
+                            "sign": self.subject.second_house["sign"] if hasattr(self.subject, "second_house") else "",
+                            "position": self.subject.second_house["position"] if hasattr(self.subject, "second_house") else 0,
+                            "abs_pos": self.subject.second_house["abs_pos"] if hasattr(self.subject, "second_house") else 0,
+                            "house_num": 2
+                        },
+                        "house_3": {
+                            "sign": self.subject.third_house["sign"] if hasattr(self.subject, "third_house") else "",
+                            "position": self.subject.third_house["position"] if hasattr(self.subject, "third_house") else 0,
+                            "abs_pos": self.subject.third_house["abs_pos"] if hasattr(self.subject, "third_house") else 0,
+                            "house_num": 3
+                        },
+                        "house_4": {
+                            "sign": self.subject.fourth_house["sign"] if hasattr(self.subject, "fourth_house") else "",
+                            "position": self.subject.fourth_house["position"] if hasattr(self.subject, "fourth_house") else 0,
+                            "abs_pos": self.subject.fourth_house["abs_pos"] if hasattr(self.subject, "fourth_house") else 0,
+                            "house_num": 4
+                        },
+                        "house_5": {
+                            "sign": self.subject.fifth_house["sign"] if hasattr(self.subject, "fifth_house") else "",
+                            "position": self.subject.fifth_house["position"] if hasattr(self.subject, "fifth_house") else 0,
+                            "abs_pos": self.subject.fifth_house["abs_pos"] if hasattr(self.subject, "fifth_house") else 0,
+                            "house_num": 5
+                        },
+                        "house_6": {
+                            "sign": self.subject.sixth_house["sign"] if hasattr(self.subject, "sixth_house") else "",
+                            "position": self.subject.sixth_house["position"] if hasattr(self.subject, "sixth_house") else 0,
+                            "abs_pos": self.subject.sixth_house["abs_pos"] if hasattr(self.subject, "sixth_house") else 0,
+                            "house_num": 6
+                        },
+                        "house_7": {
+                            "sign": self.subject.seventh_house["sign"] if hasattr(self.subject, "seventh_house") else "",
+                            "position": self.subject.seventh_house["position"] if hasattr(self.subject, "seventh_house") else 0,
+                            "abs_pos": self.subject.seventh_house["abs_pos"] if hasattr(self.subject, "seventh_house") else 0,
+                            "house_num": 7
+                        },
+                        "house_8": {
+                            "sign": self.subject.eighth_house["sign"] if hasattr(self.subject, "eighth_house") else "",
+                            "position": self.subject.eighth_house["position"] if hasattr(self.subject, "eighth_house") else 0,
+                            "abs_pos": self.subject.eighth_house["abs_pos"] if hasattr(self.subject, "eighth_house") else 0,
+                            "house_num": 8
+                        },
+                        "house_9": {
+                            "sign": self.subject.ninth_house["sign"] if hasattr(self.subject, "ninth_house") else "",
+                            "position": self.subject.ninth_house["position"] if hasattr(self.subject, "ninth_house") else 0,
+                            "abs_pos": self.subject.ninth_house["abs_pos"] if hasattr(self.subject, "ninth_house") else 0,
+                            "house_num": 9
+                        },
+                        "house_10": {
+                            "sign": self.subject.tenth_house["sign"],
+                            "position": self.subject.tenth_house["position"],
+                            "abs_pos": self.subject.tenth_house["abs_pos"],
+                            "house_num": 10
+                        },
+                        "midheaven": {
+                            "sign": self.subject.tenth_house["sign"],
+                            "position": self.subject.tenth_house["position"],
+                            "abs_pos": self.subject.tenth_house["abs_pos"],
+                            "house_num": 10
+                        },
+                        "house_11": {
+                            "sign": self.subject.eleventh_house["sign"] if hasattr(self.subject, "eleventh_house") else "",
+                            "position": self.subject.eleventh_house["position"] if hasattr(self.subject, "eleventh_house") else 0,
+                            "abs_pos": self.subject.eleventh_house["abs_pos"] if hasattr(self.subject, "eleventh_house") else 0,
+                            "house_num": 11
+                        },
+                        "house_12": {
+                            "sign": self.subject.twelfth_house["sign"] if hasattr(self.subject, "twelfth_house") else "",
+                            "position": self.subject.twelfth_house["position"] if hasattr(self.subject, "twelfth_house") else 0,
+                            "abs_pos": self.subject.twelfth_house["abs_pos"] if hasattr(self.subject, "twelfth_house") else 0,
+                            "house_num": 12
+                        }
                     }
                 }
             }
@@ -403,7 +489,6 @@ class ChartCreator:
                                     "jupiter", "saturn", "uranus", "neptune", 
                                     "pluto", "chiron"]
                     },
-                    # Add house information to transit data 
                     "houses": {
                         "ascendant": {
                             "sign": self.transit_subject.first_house["sign"],
@@ -411,11 +496,83 @@ class ChartCreator:
                             "abs_pos": self.transit_subject.first_house["abs_pos"],
                             "house_num": 1
                         },
+                        "house_1": {
+                            "sign": self.transit_subject.first_house["sign"],
+                            "position": self.transit_subject.first_house["position"],
+                            "abs_pos": self.transit_subject.first_house["abs_pos"],
+                            "house_num": 1
+                        },
+                        "house_2": {
+                            "sign": self.transit_subject.second_house["sign"] if hasattr(self.transit_subject, "second_house") else "",
+                            "position": self.transit_subject.second_house["position"] if hasattr(self.transit_subject, "second_house") else 0,
+                            "abs_pos": self.transit_subject.second_house["abs_pos"] if hasattr(self.transit_subject, "second_house") else 0,
+                            "house_num": 2
+                        },
+                        "house_3": {
+                            "sign": self.transit_subject.third_house["sign"] if hasattr(self.transit_subject, "third_house") else "",
+                            "position": self.transit_subject.third_house["position"] if hasattr(self.transit_subject, "third_house") else 0,
+                            "abs_pos": self.transit_subject.third_house["abs_pos"] if hasattr(self.transit_subject, "third_house") else 0,
+                            "house_num": 3
+                        },
+                        "house_4": {
+                            "sign": self.transit_subject.fourth_house["sign"] if hasattr(self.transit_subject, "fourth_house") else "",
+                            "position": self.transit_subject.fourth_house["position"] if hasattr(self.transit_subject, "fourth_house") else 0,
+                            "abs_pos": self.transit_subject.fourth_house["abs_pos"] if hasattr(self.transit_subject, "fourth_house") else 0,
+                            "house_num": 4
+                        },
+                        "house_5": {
+                            "sign": self.transit_subject.fifth_house["sign"] if hasattr(self.transit_subject, "fifth_house") else "",
+                            "position": self.transit_subject.fifth_house["position"] if hasattr(self.transit_subject, "fifth_house") else 0,
+                            "abs_pos": self.transit_subject.fifth_house["abs_pos"] if hasattr(self.transit_subject, "fifth_house") else 0,
+                            "house_num": 5
+                        },
+                        "house_6": {
+                            "sign": self.transit_subject.sixth_house["sign"] if hasattr(self.transit_subject, "sixth_house") else "",
+                            "position": self.transit_subject.sixth_house["position"] if hasattr(self.transit_subject, "sixth_house") else 0,
+                            "abs_pos": self.transit_subject.sixth_house["abs_pos"] if hasattr(self.transit_subject, "sixth_house") else 0,
+                            "house_num": 6
+                        },
+                        "house_7": {
+                            "sign": self.transit_subject.seventh_house["sign"] if hasattr(self.transit_subject, "seventh_house") else "",
+                            "position": self.transit_subject.seventh_house["position"] if hasattr(self.transit_subject, "seventh_house") else 0,
+                            "abs_pos": self.transit_subject.seventh_house["abs_pos"] if hasattr(self.transit_subject, "seventh_house") else 0,
+                            "house_num": 7
+                        },
+                        "house_8": {
+                            "sign": self.transit_subject.eighth_house["sign"] if hasattr(self.transit_subject, "eighth_house") else "",
+                            "position": self.transit_subject.eighth_house["position"] if hasattr(self.transit_subject, "eighth_house") else 0,
+                            "abs_pos": self.transit_subject.eighth_house["abs_pos"] if hasattr(self.transit_subject, "eighth_house") else 0,
+                            "house_num": 8
+                        },
+                        "house_9": {
+                            "sign": self.transit_subject.ninth_house["sign"] if hasattr(self.transit_subject, "ninth_house") else "",
+                            "position": self.transit_subject.ninth_house["position"] if hasattr(self.transit_subject, "ninth_house") else 0,
+                            "abs_pos": self.transit_subject.ninth_house["abs_pos"] if hasattr(self.transit_subject, "ninth_house") else 0,
+                            "house_num": 9
+                        },
+                        "house_10": {
+                            "sign": self.transit_subject.tenth_house["sign"],
+                            "position": self.transit_subject.tenth_house["position"],
+                            "abs_pos": self.transit_subject.tenth_house["abs_pos"],
+                            "house_num": 10
+                        },
                         "midheaven": {
                             "sign": self.transit_subject.tenth_house["sign"],
                             "position": self.transit_subject.tenth_house["position"],
                             "abs_pos": self.transit_subject.tenth_house["abs_pos"],
                             "house_num": 10
+                        },
+                        "house_11": {
+                            "sign": self.transit_subject.eleventh_house["sign"] if hasattr(self.transit_subject, "eleventh_house") else "",
+                            "position": self.transit_subject.eleventh_house["position"] if hasattr(self.transit_subject, "eleventh_house") else 0,
+                            "abs_pos": self.transit_subject.eleventh_house["abs_pos"] if hasattr(self.transit_subject, "eleventh_house") else 0,
+                            "house_num": 11
+                        },
+                        "house_12": {
+                            "sign": self.transit_subject.twelfth_house["sign"] if hasattr(self.transit_subject, "twelfth_house") else "",
+                            "position": self.transit_subject.twelfth_house["position"] if hasattr(self.transit_subject, "twelfth_house") else 0,
+                            "abs_pos": self.transit_subject.twelfth_house["abs_pos"] if hasattr(self.transit_subject, "twelfth_house") else 0,
+                            "house_num": 12
                         }
                     }
                 }
@@ -577,10 +734,11 @@ class ChartCreator:
             logger.error(f"Error in get_declination for {planet_name}: {str(e)}")
             return None
 
-    def get_chart_data_as_json(self):
+    def  get_chart_data_as_json(self):
         """Get chart data as JSON including aspects"""
         try:
             def get_planet_details(planet_obj):
+                print(f"Processing planet Object: {planet_obj}")
                 planet_name = planet_obj["name"].lower()
                 abs_pos = planet_obj["abs_pos"]
                 logger.info(f"Processing planet {planet_name} at position {abs_pos}")
@@ -633,7 +791,9 @@ class ChartCreator:
                         "uranus": get_planet_details(self.subject.uranus),
                         "neptune": get_planet_details(self.subject.neptune),
                         "pluto": get_planet_details(self.subject.pluto),
-                        "chiron": get_planet_details(self.subject.chiron)
+                        "chiron": get_planet_details(self.subject.chiron),
+                        "rahu": get_planet_details(self.subject.true_node),
+                        "ketu": get_planet_details(self.subject.true_south_node)
                     },
                     "houses": {
                         "ascendant": {
@@ -642,11 +802,83 @@ class ChartCreator:
                             "abs_pos": self.subject.first_house["abs_pos"],
                             "house_num": 1
                         },
+                        "house_1": {
+                            "sign": self.subject.first_house["sign"],
+                            "position": self.subject.first_house["position"],
+                            "abs_pos": self.subject.first_house["abs_pos"],
+                            "house_num": 1
+                        },
+                        "house_2": {
+                            "sign": self.subject.second_house["sign"] if hasattr(self.subject, "second_house") else "",
+                            "position": self.subject.second_house["position"] if hasattr(self.subject, "second_house") else 0,
+                            "abs_pos": self.subject.second_house["abs_pos"] if hasattr(self.subject, "second_house") else 0,
+                            "house_num": 2
+                        },
+                        "house_3": {
+                            "sign": self.subject.third_house["sign"] if hasattr(self.subject, "third_house") else "",
+                            "position": self.subject.third_house["position"] if hasattr(self.subject, "third_house") else 0,
+                            "abs_pos": self.subject.third_house["abs_pos"] if hasattr(self.subject, "third_house") else 0,
+                            "house_num": 3
+                        },
+                        "house_4": {
+                            "sign": self.subject.fourth_house["sign"] if hasattr(self.subject, "fourth_house") else "",
+                            "position": self.subject.fourth_house["position"] if hasattr(self.subject, "fourth_house") else 0,
+                            "abs_pos": self.subject.fourth_house["abs_pos"] if hasattr(self.subject, "fourth_house") else 0,
+                            "house_num": 4
+                        },
+                        "house_5": {
+                            "sign": self.subject.fifth_house["sign"] if hasattr(self.subject, "fifth_house") else "",
+                            "position": self.subject.fifth_house["position"] if hasattr(self.subject, "fifth_house") else 0,
+                            "abs_pos": self.subject.fifth_house["abs_pos"] if hasattr(self.subject, "fifth_house") else 0,
+                            "house_num": 5
+                        },
+                        "house_6": {
+                            "sign": self.subject.sixth_house["sign"] if hasattr(self.subject, "sixth_house") else "",
+                            "position": self.subject.sixth_house["position"] if hasattr(self.subject, "sixth_house") else 0,
+                            "abs_pos": self.subject.sixth_house["abs_pos"] if hasattr(self.subject, "sixth_house") else 0,
+                            "house_num": 6
+                        },
+                        "house_7": {
+                            "sign": self.subject.seventh_house["sign"] if hasattr(self.subject, "seventh_house") else "",
+                            "position": self.subject.seventh_house["position"] if hasattr(self.subject, "seventh_house") else 0,
+                            "abs_pos": self.subject.seventh_house["abs_pos"] if hasattr(self.subject, "seventh_house") else 0,
+                            "house_num": 7
+                        },
+                        "house_8": {
+                            "sign": self.subject.eighth_house["sign"] if hasattr(self.subject, "eighth_house") else "",
+                            "position": self.subject.eighth_house["position"] if hasattr(self.subject, "eighth_house") else 0,
+                            "abs_pos": self.subject.eighth_house["abs_pos"] if hasattr(self.subject, "eighth_house") else 0,
+                            "house_num": 8
+                        },
+                        "house_9": {
+                            "sign": self.subject.ninth_house["sign"] if hasattr(self.subject, "ninth_house") else "",
+                            "position": self.subject.ninth_house["position"] if hasattr(self.subject, "ninth_house") else 0,
+                            "abs_pos": self.subject.ninth_house["abs_pos"] if hasattr(self.subject, "ninth_house") else 0,
+                            "house_num": 9
+                        },
+                        "house_10": {
+                            "sign": self.subject.tenth_house["sign"],
+                            "position": self.subject.tenth_house["position"],
+                            "abs_pos": self.subject.tenth_house["abs_pos"],
+                            "house_num": 10
+                        },
                         "midheaven": {
                             "sign": self.subject.tenth_house["sign"],
                             "position": self.subject.tenth_house["position"],
                             "abs_pos": self.subject.tenth_house["abs_pos"],
                             "house_num": 10
+                        },
+                        "house_11": {
+                            "sign": self.subject.eleventh_house["sign"] if hasattr(self.subject, "eleventh_house") else "",
+                            "position": self.subject.eleventh_house["position"] if hasattr(self.subject, "eleventh_house") else 0,
+                            "abs_pos": self.subject.eleventh_house["abs_pos"] if hasattr(self.subject, "eleventh_house") else 0,
+                            "house_num": 11
+                        },
+                        "house_12": {
+                            "sign": self.subject.twelfth_house["sign"] if hasattr(self.subject, "twelfth_house") else "",
+                            "position": self.subject.twelfth_house["position"] if hasattr(self.subject, "twelfth_house") else 0,
+                            "abs_pos": self.subject.twelfth_house["abs_pos"] if hasattr(self.subject, "twelfth_house") else 0,
+                            "house_num": 12
                         }
                     }
                 }
