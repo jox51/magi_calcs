@@ -496,6 +496,12 @@ class PocketbaseService:
                     "underdog_sky_count": prediction_results.get("prediction", {}).get("underdog_sky_count", 0),
                     "favorite_pky_count": prediction_results.get("prediction", {}).get("favorite_pky_count", 0),
                     "underdog_pky_count": prediction_results.get("prediction", {}).get("underdog_pky_count", 0),
+                    "favorite_cuspal": prediction_results.get("prediction", {}).get("has_favorite_cuspal", False),
+                    "underdog_cuspal": prediction_results.get("prediction", {}).get("has_underdog_cuspal", False),
+                    "favorite_cuspal_score": prediction_results.get("prediction", {}).get("favorite_cuspal_score", 0),
+                    "underdog_cuspal_score": prediction_results.get("prediction", {}).get("underdog_cuspal_score", 0),
+                    "favorite_cuspal_count": prediction_results.get("prediction", {}).get("favorite_cuspal_count", 0),
+                    "underdog_cuspal_count": prediction_results.get("prediction", {}).get("underdog_cuspal_count", 0),
                     "event_date": prediction_results.get("event_details", {}).get("event_date", "Unknown")
                 })
             }
