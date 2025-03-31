@@ -351,6 +351,10 @@ class SportsPredictionService:
                     "has_underdog_pky": underdog_pky["has_pky"],
                     "has_favorite_cuspal": favorite_cuspal["has_cuspal_influence"],
                     "has_underdog_cuspal": underdog_cuspal["has_cuspal_influence"],
+                    "favorite_cuspal_score": round(favorite_cuspal["total_score"], 2) if favorite_cuspal["has_cuspal_influence"] else 0,
+                    "underdog_cuspal_score": round(underdog_cuspal["total_score"], 2) if underdog_cuspal["has_cuspal_influence"] else 0,
+                    "favorite_cuspal_count": len(favorite_cuspal["influences"]) if favorite_cuspal["has_cuspal_influence"] else 0,
+                    "underdog_cuspal_count": len(underdog_cuspal["influences"]) if underdog_cuspal["has_cuspal_influence"] else 0,
                     "confidence_level": confidence_level,
                     "summary": prediction_summary
                 },
