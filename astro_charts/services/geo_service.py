@@ -8,7 +8,7 @@ class GeoService:
         if not username:
             raise ValueError("GeoNames username is required")
         self.username = username
-        self.base_url = "https://geocoderdocked.commentking.net/geocode"
+        self.base_url = "https://geocoder.commentking.net/geocode"
         logger.info(f"Initialized GeoService with username: {username[:3]}***")
 
     def get_coordinates(self, city, nation):
