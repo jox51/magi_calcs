@@ -19,9 +19,20 @@ class GeoService:
             params = {
                 'location': location
             }
-            
-            response = requests.get(self.base_url, params=params, verify=certifi.where())
-            response.raise_for_status()
+
+            # Try with certifi bundle first
+            cert_path = certifi.where()
+            logger.info(f"Using certifi bundle: {cert_path}")
+
+            try:
+                response = requests.get(self.base_url, params=params, verify=cert_path, timeout=10)
+                response.raise_for_status()
+            except requests.exceptions.SSLError as ssl_error:
+                # If certifi fails, try with system default CA bundle
+                logger.warning(f"Certifi SSL verification failed: {ssl_error}")
+                logger.info("Retrying with system default CA bundle")
+                response = requests.get(self.base_url, params=params, verify=True, timeout=10)
+                response.raise_for_status()
             
             data = response.json()
             

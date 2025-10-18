@@ -27,9 +27,12 @@ COPY . .
 RUN poetry config virtualenvs.create false
 
 # Install dependencies and build the package
-RUN pip install cython && \
+RUN pip install --upgrade pip setuptools && \
+    pip install cython && \
     python setup.py build_ext --inplace && \
-    poetry install --only main --no-interaction --no-ansi
+    poetry install --only main --no-interaction --no-ansi && \
+    pip install --upgrade certifi && \
+    update-ca-certificates
 
 # Create charts directory with proper permissions
 RUN mkdir -p charts && chmod 777 charts
