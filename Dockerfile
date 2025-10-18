@@ -12,6 +12,8 @@ RUN apt-get update && apt-get install -y \
     pkg-config \
     make \
     libsqlite3-dev \
+    ca-certificates \
+    && update-ca-certificates \
     && rm -rf /var/lib/apt/lists/*
 
 # Install poetry
@@ -32,7 +34,7 @@ RUN pip install cython && \
 RUN mkdir -p charts && chmod 777 charts
 
 # Expose port
-EXPOSE 8001
+EXPOSE 8000
 
 # Command to run the application
-CMD ["poetry", "run", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8001"] 
+CMD ["poetry", "run", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"] 

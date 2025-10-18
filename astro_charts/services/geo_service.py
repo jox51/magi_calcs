@@ -1,5 +1,6 @@
 import logging
 import requests
+import certifi
 
 logger = logging.getLogger(__name__)
 
@@ -19,7 +20,7 @@ class GeoService:
                 'location': location
             }
             
-            response = requests.get(self.base_url, params=params)
+            response = requests.get(self.base_url, params=params, verify=certifi.where())
             response.raise_for_status()
             
             data = response.json()
