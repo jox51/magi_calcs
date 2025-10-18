@@ -25,6 +25,11 @@ load_dotenv()
 app = FastAPI(title="Astrology Charts API")
 logger = logging.getLogger(__name__)
 
+@app.get("/healthcheck")
+async def healthcheck():
+    """Health check endpoint for monitoring"""
+    return {"status": "healthy", "service": "astro-charts"}
+
 # Base models for shared attributes
 class BaseBirthData(BaseModel):
     name: str
