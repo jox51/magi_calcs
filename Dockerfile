@@ -32,7 +32,7 @@ RUN pip install cython && \
 RUN mkdir -p charts && chmod 777 charts
 
 # Expose port
-EXPOSE 8000
+EXPOSE 8001
 
 # Command to run the application
-CMD ["poetry", "run", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8000"] 
+CMD ["poetry", "run", "uvicorn", "api:app", "--host", "0.0.0.0", "--port", "8001"] 
