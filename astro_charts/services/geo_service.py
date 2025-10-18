@@ -2,25 +2,44 @@ import logging
 import requests
 import certifi
 import os
+import ssl
+from requests.adapters import HTTPAdapter
+from urllib3.poolmanager import PoolManager
 
 logger = logging.getLogger(__name__)
+
+class SSLAdapter(HTTPAdapter):
+    """Custom SSL adapter that accepts self-signed certificates"""
+    def init_poolmanager(self, *args, **kwargs):
+        context = ssl.create_default_context()
+        context.check_hostname = False
+        context.verify_mode = ssl.CERT_NONE
+        kwargs['ssl_context'] = context
+        return super().init_poolmanager(*args, **kwargs)
 
 class GeoService:
     def __init__(self, username):
         if not username:
             raise ValueError("GeoNames username is required")
         self.username = username
-        self.base_url = "https://geocoder.commentking.net/geocode"
 
-        # Allow disabling SSL verification for trusted internal services
-        # This is safe because geocoder.commentking.net is a service we control
-        # and the SSL issue is due to Coolify/Traefik internal certificate handling
-        self.verify_ssl = os.getenv("GEOCODER_VERIFY_SSL", "false").lower() == "true"
+        # Allow using HTTP for internal service communication
+        # This bypasses SSL issues when services are on the same network
+        use_http = os.getenv("GEOCODER_USE_HTTP", "false").lower() == "true"
 
-        if not self.verify_ssl:
-            logger.warning("SSL verification disabled for geocoder service (GEOCODER_VERIFY_SSL=false)")
+        if use_http:
+            self.base_url = "http://geocoder.commentking.net/geocode"
+            logger.warning("Using HTTP for geocoder service (GEOCODER_USE_HTTP=true)")
+        else:
+            self.base_url = "https://geocoder.commentking.net/geocode"
+            # Allow disabling SSL verification for trusted internal services
+            self.verify_ssl = os.getenv("GEOCODER_VERIFY_SSL", "false").lower() == "true"
+
+            if not self.verify_ssl:
+                logger.warning("SSL verification disabled for geocoder service (GEOCODER_VERIFY_SSL=false)")
 
         logger.info(f"Initialized GeoService with username: {username[:3]}***")
+        logger.info(f"Geocoder base URL: {self.base_url}")
 
     def get_coordinates(self, city, nation):
         """Get coordinates for a city and nation using custom geocoding API."""
@@ -30,9 +49,14 @@ class GeoService:
                 'location': location
             }
 
-            # Determine SSL verification approach
-            if self.verify_ssl:
-                # Try with certifi bundle first
+            # Make request based on URL scheme
+            if self.base_url.startswith("http://"):
+                # HTTP - no SSL verification needed
+                logger.info(f"Making HTTP request to {self.base_url}")
+                response = requests.get(self.base_url, params=params, timeout=10)
+                response.raise_for_status()
+            elif hasattr(self, 'verify_ssl') and self.verify_ssl:
+                # HTTPS with SSL verification
                 cert_path = certifi.where()
                 logger.info(f"Using certifi bundle: {cert_path}")
 
@@ -46,10 +70,16 @@ class GeoService:
                     response = requests.get(self.base_url, params=params, verify=True, timeout=10)
                     response.raise_for_status()
             else:
-                # SSL verification disabled for trusted internal service
+                # HTTPS without SSL verification (trusted internal service)
+                # Use custom SSL adapter for proper TLS handshake with self-signed certs
                 import urllib3
                 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
-                response = requests.get(self.base_url, params=params, verify=False, timeout=10)
+                logger.info(f"Making HTTPS request without SSL verification to {self.base_url}")
+
+                session = requests.Session()
+                session.mount('https://', SSLAdapter())
+
+                response = session.get(self.base_url, params=params, timeout=10)
                 response.raise_for_status()
             
             data = response.json()

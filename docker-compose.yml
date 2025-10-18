@@ -11,7 +11,10 @@ services:
       - POCKETBASE_PASSWORD=${POCKETBASE_PASSWORD}
       - ASTRONOMY_APP_ID=${ASTRONOMY_APP_ID}
       - ASTRONOMY_APP_SECRET=${ASTRONOMY_APP_SECRET}
-      # SSL verification for geocoder service (false = disabled for Coolify internal certs)
+      # Geocoder connection settings
+      # Option 1: Use HTTP instead of HTTPS (bypasses SSL issues entirely)
+      - GEOCODER_USE_HTTP=false
+      # Option 2: Use HTTPS without SSL verification (for self-signed certs)
       - GEOCODER_VERIFY_SSL=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
