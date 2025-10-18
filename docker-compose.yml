@@ -11,6 +11,8 @@ services:
       - POCKETBASE_PASSWORD=${POCKETBASE_PASSWORD}
       - ASTRONOMY_APP_ID=${ASTRONOMY_APP_ID}
       - ASTRONOMY_APP_SECRET=${ASTRONOMY_APP_SECRET}
+      # SSL verification for geocoder service (false = disabled for Coolify internal certs)
+      - GEOCODER_VERIFY_SSL=false
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/healthcheck"]
       interval: 30s

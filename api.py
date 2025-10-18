@@ -30,6 +30,61 @@ async def healthcheck():
     """Health check endpoint for monitoring"""
     return {"status": "healthy", "service": "astro-charts"}
 
+@app.get("/debug/ssl-cert-check")
+async def check_ssl_cert():
+    """Debug endpoint to check SSL certificate of geocoder"""
+    import ssl
+    import socket
+    from datetime import datetime
+
+    hostname = "geocoder.commentking.net"
+    port = 443
+
+    try:
+        context = ssl.create_default_context()
+
+        with socket.create_connection((hostname, port), timeout=10) as sock:
+            with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+                cert = ssock.getpeercert()
+
+                return {
+                    "hostname": hostname,
+                    "ssl_version": ssock.version(),
+                    "issuer": dict(x[0] for x in cert.get('issuer', [])),
+                    "subject": dict(x[0] for x in cert.get('subject', [])),
+                    "notBefore": cert.get('notBefore'),
+                    "notAfter": cert.get('notAfter'),
+                    "subjectAltName": cert.get('subjectAltName', []),
+                    "cert_valid": True
+                }
+    except ssl.SSLError as e:
+        # Try without verification to see what cert is actually presented
+        try:
+            context = ssl._create_unverified_context()
+            with socket.create_connection((hostname, port), timeout=10) as sock:
+                with context.wrap_socket(sock, server_hostname=hostname) as ssock:
+                    cert = ssock.getpeercert()
+
+                    return {
+                        "hostname": hostname,
+                        "ssl_version": ssock.version(),
+                        "issuer": dict(x[0] for x in cert.get('issuer', [])),
+                        "subject": dict(x[0] for x in cert.get('subject', [])),
+                        "notBefore": cert.get('notBefore'),
+                        "notAfter": cert.get('notAfter'),
+                        "subjectAltName": cert.get('subjectAltName', []),
+                        "cert_valid": False,
+                        "ssl_error": str(e),
+                        "note": "Certificate retrieved without verification"
+                    }
+        except Exception as inner_e:
+            return {
+                "error": str(inner_e),
+                "ssl_error": str(e)
+            }
+    except Exception as e:
+        return {"error": str(e)}
+
 # Base models for shared attributes
 class BaseBirthData(BaseModel):
     name: str

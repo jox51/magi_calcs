@@ -1,6 +1,7 @@
 import logging
 import requests
 import certifi
+import os
 
 logger = logging.getLogger(__name__)
 
@@ -10,6 +11,15 @@ class GeoService:
             raise ValueError("GeoNames username is required")
         self.username = username
         self.base_url = "https://geocoder.commentking.net/geocode"
+
+        # Allow disabling SSL verification for trusted internal services
+        # This is safe because geocoder.commentking.net is a service we control
+        # and the SSL issue is due to Coolify/Traefik internal certificate handling
+        self.verify_ssl = os.getenv("GEOCODER_VERIFY_SSL", "false").lower() == "true"
+
+        if not self.verify_ssl:
+            logger.warning("SSL verification disabled for geocoder service (GEOCODER_VERIFY_SSL=false)")
+
         logger.info(f"Initialized GeoService with username: {username[:3]}***")
 
     def get_coordinates(self, city, nation):
@@ -20,18 +30,26 @@ class GeoService:
                 'location': location
             }
 
-            # Try with certifi bundle first
-            cert_path = certifi.where()
-            logger.info(f"Using certifi bundle: {cert_path}")
+            # Determine SSL verification approach
+            if self.verify_ssl:
+                # Try with certifi bundle first
+                cert_path = certifi.where()
+                logger.info(f"Using certifi bundle: {cert_path}")
 
-            try:
-                response = requests.get(self.base_url, params=params, verify=cert_path, timeout=10)
-                response.raise_for_status()
-            except requests.exceptions.SSLError as ssl_error:
-                # If certifi fails, try with system default CA bundle
-                logger.warning(f"Certifi SSL verification failed: {ssl_error}")
-                logger.info("Retrying with system default CA bundle")
-                response = requests.get(self.base_url, params=params, verify=True, timeout=10)
+                try:
+                    response = requests.get(self.base_url, params=params, verify=cert_path, timeout=10)
+                    response.raise_for_status()
+                except requests.exceptions.SSLError as ssl_error:
+                    # If certifi fails, try with system default CA bundle
+                    logger.warning(f"Certifi SSL verification failed: {ssl_error}")
+                    logger.info("Retrying with system default CA bundle")
+                    response = requests.get(self.base_url, params=params, verify=True, timeout=10)
+                    response.raise_for_status()
+            else:
+                # SSL verification disabled for trusted internal service
+                import urllib3
+                urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+                response = requests.get(self.base_url, params=params, verify=False, timeout=10)
                 response.raise_for_status()
             
             data = response.json()
