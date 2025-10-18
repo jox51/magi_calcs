@@ -79,7 +79,7 @@ class GeoService:
                 session = requests.Session()
                 session.mount('https://', SSLAdapter())
 
-                response = session.get(self.base_url, params=params, timeout=10)
+                response = session.get(self.base_url, params=params, verify=False, timeout=10)
                 response.raise_for_status()
             
             data = response.json()
